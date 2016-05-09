@@ -1,0 +1,30 @@
+{
+  "name": "sanctuary-type-classes",
+  "version": "0.0.0",
+  "description": "Standard library for Fantasy Land",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/sanctuary-js/sanctuary-type-classes.git"
+  },
+  "scripts": {
+    "test": "make lint test"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "doctest": "0.10.x",
+    "eslint": "2.9.x",
+    "fantasy-land": "1.0.1",
+    "istanbul": "0.4.x",
+    "mocha": "2.x.x",
+    "sanctuary-style": "0.2.x",
+    "transcribe": "0.5.x",
+    "xyz": "1.0.x"
+  },
+  "files": [
+    "/LICENSE",
+    "/README.md",
+    "/index.js",
+    "/package.json"
+  ]
+}
