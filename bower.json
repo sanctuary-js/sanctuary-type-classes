@@ -1,0 +1,35 @@
+{
+  "name": "sanctuary-type-classes",
+  "description": "Standard library for Fantasy Land",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/sanctuary-js/sanctuary-type-classes.git"
+  },
+  "main": "index.js",
+  "moduleType": [
+    "amd",
+    "globals",
+    "node"
+  ],
+  "keywords": [
+    "algebraic",
+    "functional",
+    "sanctuary",
+    "types"
+  ],
+  "dependencies": {},
+  "ignore": [
+    "/.git/",
+    "/bower_components/",
+    "/coverage/",
+    "/node_modules/",
+    "/scripts/",
+    "/test/",
+    "/.*",
+    "/CONTRIBUTING.md",
+    "/Makefile",
+    "/circle.yml",
+    "/package.json"
+  ]
+}
