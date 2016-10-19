@@ -1037,6 +1037,46 @@
     return Apply.methods.ap(applyX)(applyF);
   };
 
+  //# lift2 :: Apply f => (a -> b -> c, f a, f b) -> f c
+  //.
+  //. Lifts `a -> b -> c` to `Apply f => f a -> f b -> f c` and returns the
+  //. result of applying this to the given arguments.
+  //.
+  //. This function is derived from [`map`](#map) and [`ap`](#ap).
+  //.
+  //. See also [`lift3`](#lift3).
+  //.
+  //. ```javascript
+  //. > lift2(x => y => Math.pow(x, y), [10], [1, 2, 3])
+  //. [10, 100, 1000]
+  //.
+  //. > lift2(x => y => Math.pow(x, y), Identity(10), Identity(3))
+  //. Identity(1000)
+  //. ```
+  var lift2 = function lift2(f, x, y) {
+    return ap(map(f, x), y);
+  };
+
+  //# lift3 :: Apply f => (a -> b -> c -> d, f a, f b, f c) -> f d
+  //.
+  //. Lifts `a -> b -> c -> d` to `Apply f => f a -> f b -> f c -> f d` and
+  //. returns the result of applying this to the given arguments.
+  //.
+  //. This function is derived from [`map`](#map) and [`ap`](#ap).
+  //.
+  //. See also [`lift2`](#lift2).
+  //.
+  //. ```javascript
+  //. > lift3(x => y => z => x + z + y, ['<'], ['>'], ['foo', 'bar', 'baz'])
+  //. ['<foo>', '<bar>', '<baz>']
+  //.
+  //. > lift3(x => y => z => x + z + y, Identity('<'), Identity('>'), Identity('baz'))
+  //. Identity('<baz>')
+  //. ```
+  var lift3 = function lift3(f, x, y, z) {
+    return ap(ap(map(f, x), y), z);
+  };
+
   //# of :: Applicative f => (TypeRep f, a) -> f a
   //.
   //. Function wrapper for [`fantasy-land/of`][].
@@ -1252,6 +1292,8 @@
     bimap: bimap,
     promap: promap,
     ap: ap,
+    lift2: lift2,
+    lift3: lift3,
     of: of,
     chain: chain,
     chainRec: chainRec,
