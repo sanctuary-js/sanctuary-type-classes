@@ -128,6 +128,18 @@ var toUpper = function(s) {
   return s.toUpperCase();
 };
 
+//  wrap :: String -> String -> String -> String
+var wrap = function(before) {
+  eq(arguments.length, 1);
+  return function(after) {
+    eq(arguments.length, 1);
+    return function(s) {
+      eq(arguments.length, 1);
+      return before + s + after;
+    };
+  };
+};
+
 
 test('TypeClass', function() {
   eq(typeof Z.TypeClass, 'function');
@@ -551,6 +563,22 @@ test('ap', function() {
   eq(Z.ap(Cons(inc, Nil), Nil), Nil);
   eq(Z.ap(Cons(inc, Nil), Cons(1, Cons(2, Cons(3, Nil)))), Cons(2, Cons(3, Cons(4, Nil))));
   eq(Z.ap(Cons(inc, Cons(square, Nil)), Cons(1, Cons(2, Cons(3, Nil)))), Cons(2, Cons(3, Cons(4, Cons(1, Cons(4, Cons(9, Nil)))))));
+});
+
+test('lift2', function() {
+  eq(Z.lift2.length, 3);
+  eq(Z.lift2.name, 'lift2');
+
+  eq(Z.lift2(pow, [10], [1, 2, 3]), [10, 100, 1000]);
+  eq(Z.lift2(pow, Identity(10), Identity(3)), Identity(1000));
+});
+
+test('lift3', function() {
+  eq(Z.lift3.length, 4);
+  eq(Z.lift3.name, 'lift3');
+
+  eq(Z.lift3(wrap, ['<'], ['>'], ['foo', 'bar', 'baz']), ['<foo>', '<bar>', '<baz>']);
+  eq(Z.lift3(wrap, Identity('<'), Identity('>'), Identity('baz')), Identity('<baz>'));
 });
 
 test('of', function() {
