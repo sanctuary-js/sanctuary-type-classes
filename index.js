@@ -148,11 +148,6 @@
     };
   };
 
-  //  orConstructor :: (String, Object) -> Function?
-  var orConstructor = function(methodName, x) {
-    return typeof x[methodName] === 'function' ? x : x.constructor;
-  };
-
   //  data Location = Constructor | Value
 
   //  Constructor :: Location
@@ -1156,10 +1151,10 @@
   //. Cons(1, Cons(3, Nil))
   //. ```
   var filter = function filter(pred, m) {
-    var M$empty = empty(orConstructor('fantasy-land/empty', m));
-    var M$of = orConstructor('fantasy-land/of', m);
-    var f = function(m, x) { return pred(x) ? concat(m, of(M$of, x)) : m; };
-    return reduce(f, M$empty, m);
+    var M = m.constructor;
+    return reduce(function(m, x) { return pred(x) ? concat(m, of(M, x)) : m; },
+                  empty(M),
+                  m);
   };
 
   //# filterM :: (Monad m, Monoid (m a)) => (a -> Boolean, m a) -> m a
@@ -1179,10 +1174,9 @@
   //. Cons(1, Cons(3, Nil))
   //. ```
   var filterM = function filterM(pred, m) {
-    var M$empty = empty(orConstructor('fantasy-land/empty', m));
-    var M$of = orConstructor('fantasy-land/of', m);
-    var f = function(x) { return pred(x) ? of(M$of, x) : M$empty; };
-    return chain(f, m);
+    var M = m.constructor;
+    var e = empty(M);
+    return chain(function(x) { return pred(x) ? of(M, x) : e; }, m);
   };
 
   //# reduce :: Foldable f => ((b, a) -> b, b, f a) -> b

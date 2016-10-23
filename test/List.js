@@ -50,8 +50,6 @@ List.prototype[FL.concat] = function(other) {
     Cons(this.head, Z.concat(this.tail, other));
 };
 
-List.prototype[FL.empty] = List[FL.empty];
-
 List.prototype[FL.map] = function(f) {
   return this.tag === 'Nil' ?
     Nil :
@@ -63,8 +61,6 @@ List.prototype[FL.ap] = function(other) {
     Nil :
     Z.concat(Z.map(other.head, this), Z.ap(other.tail, this));
 };
-
-List.prototype[FL.of] = List[FL.of];
 
 List.prototype[FL.chain] = function(f) {
   return this.tag === 'Nil' ?
