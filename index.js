@@ -181,20 +181,12 @@
   var $ = function(_name, dependencies, requirements) {
     var getBoundMethod = function(_name) {
       return function(x) {
+        var m;
         var name = 'fantasy-land/' + _name;
-        var locations = requirements[_name];
-        for (var idx = 0; idx < locations.length; idx += 1) {
-          if (locations[idx] === Constructor) {
-            var f = funcPath(['constructor', name], x) ||
-                    implPath([type(x), name]);
-            /* istanbul ignore else */  // Constructor always listed last
-            if (f) return f;
-          } else {
-            var m = funcPath([name], x) ||
-                    implPath([type(x), 'prototype', name]);
-            if (m) return m.bind(x);
-          }
-        }
+        return requirements[_name] === Constructor ?
+          funcPath(['constructor', name], x) || implPath([type(x), name]) :
+          (m = funcPath([name], x) || implPath([type(x), 'prototype', name]))
+          && m.bind(x);
       };
     };
 
@@ -207,24 +199,16 @@
       });
     });
 
-    typeClass.functions = {};
-    keys.forEach(function(_name) {
-      var name = 'fantasy-land/' + _name;
-      if (requirements[_name].indexOf(Constructor) >= 0) {
-        typeClass.functions[_name] = function(typeRep) {
+    typeClass.methods = keys.reduce(function(methods, _name) {
+      methods[_name] = requirements[_name] === Constructor ?
+        function(typeRep) {
           var m = /function (\w*)/.exec(typeRep);
+          var name = 'fantasy-land/' + _name;
           return m && implPath([m[1], name]) || typeRep[name];
-        };
-      }
-    });
-
-    typeClass.methods = {};
-    keys.forEach(function(_name) {
-      /* istanbul ignore else */  // Value always listed
-      if (requirements[_name].indexOf(Value) >= 0) {
-        typeClass.methods[_name] = getBoundMethod(_name);
-      }
-    });
+        } :
+        getBoundMethod(_name);
+      return methods;
+    }, {});
 
     return typeClass;
   };
@@ -237,7 +221,7 @@
   //. > Setoid.test(null)
   //. true
   //. ```
-  var Setoid = $('Setoid', [], {equals: [Value]});
+  var Setoid = $('Setoid', [], {equals: Value});
 
   //# Semigroup :: TypeClass
   //.
@@ -250,7 +234,7 @@
   //. > Semigroup.test(0)
   //. false
   //. ```
-  var Semigroup = $('Semigroup', [], {concat: [Value]});
+  var Semigroup = $('Semigroup', [], {concat: Value});
 
   //# Monoid :: TypeClass
   //.
@@ -263,7 +247,7 @@
   //. > Monoid.test(0)
   //. false
   //. ```
-  var Monoid = $('Monoid', [Semigroup], {empty: [Value, Constructor]});
+  var Monoid = $('Monoid', [Semigroup], {empty: Constructor});
 
   //# Functor :: TypeClass
   //.
@@ -276,7 +260,7 @@
   //. > Functor.test('')
   //. false
   //. ```
-  var Functor = $('Functor', [], {map: [Value]});
+  var Functor = $('Functor', [], {map: Value});
 
   //# Bifunctor :: TypeClass
   //.
@@ -289,7 +273,7 @@
   //. > Bifunctor.test([])
   //. false
   //. ```
-  var Bifunctor = $('Bifunctor', [Functor], {bimap: [Value]});
+  var Bifunctor = $('Bifunctor', [Functor], {bimap: Value});
 
   //# Profunctor :: TypeClass
   //.
@@ -302,7 +286,7 @@
   //. > Profunctor.test([])
   //. false
   //. ```
-  var Profunctor = $('Profunctor', [Functor], {promap: [Value]});
+  var Profunctor = $('Profunctor', [Functor], {promap: Value});
 
   //# Apply :: TypeClass
   //.
@@ -315,7 +299,7 @@
   //. > Apply.test({})
   //. false
   //. ```
-  var Apply = $('Apply', [Functor], {ap: [Value]});
+  var Apply = $('Apply', [Functor], {ap: Value});
 
   //# Applicative :: TypeClass
   //.
@@ -328,7 +312,7 @@
   //. > Applicative.test({})
   //. false
   //. ```
-  var Applicative = $('Applicative', [Apply], {of: [Value, Constructor]});
+  var Applicative = $('Applicative', [Apply], {of: Constructor});
 
   //# Chain :: TypeClass
   //.
@@ -341,7 +325,7 @@
   //. > Chain.test({})
   //. false
   //. ```
-  var Chain = $('Chain', [Apply], {chain: [Value]});
+  var Chain = $('Chain', [Apply], {chain: Value});
 
   //# ChainRec :: TypeClass
   //.
@@ -354,7 +338,7 @@
   //. > ChainRec.test({})
   //. false
   //. ```
-  var ChainRec = $('ChainRec', [Chain], {chainRec: [Value, Constructor]});
+  var ChainRec = $('ChainRec', [Chain], {chainRec: Constructor});
 
   //# Monad :: TypeClass
   //.
@@ -380,7 +364,7 @@
   //. > Foldable.test('')
   //. false
   //. ```
-  var Foldable = $('Foldable', [], {reduce: [Value]});
+  var Foldable = $('Foldable', [], {reduce: Value});
 
   //# Traversable :: TypeClass
   //.
@@ -393,7 +377,7 @@
   //. > Traversable.test({})
   //. false
   //. ```
-  var Traversable = $('Traversable', [Functor, Foldable], {traverse: [Value]});
+  var Traversable = $('Traversable', [Functor, Foldable], {traverse: Value});
 
   //# Extend :: TypeClass
   //.
@@ -406,7 +390,7 @@
   //. > Extend.test({})
   //. false
   //. ```
-  var Extend = $('Extend', [], {extend: [Value]});
+  var Extend = $('Extend', [], {extend: Value});
 
   //# Comonad :: TypeClass
   //.
@@ -419,7 +403,7 @@
   //. > Comonad.test([])
   //. false
   //. ```
-  var Comonad = $('Comonad', [Functor, Extend], {extract: [Value]});
+  var Comonad = $('Comonad', [Functor, Extend], {extract: Value});
 
   //  Null$prototype$toString :: Null ~> () -> String
   var Null$prototype$toString = function() {
@@ -948,7 +932,7 @@
   //. Nil
   //. ```
   var empty = function empty(typeRep) {
-    return Monoid.functions.empty(typeRep)();
+    return Monoid.methods.empty(typeRep)();
   };
 
   //# map :: Functor f => (a -> b, f a) -> f b
@@ -1090,7 +1074,7 @@
   //. Cons(42, Nil)
   //. ```
   var of = function of(typeRep, x) {
-    return Applicative.functions.of(typeRep)(x);
+    return Applicative.methods.of(typeRep)(x);
   };
 
   //# chain :: Chain m => (a -> m b, m a) -> m b
@@ -1131,7 +1115,7 @@
   //. ['oo!', 'oo?', 'on!', 'on?', 'no!', 'no?', 'nn!', 'nn?']
   //. ```
   var chainRec = function chainRec(typeRep, f, x) {
-    return ChainRec.functions.chainRec(typeRep)(f, x);
+    return ChainRec.methods.chainRec(typeRep)(f, x);
   };
 
   //# filter :: (Applicative f, Foldable f, Monoid (f a)) => (a -> Boolean, f a) -> f a
