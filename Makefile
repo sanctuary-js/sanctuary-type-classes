@@ -3,6 +3,7 @@ ESLINT = node_modules/.bin/eslint --config node_modules/sanctuary-style/eslint-e
 ISTANBUL = node_modules/.bin/istanbul
 NPM = npm
 PREDOCTEST = scripts/predoctest
+REMEMBER_BOWER = node_modules/.bin/remember-bower
 TRANSCRIBE = node_modules/.bin/transcribe
 XYZ = node_modules/.bin/xyz --repo git@github.com:sanctuary-js/sanctuary-type-classes.git --script scripts/prepublish
 
@@ -55,6 +56,7 @@ lint:
 	$(ESLINT) \
 	  --env node \
 	  -- $(PREDOCTEST) $(TEST)
+	$(REMEMBER_BOWER) $(shell pwd)
 	@echo 'Checking for missing link definitions...'
 	grep -o '\[[^]]*\]\[[^]]*\]' index.js \
 	| sort -u \
