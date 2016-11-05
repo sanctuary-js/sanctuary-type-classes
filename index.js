@@ -31,34 +31,37 @@
 //. ## Type-class hierarchy
 //.
 //. <pre>
-//:  Setoid   Semigroup   Foldable           Functor            Extend
-//: (equals)   (concat)   (reduce)            (map)            (extend)
-//:               |           \             / | | | \             /
-//:               |            \           /  | | |  \           /
-//:               |             \         /   | | |   \         /
-//:               |              \       /    | | |    \       /
-//:               |               \     /     | | |     \     /
-//:               |                \   /      | | |      \   /
-//:               |                 \ /       / | \       \ /
-//:            Monoid           Traversable  /  |  \    Comonad
-//:            (empty)          (traverse)  /   |   \  (extract)
-//:                                        /    |    \
-//:                               Bifunctor   Apply   Profunctor
-//:                                (bimap)     (ap)    (promap)
-//:                                            / \
-//:                                           /   \
-//:                                          /     \
-//:                                         /       \
-//:                                        /         \
-//:                                  Applicative    Chain
-//:                                      (of)      (chain)
-//:                                        \         / \
-//:                                         \       /   \
-//:                                          \     /     \
-//:                                           \   /       \
-//:                                            \ /         \
-//:                                           Monad     ChainRec
-//:                                                    (chainRec)
+//:  Setoid   Semigroup   Foldable        Functor         Extend
+//: (equals)   (concat)   (reduce)         (map)         (extend)
+//:               |           \         / | | | | \         /
+//:               |            \       /  | | | |  \       /
+//:               |             \     /   | | | |   \     /
+//:               |              \   /    | | | |    \   /
+//:               |               \ /     | | | |     \ /
+//:            Monoid         Traversable | | | |   Comonad
+//:            (empty)        (traverse)  / | | \  (extract)
+//:                                      /  | |  \
+//:                                     /   / \   \
+//:                            Bifunctor   /   \   Profunctor
+//:                             (bimap)   /     \   (promap)
+//:                                      /       \
+//:                                     /         \
+//:                                   Alt        Apply
+//:                                  (alt)        (ap)
+//:                                   /           / \
+//:                                  /           /   \
+//:                                 /           /     \
+//:                                /           /       \
+//:                               /           /         \
+//:                             Plus    Applicative    Chain
+//:                            (zero)       (of)      (chain)
+//:                               \         / \         / \
+//:                                \       /   \       /   \
+//:                                 \     /     \     /     \
+//:                                  \   /       \   /       \
+//:                                   \ /         \ /         \
+//:                               Alternative    Monad     ChainRec
+//:                                                       (chainRec)
 //. </pre>
 //.
 //. ## API
@@ -360,6 +363,45 @@
   //. ```
   var Monad = $('Monad', [Applicative, Chain], {});
 
+  //# Alt :: TypeClass
+  //.
+  //. `TypeClass` value for [Alt][].
+  //.
+  //. ```javascript
+  //. > Alt.test({})
+  //. true
+  //.
+  //. > Alt.test('')
+  //. false
+  //. ```
+  var Alt = $('Alt', [Functor], {alt: Value});
+
+  //# Plus :: TypeClass
+  //.
+  //. `TypeClass` value for [Plus][].
+  //.
+  //. ```javascript
+  //. > Plus.test({})
+  //. true
+  //.
+  //. > Plus.test('')
+  //. false
+  //. ```
+  var Plus = $('Plus', [Alt], {zero: Constructor});
+
+  //# Alternative :: TypeClass
+  //.
+  //. `TypeClass` value for [Alternative][].
+  //.
+  //. ```javascript
+  //. > Alternative.test([])
+  //. true
+  //.
+  //. > Alternative.test({})
+  //. false
+  //. ```
+  var Alternative = $('Alternative', [Applicative, Plus], {});
+
   //# Foldable :: TypeClass
   //.
   //. `TypeClass` value for [Foldable][].
@@ -538,6 +580,11 @@
     return $done;
   };
 
+  //  Array$zero :: () -> Array a
+  var Array$zero = function() {
+    return [];
+  };
+
   //  Array$prototype$toString :: Array a ~> () -> String
   var Array$prototype$toString = function() {
     var reprs = this.map(toString);
@@ -588,6 +635,9 @@
     return result;
   };
 
+  //  Array$prototype$alt :: Array a ~> Array a -> Array a
+  var Array$prototype$alt = Array$prototype$concat;
+
   //  Array$prototype$reduce :: Array a ~> ((b, a) -> b, b) -> b
   var Array$prototype$reduce = function(f, initial) {
     return this.reduce(function(acc, x) { return f(acc, x); }, initial);
@@ -634,6 +684,11 @@
     return {};
   };
 
+  //  Object$zero :: () -> StrMap a
+  var Object$zero = function() {
+    return {};
+  };
+
   //  Object$prototype$toString :: StrMap a ~> () -> String
   var Object$prototype$toString = function() {
     var reprs = [];
@@ -667,6 +722,9 @@
     for (var k in this) result[k] = f(this[k]);
     return result;
   };
+
+  //  Object$prototype$alt :: StrMap a ~> StrMap a -> StrMap a
+  var Object$prototype$alt = Object$prototype$concat;
 
   //  Object$prototype$reduce :: StrMap a ~> ((b, a) -> b, b) -> b
   var Object$prototype$reduce = function(f, initial) {
@@ -753,6 +811,7 @@
       'fantasy-land/empty':         Array$empty,
       'fantasy-land/of':            Array$of,
       'fantasy-land/chainRec':      Array$chainRec,
+      'fantasy-land/zero':          Array$zero,
       prototype: {
         toString:                   Array$prototype$toString,
         'fantasy-land/equals':      Array$prototype$equals,
@@ -760,6 +819,7 @@
         'fantasy-land/map':         Array$prototype$map,
         'fantasy-land/ap':          Array$prototype$ap,
         'fantasy-land/chain':       Array$prototype$chain,
+        'fantasy-land/alt':         Array$prototype$alt,
         'fantasy-land/reduce':      Array$prototype$reduce,
         'fantasy-land/traverse':    Array$prototype$traverse,
         'fantasy-land/extend':      Array$prototype$extend
@@ -779,11 +839,13 @@
     },
     Object: {
       'fantasy-land/empty':         Object$empty,
+      'fantasy-land/zero':          Object$zero,
       prototype: {
         toString:                   Object$prototype$toString,
         'fantasy-land/equals':      Object$prototype$equals,
         'fantasy-land/concat':      Object$prototype$concat,
         'fantasy-land/map':         Object$prototype$map,
+        'fantasy-land/alt':         Object$prototype$alt,
         'fantasy-land/reduce':      Object$prototype$reduce
       }
     },
@@ -1230,6 +1292,51 @@
     return chain(function(x) { return pred(x) ? of(M, x) : e; }, m);
   };
 
+  //# alt :: Alt f => (f a, f a) -> f a
+  //.
+  //. Function wrapper for [`fantasy-land/alt`][].
+  //.
+  //. `fantasy-land/alt` implementations are provided for the following
+  //. built-in types: Array and Object.
+  //.
+  //. ```javascript
+  //. > alt([1, 2, 3], [4, 5, 6])
+  //. [1, 2, 3, 4, 5, 6]
+  //.
+  //. > alt(Nothing, Nothing)
+  //. Nothing
+  //.
+  //. > alt(Nothing, Just(1))
+  //. Just(1)
+  //.
+  //. > alt(Just(2), Just(3))
+  //. Just(2)
+  //. ```
+  var alt = function alt(x, y) {
+    return Alt.methods.alt(x)(y);
+  };
+
+  //# zero :: Plus f => TypeRep f -> f a
+  //.
+  //. Function wrapper for [`fantasy-land/zero`][].
+  //.
+  //. `fantasy-land/zero` implementations are provided for the following
+  //. built-in types: Array and Object.
+  //.
+  //. ```javascript
+  //. > zero(Array)
+  //. []
+  //.
+  //. > zero(Object)
+  //. {}
+  //.
+  //. > zero(Maybe)
+  //. Nothing
+  //. ```
+  var zero = function zero(typeRep) {
+    return Plus.methods.zero(typeRep)();
+  };
+
   //# reduce :: Foldable f => ((b, a) -> b, b, f a) -> b
   //.
   //. Function wrapper for [`fantasy-land/reduce`][].
@@ -1325,6 +1432,9 @@
     Chain: Chain,
     ChainRec: ChainRec,
     Monad: Monad,
+    Alt: Alt,
+    Plus: Plus,
+    Alternative: Alternative,
     Foldable: Foldable,
     Traversable: Traversable,
     Extend: Extend,
@@ -1347,6 +1457,8 @@
     chainRec: chainRec,
     filter: filter,
     filterM: filterM,
+    alt: alt,
+    zero: zero,
     reduce: reduce,
     traverse: traverse,
     sequence: sequence,
@@ -1356,6 +1468,8 @@
 
 }));
 
+//. [Alt]:                      https://github.com/fantasyland/fantasy-land#alt
+//. [Alternative]:              https://github.com/fantasyland/fantasy-land#alternative
 //. [Applicative]:              https://github.com/fantasyland/fantasy-land#applicative
 //. [Apply]:                    https://github.com/fantasyland/fantasy-land#apply
 //. [Bifunctor]:                https://github.com/fantasyland/fantasy-land#bifunctor
@@ -1368,10 +1482,12 @@
 //. [Functor]:                  https://github.com/fantasyland/fantasy-land#functor
 //. [Monad]:                    https://github.com/fantasyland/fantasy-land#monad
 //. [Monoid]:                   https://github.com/fantasyland/fantasy-land#monoid
+//. [Plus]:                     https://github.com/fantasyland/fantasy-land#plus
 //. [Profunctor]:               https://github.com/fantasyland/fantasy-land#profunctor
 //. [Semigroup]:                https://github.com/fantasyland/fantasy-land#semigroup
 //. [Setoid]:                   https://github.com/fantasyland/fantasy-land#setoid
 //. [Traversable]:              https://github.com/fantasyland/fantasy-land#traversable
+//. [`fantasy-land/alt`]:       https://github.com/fantasyland/fantasy-land#alt-method
 //. [`fantasy-land/ap`]:        https://github.com/fantasyland/fantasy-land#ap-method
 //. [`fantasy-land/bimap`]:     https://github.com/fantasyland/fantasy-land#bimap-method
 //. [`fantasy-land/chain`]:     https://github.com/fantasyland/fantasy-land#chain-method
@@ -1386,4 +1502,5 @@
 //. [`fantasy-land/promap`]:    https://github.com/fantasyland/fantasy-land#promap-method
 //. [`fantasy-land/reduce`]:    https://github.com/fantasyland/fantasy-land#reduce-method
 //. [`fantasy-land/traverse`]:  https://github.com/fantasyland/fantasy-land#traverse-method
+//. [`fantasy-land/zero`]:      https://github.com/fantasyland/fantasy-land#zero-method
 //. [type-classes]:             https://github.com/sanctuary-js/sanctuary-def#type-classes

@@ -11,6 +11,9 @@ var definitions = [
   "global.List = require('./test/List')",
   'global.Nil = List.Nil',
   'global.Cons = List.Cons',
+  "global.Maybe = require('./test/Maybe')",
+  'global.Nothing = Maybe.Nothing',
+  'global.Just = Maybe.Just',
   "global.Tuple = require('./test/Tuple')"
 ];
 
