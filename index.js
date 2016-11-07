@@ -85,6 +85,13 @@
     return Object.prototype.hasOwnProperty.call(o, k);
   };
 
+  //  constant :: a -> b -> a
+  var constant = function(x) {
+    return function(y) {
+      return x;
+    };
+  };
+
   //  identity :: a -> a
   var identity = function(x) { return x; };
 
@@ -1056,6 +1063,42 @@
     return ap(ap(map(f, x), y), z);
   };
 
+  //# apFirst :: Apply f => (f a, f b) -> f a
+  //.
+  //. Combine two effectful actions, keeping only the result of the first.
+  //. Equivalent to Haskell's `(<*)` function.
+  //.
+  //. See also [`apSecond`](#apSecond).
+  //.
+  //. ```javascript
+  //. > apFirst([1, 2], [3, 4])
+  //. [1, 1, 2, 2]
+  //.
+  //. > apFirst(Identity(1), Identity(2))
+  //. Identity(1)
+  //. ```
+  var apFirst = function apFirst(x, y) {
+    return lift2(constant, x, y);
+  };
+
+  //# apSecond :: Apply f => (f a, f b) -> f b
+  //.
+  //. Combine two effectful actions, keeping only the result of the second.
+  //. Equivalent to Haskell's `(*>)` function.
+  //.
+  //. See also [`apFirst`](#apFirst).
+  //.
+  //. ```javascript
+  //. > apSecond([1, 2], [3, 4])
+  //. [3, 4, 3, 4]
+  //.
+  //. > apSecond(Identity(1), Identity(2))
+  //. Identity(2)
+  //. ```
+  var apSecond = function apSecond(x, y) {
+    return lift2(constant(identity), x, y);
+  };
+
   //# of :: Applicative f => (TypeRep f, a) -> f a
   //.
   //. Function wrapper for [`fantasy-land/of`][].
@@ -1272,6 +1315,8 @@
     ap: ap,
     lift2: lift2,
     lift3: lift3,
+    apFirst: apFirst,
+    apSecond: apSecond,
     of: of,
     chain: chain,
     chainRec: chainRec,

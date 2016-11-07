@@ -581,6 +581,22 @@ test('lift3', function() {
   eq(Z.lift3(wrap, Identity('<'), Identity('>'), Identity('baz')), Identity('<baz>'));
 });
 
+test('apFirst', function() {
+  eq(Z.apFirst.length, 2);
+  eq(Z.apFirst.name, 'apFirst');
+
+  eq(Z.apFirst([1, 2], [3, 4]), [1, 1, 2, 2]);
+  eq(Z.apFirst(Identity(1), Identity(2)), Identity(1));
+});
+
+test('apSecond', function() {
+  eq(Z.apSecond.length, 2);
+  eq(Z.apSecond.name, 'apSecond');
+
+  eq(Z.apSecond([1, 2], [3, 4]), [3, 4, 3, 4]);
+  eq(Z.apSecond(Identity(1), Identity(2)), Identity(2));
+});
+
 test('of', function() {
   eq(Z.of.length, 2);
   eq(Z.of.name, 'of');
