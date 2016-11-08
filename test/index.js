@@ -621,6 +621,19 @@ test('chain', function() {
   eq(Z.chain(identity, Identity(Identity(0))), Identity(0));
 });
 
+test('join', function() {
+  eq(Z.join.length, 1);
+  eq(Z.join.name, 'join');
+
+  eq(Z.join([]), []);
+  eq(Z.join([[]]), []);
+  eq(Z.join([[[]]]), [[]]);
+  eq(Z.join([[1], [2], [3]]), [1, 2, 3]);
+  eq(Z.join([[[1, 2, 3]]]), [[1, 2, 3]]);
+  eq(Z.join(Identity(Identity(1))), Identity(1));
+  eq(Z.join(Identity(Identity(Identity(1)))), Identity(Identity(1)));
+});
+
 test('chainRec', function() {
   eq(Z.chainRec.length, 3);
   eq(Z.chainRec.name, 'chainRec');
