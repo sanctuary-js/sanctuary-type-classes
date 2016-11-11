@@ -14,7 +14,7 @@
   "devDependencies": {
     "doctest": "0.10.x",
     "eslint": "2.9.x",
-    "fantasy-land": "2.0.0",
+    "fantasy-land": "2.1.0",
     "istanbul": "0.4.x",
     "mocha": "2.x.x",
     "remember-bower": "0.1.x",

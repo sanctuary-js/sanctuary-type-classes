@@ -7,12 +7,16 @@ var Z = require('..');
 
 var Identity = require('./Identity');
 var List = require('./List');
+var Maybe = require('./Maybe');
 var Tuple = require('./Tuple');
 var eq = require('./eq');
 
 
 var Nil = List.Nil;
 var Cons = List.Cons;
+
+var Nothing = Maybe.Nothing;
+var Just = Maybe.Just;
 
 
 //  Array$of :: a -> Array a
@@ -275,6 +279,33 @@ test('Monad', function() {
   eq(Z.Monad.test(''), false);
   eq(Z.Monad.test([]), true);
   eq(Z.Monad.test({}), false);
+});
+
+test('Alt', function() {
+  eq(Z.Alt['@@type'], 'sanctuary-type-classes/TypeClass');
+  eq(Z.Alt.name, 'sanctuary-type-classes/Alt');
+  eq(Z.Alt.test(null), false);
+  eq(Z.Alt.test(''), false);
+  eq(Z.Alt.test([]), true);
+  eq(Z.Alt.test({}), true);
+});
+
+test('Plus', function() {
+  eq(Z.Plus['@@type'], 'sanctuary-type-classes/TypeClass');
+  eq(Z.Plus.name, 'sanctuary-type-classes/Plus');
+  eq(Z.Plus.test(null), false);
+  eq(Z.Plus.test(''), false);
+  eq(Z.Plus.test([]), true);
+  eq(Z.Plus.test({}), true);
+});
+
+test('Alternative', function() {
+  eq(Z.Alternative['@@type'], 'sanctuary-type-classes/TypeClass');
+  eq(Z.Alternative.name, 'sanctuary-type-classes/Alternative');
+  eq(Z.Alternative.test(null), false);
+  eq(Z.Alternative.test(''), false);
+  eq(Z.Alternative.test([]), true);
+  eq(Z.Alternative.test({}), false);
 });
 
 test('Foldable', function() {
@@ -671,6 +702,33 @@ test('filterM', function() {
   eq(Z.filterM(odd, [1, 2, 3, 4, 5]), [1, 3, 5]);
   eq(Z.filterM(odd, Nil), Nil);
   eq(Z.filterM(odd, Cons(1, Cons(2, Cons(3, Cons(4, Cons(5, Nil)))))), Cons(1, Cons(3, Cons(5, Nil))));
+});
+
+test('alt', function() {
+  eq(Z.alt.length, 2);
+  eq(Z.alt.name, 'alt');
+
+  eq(Z.alt([], []), []);
+  eq(Z.alt([], [1, 2, 3]), [1, 2, 3]);
+  eq(Z.alt([1, 2, 3], []), [1, 2, 3]);
+  eq(Z.alt([1, 2, 3], [4, 5, 6]), [1, 2, 3, 4, 5, 6]);
+  eq(Z.alt({}, {}), {});
+  eq(Z.alt({}, {a: 1, b: 2, c: 3}), {a: 1, b: 2, c: 3});
+  eq(Z.alt({a: 1, b: 2, c: 3}, {}), {a: 1, b: 2, c: 3});
+  eq(Z.alt({a: 1, b: 2, c: 3}, {d: 4, e: 5, f: 6}), {a: 1, b: 2, c: 3, d: 4, e: 5, f: 6});
+  eq(Z.alt(Nothing, Nothing), Nothing);
+  eq(Z.alt(Nothing, Just(1)), Just(1));
+  eq(Z.alt(Just(2), Nothing), Just(2));
+  eq(Z.alt(Just(3), Just(4)), Just(3));
+});
+
+test('zero', function() {
+  eq(Z.zero.length, 1);
+  eq(Z.zero.name, 'zero');
+
+  eq(Z.zero(Array), []);
+  eq(Z.zero(Object), {});
+  eq(Z.zero(Maybe), Nothing);
 });
 
 test('reduce', function() {
