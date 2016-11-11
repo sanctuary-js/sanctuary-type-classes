@@ -1065,8 +1065,10 @@
 
   //# apFirst :: Apply f => (f a, f b) -> f a
   //.
-  //. Combine two effectful actions, keeping only the result of the first.
+  //. Combines two effectful actions, keeping only the result of the first.
   //. Equivalent to Haskell's `(<*)` function.
+  //.
+  //. This function is derived from [`lift2`](#lift2).
   //.
   //. See also [`apSecond`](#apSecond).
   //.
@@ -1083,8 +1085,10 @@
 
   //# apSecond :: Apply f => (f a, f b) -> f b
   //.
-  //. Combine two effectful actions, keeping only the result of the second.
+  //. Combines two effectful actions, keeping only the result of the second.
   //. Equivalent to Haskell's `(*>)` function.
+  //.
+  //. This function is derived from [`lift2`](#lift2).
   //.
   //. See also [`apFirst`](#apFirst).
   //.
@@ -1139,6 +1143,26 @@
   //. ```
   var chain = function chain(f, chain) {
     return Chain.methods.chain(chain)(f);
+  };
+
+  //# join :: Chain m => m (m a) -> m a
+  //.
+  //. Removes one level of nesting from a nested monadic structure.
+  //.
+  //. This function is derived from [`chain`](#chain).
+  //.
+  //. ```javascript
+  //. > join([[1], [2], [3]])
+  //. [1, 2, 3]
+  //.
+  //. > join([[[1, 2, 3]]])
+  //. [[1, 2, 3]]
+  //.
+  //. > join(Identity(Identity(1)))
+  //. Identity(1)
+  //. ```
+  var join = function join(chain_) {
+    return chain(identity, chain_);
   };
 
   //# chainRec :: ChainRec m => (TypeRep m, (a -> c, b -> c, a) -> m c, a) -> m b
@@ -1319,6 +1343,7 @@
     apSecond: apSecond,
     of: of,
     chain: chain,
+    join: join,
     chainRec: chainRec,
     filter: filter,
     filterM: filterM,
