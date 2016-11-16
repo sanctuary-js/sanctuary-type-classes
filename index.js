@@ -497,7 +497,7 @@
   var Number$prototype$equals = function(other) {
     return typeof other === 'object' ?
       typeof this === 'object' &&
-        equals(other.valueOf(), this.valueOf()) :
+        equals(this.valueOf(), other.valueOf()) :
       isNaN(other) && isNaN(this) ||
         other === this && 1 / other === 1 / this;
   };
@@ -510,7 +510,7 @@
 
   //  Date$prototype$equals :: Date ~> Date -> Boolean
   var Date$prototype$equals = function(other) {
-    return equals(other.valueOf(), this.valueOf());
+    return equals(this.valueOf(), other.valueOf());
   };
 
   //  RegExp$prototype$equals :: RegExp ~> RegExp -> Boolean
@@ -602,7 +602,7 @@
   var Array$prototype$equals = function(other) {
     if (other.length !== this.length) return false;
     for (var idx = 0; idx < this.length; idx += 1) {
-      if (!equals(other[idx], this[idx])) return false;
+      if (!equals(this[idx], other[idx])) return false;
     }
     return true;
   };
@@ -675,8 +675,8 @@
 
   //  Error$prototype$equals :: Error ~> Error -> Boolean
   var Error$prototype$equals = function(other) {
-    return equals(other.name, this.name) &&
-           equals(other.message, this.message);
+    return equals(this.name, other.name) &&
+           equals(this.message, other.message);
   };
 
   //  Object$empty :: () -> StrMap a
@@ -704,8 +704,8 @@
   var Object$prototype$equals = function(other) {
     var self = this;
     var keys = Object.keys(this).sort();
-    return equals(Object.keys(other).sort(), keys) &&
-           keys.every(function(k) { return equals(other[k], self[k]); });
+    return equals(keys, Object.keys(other).sort()) &&
+           keys.every(function(k) { return equals(self[k], other[k]); });
   };
 
   //  Object$prototype$concat :: StrMap a ~> StrMap a -> StrMap a
@@ -736,6 +736,11 @@
   //  Function$of :: b -> (a -> b)
   var Function$of = function(x) {
     return function(_) { return x; };
+  };
+
+  //  Function$prototype$equals :: Function ~> Function -> Boolean
+  var Function$prototype$equals = function(other) {
+    return other === this;
   };
 
   //  Function$prototype$map :: (a -> b) ~> (b -> c) -> (a -> c)
@@ -852,6 +857,7 @@
     Function: {
       'fantasy-land/of':            Function$of,
       prototype: {
+        'fantasy-land/equals':      Function$prototype$equals,
         'fantasy-land/map':         Function$prototype$map,
         'fantasy-land/promap':      Function$prototype$promap,
         'fantasy-land/ap':          Function$prototype$ap,
@@ -916,7 +922,13 @@
   //.
   //. `fantasy-land/equals` implementations are provided for the following
   //. built-in types: Null, Undefined, Boolean, Number, Date, RegExp, String,
-  //. Array, Arguments, Error, and Object.
+  //. Array, Arguments, Error, Object, and Function.
+  //.
+  //. The algorithm supports circular data structures. Two arrays are equal
+  //. if they have the same index paths and for each path have equal values.
+  //. Two arrays which represent `[1, [1, [1, [1, [1, ...]]]]]`, for example,
+  //. are equal even if their internal structures differ. Two objects are equal
+  //. if they have the same property paths and for each path have equal values.
   //.
   //. ```javascript
   //. > equals(0, -0)
@@ -932,24 +944,26 @@
   //. false
   //. ```
   var equals = (function() {
-    //  $seen :: Array Any
-    var $seen = [];
+    //  $pairs :: Array (Pair Any Any)
+    var $pairs = [];
 
-    //  equal :: (a, b) -> Boolean
-    var equal = function(x, y) {
-      $seen.push(x, y);
+    return function equals(x, y) {
+      if (type(x) !== type(y)) {
+        return false;
+      }
+
+      //  This algorithm for comparing circular data structures was
+      //  suggested in <http://stackoverflow.com/a/40622794/312785>.
+      if ($pairs.some(function(p) { return p[0] === x && p[1] === y; })) {
+        return true;
+      }
+
+      $pairs.push([x, y]);
       try {
         return Setoid.test(x) && Setoid.test(y) && Setoid.methods.equals(x)(y);
       } finally {
-        $seen.splice(-2, 2);
+        $pairs.pop();
       }
-    };
-
-    return function equals(x, y) {
-      return Object(x) === Object(y) || type(x) === type(y)
-                                     && $seen.indexOf(x) < 0
-                                     && $seen.indexOf(y) < 0
-                                     && equal(x, y);
     };
   }());
 
