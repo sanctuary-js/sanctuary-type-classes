@@ -932,9 +932,6 @@
   //. false
   //. ```
   var equals = (function() {
-    //  eq :: Setoid a => a -> a -> Boolean
-    var eq = Setoid.methods.equals;
-
     //  $seen :: Array Any
     var $seen = [];
 
@@ -942,7 +939,7 @@
     var equal = function(x, y) {
       $seen.push(x, y);
       try {
-        return Setoid.test(x) && Setoid.test(y) && eq(x)(y) && eq(y)(x);
+        return Setoid.test(x) && Setoid.test(y) && Setoid.methods.equals(x)(y);
       } finally {
         $seen.splice(-2, 2);
       }
