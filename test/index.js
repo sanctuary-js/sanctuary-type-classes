@@ -48,9 +48,6 @@ var args = function() {
   return arguments;
 };
 
-//  circular :: Pair String (Pair String (Pair String ...))
-var circular = ['foo']; circular[1] = circular;
-
 //  duplicate :: a -> Pair a a
 var duplicate = function(x) {
   eq(arguments.length, 1);
@@ -91,6 +88,12 @@ var odd = function(x) {
   eq(arguments.length, 1);
   return x % 2 === 1;
 };
+
+//  ones :: Pair Number (Pair Number (Pair Number ...))
+var ones = [1]; ones.push(ones);
+
+//  ones_ :: Pair Number (Pair Number (Pair Number ...))
+var ones_ = [1]; ones_.push([1, ones_]);
 
 //  pow :: Number -> Number -> Number
 var pow = function(base) {
@@ -383,7 +386,8 @@ test('toString', function() {
   eq(Z.toString(['foo', 'bar']), '["foo", "bar"]');
   eq(Z.toString(/x/.exec('xyz')), '["x", "index": 0, "input": "xyz"]');
   eq(Z.toString((function() { var xs = []; xs.z = true; xs.a = true; return xs; }())), '["a": true, "z": true]');
-  eq(Z.toString(circular), '["foo", <Circular>]');
+  eq(Z.toString(ones), '[1, <Circular>]');
+  eq(Z.toString(ones_), '[1, [1, <Circular>]]');
   eq(Z.toString(args()), '(function () { return arguments; }())');
   eq(Z.toString(args('foo')), '(function () { return arguments; }("foo"))');
   eq(Z.toString(args('foo', 'bar')), '(function () { return arguments; }("foo", "bar"))');
@@ -475,7 +479,12 @@ test('equals', function() {
   eq(Z.equals([1, 2], [2, 1]), false);
   eq(Z.equals([0], [-0]), false);
   eq(Z.equals([NaN], [NaN]), true);
-  eq(Z.equals(circular, circular), true);
+  eq(Z.equals(ones, ones), true);
+  eq(Z.equals(ones, [1, [1, [1, [1, []]]]]), false);
+  eq(Z.equals(ones, [1, [1, [1, [1, [0, ones]]]]]), false);
+  eq(Z.equals(ones, [1, [1, [1, [1, [1, ones]]]]]), true);
+  eq(Z.equals(ones, ones_), true);
+  eq(Z.equals(ones_, ones), true);
   eq(Z.equals(args(), args()), true);
   eq(Z.equals(args(1, 2), args(1, 2)), true);
   eq(Z.equals(args(1, 2, 3), args(1, 2)), false);
