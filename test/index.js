@@ -6,6 +6,7 @@
 var Z = require('..');
 
 var Identity = require('./Identity');
+var Lazy = require('./Lazy');
 var List = require('./List');
 var Maybe = require('./Maybe');
 var Tuple = require('./Tuple');
@@ -23,6 +24,12 @@ var Just = Maybe.Just;
 function Array$of(x) {
   eq(arguments.length, Array$of.length);
   return Z.of(Array, x);
+}
+
+//  Lazy$of :: a -> Lazy a
+function Lazy$of(x) {
+  eq(arguments.length, Lazy$of.length);
+  return Z.of(Lazy, x);
 }
 
 //  List$of :: a -> List a
@@ -772,6 +779,7 @@ test('traverse', function() {
   eq(Z.traverse(Identity, identInc, [1, 2, 3]), Identity([2, 3, 4]));
   eq(Z.traverse(Identity, identInc, Nil), Identity(Nil));
   eq(Z.traverse(Identity, identInc, Cons(1, Cons(2, Cons(3, Nil)))), Identity(Cons(2, Cons(3, Cons(4, Nil)))));
+  eq(Z.traverse(Lazy$of, Lazy$of, range(70000)).run().length, 70000);
 });
 
 test('sequence', function() {
