@@ -20,63 +20,63 @@ var Just = Maybe.Just;
 
 
 //  Array$of :: a -> Array a
-var Array$of = function(x) {
-  eq(arguments.length, 1);
+function Array$of(x) {
+  eq(arguments.length, Array$of.length);
   return Z.of(Array, x);
-};
+}
 
 //  List$of :: a -> List a
-var List$of = function(x) {
-  eq(arguments.length, 1);
+function List$of(x) {
+  eq(arguments.length, List$of.length);
   return Z.of(List, x);
-};
+}
 
 //  abs :: Number -> Number
-var abs = function(x) {
-  eq(arguments.length, 1);
+function abs(x) {
+  eq(arguments.length, abs.length);
   return Math.abs(x);
-};
+}
 
 //  add :: (Number, Number) -> Number
-var add = function(x, y) {
-  eq(arguments.length, 2);
+function add(x, y) {
+  eq(arguments.length, add.length);
   return x + y;
-};
+}
 
 //  args :: (Any...) -> Arguments
-var args = function() {
+function args() {
   return arguments;
-};
+}
 
 //  duplicate :: a -> Pair a a
-var duplicate = function(x) {
-  eq(arguments.length, 1);
+function duplicate(x) {
+  eq(arguments.length, duplicate.length);
   return [x, x];
-};
+}
 
 //  identInc :: Number -> Identity Number
-var identInc = function(x) {
-  eq(arguments.length, 1);
+function identInc(x) {
+  eq(arguments.length, identInc.length);
   return Identity(x + 1);
-};
+}
 
 //  identity :: a -> a
-var identity = function(x) {
-  eq(arguments.length, 1);
+function identity(x) {
+  eq(arguments.length, identity.length);
   return x;
-};
+}
 
 //  inc :: Number -> Number
-var inc = function(x) {
-  eq(arguments.length, 1);
+function inc(x) {
+  eq(arguments.length, inc.length);
   return x + 1;
-};
+}
 
 //  length :: List a -> Integer
-var length = function(xs) {
-  eq(arguments.length, 1);
+function length(xs) {
+  eq(arguments.length, length.length);
   return xs.length;
-};
+}
 
 var node1 = {id: 1, rels: []};
 var node2 = {id: 2, rels: []};
@@ -84,10 +84,10 @@ node1.rels.push({type: 'child', value: node2});
 node2.rels.push({type: 'parent', value: node1});
 
 //  odd :: Integer -> Boolean
-var odd = function(x) {
-  eq(arguments.length, 1);
+function odd(x) {
+  eq(arguments.length, odd.length);
   return x % 2 === 1;
-};
+}
 
 //  ones :: Pair Number (Pair Number (Pair Number ...))
 var ones = [1]; ones.push(ones);
@@ -96,56 +96,56 @@ var ones = [1]; ones.push(ones);
 var ones_ = [1]; ones_.push([1, ones_]);
 
 //  pow :: Number -> Number -> Number
-var pow = function(base) {
-  eq(arguments.length, 1);
-  return function(exp) {
-    eq(arguments.length, 1);
+function pow(base) {
+  eq(arguments.length, pow.length);
+  return function pow$1(exp) {
+    eq(arguments.length, pow$1.length);
     return Math.pow(base, exp);
   };
-};
+}
 
 //  range :: Integer -> Array Integer
-var range = function(n) {
-  eq(arguments.length, 1);
+function range(n) {
+  eq(arguments.length, range.length);
   var result = [];
   for (var m = 0; m < n; m += 1) result.push(m);
   return result;
-};
+}
 
 //  repeat :: Integer -> a -> Array a
-var repeat = function(n) {
-  eq(arguments.length, 1);
-  return function(x) {
-    eq(arguments.length, 1);
+function repeat(n) {
+  eq(arguments.length, repeat.length);
+  return function repeat$1(x) {
+    eq(arguments.length, repeat$1.length);
     var result = [];
     for (var m = 0; m < n; m += 1) result.push(x);
     return result;
   };
-};
+}
 
 //  square :: Number -> Number
-var square = function(x) {
-  eq(arguments.length, 1);
+function square(x) {
+  eq(arguments.length, square.length);
   return x * x;
-};
+}
 
 //  toUpper :: String -> String
-var toUpper = function(s) {
-  eq(arguments.length, 1);
+function toUpper(s) {
+  eq(arguments.length, toUpper.length);
   return s.toUpperCase();
-};
+}
 
 //  wrap :: String -> String -> String -> String
-var wrap = function(before) {
-  eq(arguments.length, 1);
-  return function(after) {
-    eq(arguments.length, 1);
-    return function(s) {
-      eq(arguments.length, 1);
+function wrap(before) {
+  eq(arguments.length, wrap.length);
+  return function wrap$1(after) {
+    eq(arguments.length, wrap$1.length);
+    return function wrap$2(s) {
+      eq(arguments.length, wrap$2.length);
       return before + s + after;
     };
   };
-};
+}
 
 
 test('TypeClass', function() {
@@ -153,11 +153,11 @@ test('TypeClass', function() {
   eq(Z.TypeClass.length, 3);
 
   //  hasMethod :: String -> a -> Boolean
-  var hasMethod = function(name) {
+  function hasMethod(name) {
     return function(x) {
       return x != null && typeof x[name] === 'function';
     };
-  };
+  }
 
   //  Foo :: TypeClass
   var Foo = Z.TypeClass('my-package/Foo', [], hasMethod('foo'));
@@ -400,7 +400,7 @@ test('toString', function() {
   eq(Z.toString(node1), '{"id": 1, "rels": [{"type": "child", "value": {"id": 2, "rels": [{"type": "parent", "value": <Circular>}]}}]}');
   eq(Z.toString(node2), '{"id": 2, "rels": [{"type": "parent", "value": {"id": 1, "rels": [{"type": "child", "value": <Circular>}]}}]}');
   eq(Z.toString(Object.create(null)), '{}');
-  var Foo = function() {};
+  function Foo() {}
   Foo.prototype = {toString: function() { return '<b>foo</b>'; }};
   eq(Z.toString(Foo.prototype), '<b>foo</b>');
   eq(Z.toString(new Foo()), '<b>foo</b>');
@@ -681,11 +681,11 @@ test('chainRec', function() {
   var count = 0;
 
   //  squash :: (Any -> a, Any -> a, Any) -> Array b
-  var squash = function(next, done, x) {
+  function squash(next, done, x) {
     if (Array.isArray(x)) return x.map(next);
     count += 1;
     return [done(x)];
-  };
+  }
 
   eq(Z.chainRec(Array, squash, [1, [[2, 3], 4], 5]), [1, 2, 3, 4, 5]);
   eq(count, 5);

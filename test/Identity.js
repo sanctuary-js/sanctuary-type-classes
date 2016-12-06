@@ -6,10 +6,10 @@ var Z = require('..');
 
 
 //  Identity :: a -> Identity a
-var Identity = function Identity(value) {
+function Identity(value) {
   if (!(this instanceof Identity)) return new Identity(value);
   this.value = value;
-};
+}
 
 Identity[FL.of] = Identity;
 

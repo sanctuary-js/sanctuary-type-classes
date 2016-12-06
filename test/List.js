@@ -10,7 +10,7 @@ var eq = require('./eq');
 
 var sentinel = {};
 
-var List = function List(x, tag, head, tail) {
+function List(x, tag, head, tail) {
   if (x !== sentinel) {
     throw new Error('List is not a data constructor (use Nil or Cons)');
   }
@@ -19,14 +19,14 @@ var List = function List(x, tag, head, tail) {
     this.head = head;
     this.tail = tail;
   }
-};
+}
 
 //  Nil :: List a
 var Nil = List.Nil = new List(sentinel, 'Nil');
 
 //  Cons :: (a, List a) -> List a
-var Cons = List.Cons = function(head, tail) {
-  eq(arguments.length, 2);
+var Cons = List.Cons = function Cons(head, tail) {
+  eq(arguments.length, Cons.length);
   return new List(sentinel, 'Cons', head, tail);
 };
 

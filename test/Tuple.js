@@ -6,11 +6,11 @@ var Z = require('..');
 
 
 //  Tuple :: (a, b) -> Tuple a b
-var Tuple = function Tuple(_1, _2) {
+function Tuple(_1, _2) {
   if (!(this instanceof Tuple)) return new Tuple(_1, _2);
   this._1 = _1;
   this._2 = _2;
-};
+}
 
 Tuple.prototype['@@type'] = 'sanctuary-type-classes/Tuple';
 
