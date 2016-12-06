@@ -5,11 +5,11 @@ var FL = require('fantasy-land');
 var Z = require('..');
 
 
-var Maybe = function Maybe(tag, value) {
+function Maybe(tag, value) {
   this.isNothing = tag === 'Nothing';
   this.isJust = tag === 'Just';
   if (this.isJust) this.value = value;
-};
+}
 
 Maybe.Nothing = new Maybe('Nothing');
 
