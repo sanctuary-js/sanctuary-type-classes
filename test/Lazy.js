@@ -11,11 +11,11 @@ function Lazy(f) {
   this.run = f;
 }
 
+Lazy['@@type'] = 'sanctuary-type-classes/Lazy';
+
 Lazy[FL.of] = function(a) {
   return Lazy(function() { return a; });
 };
-
-Lazy.prototype['@@type'] = 'sanctuary-type-classes/Lazy';
 
 Lazy.prototype[FL.map] = function(f) {
   return Z.ap(Z.of(Lazy, f), this);

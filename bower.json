@@ -18,7 +18,9 @@
     "sanctuary",
     "types"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "sanctuary-type-identifiers": "1.0.x"
+  },
   "ignore": [
     "/.git/",
     "/bower_components/",
