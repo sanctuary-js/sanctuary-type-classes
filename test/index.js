@@ -691,6 +691,14 @@ test('chainRec', function() {
   eq(count, 5);
 
   eq(Z.chainRec(Array, function(next, done, n) { return n === 0 ? [done('DONE')] : [next(n - 1)]; }, 100000), ['DONE']);
+
+  function stepper(next, done, n) {
+    return n === 30000
+      ? Z.map(done, function(env) { return n + env.inc; })
+      : Z.map(next, function(env) { return n + env.step; });
+  }
+
+  eq(Z.chainRec(Function, stepper, 0)({step: 2, inc: 100}), 30100);
 });
 
 test('filter', function() {
