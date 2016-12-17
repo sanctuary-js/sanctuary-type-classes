@@ -105,6 +105,14 @@
     };
   }
 
+  //  type Iteration a = { value :: a, done :: Boolean }
+
+  //  iterationNext :: a -> Iteration a
+  function iterationNext(x) { return {value: x, done: false}; }
+
+  //  iterationDone :: a -> Iteration a
+  function iterationDone(x) { return {value: x, done: true}; }
+
   //  type :: Any -> String
   function type(x) {
     return x != null && type(x['@@type']) === 'String' ?
@@ -565,12 +573,10 @@
 
   //  Array$chainRec :: ((a -> c, b -> c, a) -> Array c, a) -> Array b
   function Array$chainRec(f, x) {
-    function next(x) { return {value: x, done: false}; }
-    function done(x) { return {value: x, done: true}; }
     var $todo = [x];
     var $done = [];
     while ($todo.length > 0) {
-      var xs = f(next, done, $todo.shift());
+      var xs = f(iterationNext, iterationDone, $todo.shift());
       var $more = [];
       for (var idx = 0; idx < xs.length; idx += 1) {
         (xs[idx].done ? $done : $more).push(xs[idx].value);
@@ -738,6 +744,17 @@
     return function(_) { return x; };
   }
 
+  //  Function$chainRec :: ((a -> c, b -> c, a) -> (z -> c), a) -> (z -> b)
+  function Function$chainRec(f, x) {
+    return function(a) {
+      var step = iterationNext(x);
+      while (!step.done) {
+        step = f(iterationNext, iterationDone, step.value)(a);
+      }
+      return step.value;
+    };
+  }
+
   //  Function$prototype$equals :: Function ~> Function -> Boolean
   function Function$prototype$equals(other) {
     return other === this;
@@ -856,6 +873,7 @@
     },
     Function: {
       'fantasy-land/of':            Function$of,
+      'fantasy-land/chainRec':      Function$chainRec,
       prototype: {
         'fantasy-land/equals':      Function$prototype$equals,
         'fantasy-land/map':         Function$prototype$map,
