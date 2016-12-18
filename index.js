@@ -83,9 +83,11 @@
 
   'use strict';
 
-  //  has :: (String, Object) -> Boolean
-  function has(k, o) {
-    return Object.prototype.hasOwnProperty.call(o, k);
+  //  concat_ :: Array a -> Array a -> Array a
+  function concat_(xs) {
+    return function(ys) {
+      return xs.concat(ys);
+    };
   }
 
   //  constant :: a -> b -> a
@@ -95,13 +97,18 @@
     };
   }
 
+  //  has :: (String, Object) -> Boolean
+  function has(k, o) {
+    return Object.prototype.hasOwnProperty.call(o, k);
+  }
+
   //  identity :: a -> a
   function identity(x) { return x; }
 
-  //  prepend :: a -> Array a -> Array a
-  function prepend(x) {
-    return function(xs) {
-      return [x].concat(xs);
+  //  pair :: a -> b -> Pair a b
+  function pair(x) {
+    return function(y) {
+      return [x, y];
     };
   }
 
@@ -651,11 +658,19 @@
 
   //  Array$prototype$traverse :: Applicative f => Array a ~> (a -> f b, c -> f c) -> f (Array b)
   function Array$prototype$traverse(f, of) {
-    var applicative = of([]);
-    for (var idx = this.length - 1; idx >= 0; idx -= 1) {
-      applicative = ap(map(prepend, f(this[idx])), applicative);
+    var xs = this;
+    function go(idx, n) {
+      switch (n) {
+        case 0: return of([]);
+        case 2: return lift2(pair, f(xs[idx]), f(xs[idx + 1]));
+        default:
+          var m = Math.floor(n / 4) * 2;
+          return lift2(concat_, go(idx, m), go(idx + m, n - m));
+      }
     }
-    return applicative;
+    return this.length % 2 === 1 ?
+      lift2(concat_, map(Array$of, f(this[0])), go(1, this.length - 1)) :
+      go(0, this.length);
   }
 
   //  Array$prototype$extend :: Array a ~> (Array a -> b) -> Array b

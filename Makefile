@@ -78,6 +78,6 @@ setup:
 
 .PHONY: test
 test:
-	$(ISTANBUL) cover node_modules/.bin/_mocha -- --timeout 10000 --ui tdd -- test/index.js
+	$(ISTANBUL) cover node_modules/.bin/_mocha -- --timeout 30000 --ui tdd -- test/index.js
 	$(ISTANBUL) check-coverage --branches 100
 	make doctest
