@@ -72,14 +72,14 @@
 
   /* istanbul ignore else */
   if (typeof module === 'object' && typeof module.exports === 'object') {
-    module.exports = f();
+    module.exports = f(require('sanctuary-type-identifiers'));
   } else if (typeof define === 'function' && define.amd != null) {
-    define([], f);
+    define(['sanctuary-type-identifiers'], f);
   } else {
-    self.sanctuaryTypeClasses = f();
+    self.sanctuaryTypeClasses = f(self.sanctuaryTypeIdentifiers);
   }
 
-}(function() {
+}(function(type) {
 
   'use strict';
 
@@ -120,13 +120,6 @@
   //  iterationDone :: a -> Iteration a
   function iterationDone(x) { return {value: x, done: true}; }
 
-  //  type :: Any -> String
-  function type(x) {
-    return x != null && type(x['@@type']) === 'String' ?
-      x['@@type'] :
-      Object.prototype.toString.call(x).slice('[object '.length, -']'.length);
-  }
-
   //# TypeClass :: (String, Array TypeClass, a -> Boolean) -> TypeClass
   //.
   //. The arguments are:
@@ -163,15 +156,16 @@
   //. to define parametrically polymorphic functions which verify their
   //. type-class constraints at run time.
   function TypeClass(name, dependencies, test) {
-    return {
-      '@@type': 'sanctuary-type-classes/TypeClass',
-      name: name,
-      test: function(x) {
-        return dependencies.every(function(d) { return d.test(x); }) &&
-               test(x);
-      }
+    if (!(this instanceof TypeClass)) {
+      return new TypeClass(name, dependencies, test);
+    }
+    this.name = name;
+    this.test = function(x) {
+      return dependencies.every(function(d) { return d.test(x); }) && test(x);
     };
   }
+
+  TypeClass['@@type'] = 'sanctuary-type-classes/TypeClass';
 
   //  data Location = Constructor | Value
 
@@ -205,14 +199,21 @@
   //  $ :: (String, Array TypeClass, StrMap (Array Location)) -> TypeClass
   function $(_name, dependencies, requirements) {
     function getBoundMethod(_name) {
-      return function(x) {
-        var m;
-        var name = 'fantasy-land/' + _name;
-        return requirements[_name] === Constructor ?
-          funcPath(['constructor', name], x) || implPath([type(x), name]) :
-          (m = funcPath([name], x) || implPath([type(x), 'prototype', name]))
-          && m.bind(x);
-      };
+      var name = 'fantasy-land/' + _name;
+      return requirements[_name] === Constructor ?
+        function(typeRep) {
+          return funcPath([name], typeRep) ||
+                 implPath([/function (\w*)/.exec(typeRep)[1], name]);
+        } :
+        function(x) {
+          var isPrototype = x != null &&
+                            x.constructor != null &&
+                            x.constructor.prototype === x;
+          var m = null;
+          if (!isPrototype) m = funcPath([name], x);
+          if (m == null)    m = implPath([type(x), 'prototype', name]);
+          return m && m.bind(x);
+        };
     }
 
     var name = 'sanctuary-type-classes/' + _name;
@@ -220,18 +221,13 @@
 
     var typeClass = TypeClass(name, dependencies, function(x) {
       return keys.every(function(_name) {
-        return getBoundMethod(_name)(x) != null;
+        var arg = requirements[_name] === Constructor ? x.constructor : x;
+        return getBoundMethod(_name)(arg) != null;
       });
     });
 
     typeClass.methods = keys.reduce(function(methods, _name) {
-      methods[_name] = requirements[_name] === Constructor ?
-        function(typeRep) {
-          var m = /function (\w*)/.exec(typeRep);
-          var name = 'fantasy-land/' + _name;
-          return m && implPath([m[1], name]) || typeRep[name];
-        } :
-        getBoundMethod(_name);
+      methods[_name] = getBoundMethod(_name);
       return methods;
     }, {});
 

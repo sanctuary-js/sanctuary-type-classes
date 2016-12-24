@@ -8,12 +8,11 @@ var curry2 = require('./curry2');
 var eq = require('./eq');
 
 
-var sentinel = {};
+var List = {prototype: _List.prototype};
 
-function List(x, tag, head, tail) {
-  if (x !== sentinel) {
-    throw new Error('List is not a data constructor (use Nil or Cons)');
-  }
+List.prototype.constructor = List;
+
+function _List(tag, head, tail) {
   this.tag = tag;
   if (tag === 'Cons') {
     this.head = head;
@@ -21,20 +20,20 @@ function List(x, tag, head, tail) {
   }
 }
 
+List['@@type'] = 'sanctuary-type-classes/List';
+
 //  Nil :: List a
-var Nil = List.Nil = new List(sentinel, 'Nil');
+var Nil = List.Nil = new _List('Nil');
 
 //  Cons :: (a, List a) -> List a
 var Cons = List.Cons = function Cons(head, tail) {
   eq(arguments.length, Cons.length);
-  return new List(sentinel, 'Cons', head, tail);
+  return new _List('Cons', head, tail);
 };
 
 List[FL.empty] = function() { return Nil; };
 
 List[FL.of] = function(x) { return Cons(x, Nil); };
-
-List.prototype['@@type'] = 'sanctuary-type-classes/List';
 
 List.prototype[FL.equals] = function(other) {
   return this.tag === 'Nil' ?

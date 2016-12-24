@@ -49,6 +49,7 @@ lint:
 	$(ESLINT) \
 	  --global define \
 	  --global module \
+	  --global require \
 	  --global self \
 	  --rule 'max-len: [error, {code: 79, ignoreUrls: true, ignorePattern: "^ *//(# |  .* :: |[.] > )"}]' \
 	  --rule 'spaced-comment: [error, always, {line: {exceptions: ["."], markers: ["#", ".", ":"]}}]' \

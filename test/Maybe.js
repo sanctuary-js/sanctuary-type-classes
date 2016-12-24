@@ -5,19 +5,23 @@ var FL = require('fantasy-land');
 var Z = require('..');
 
 
-function Maybe(tag, value) {
+var Maybe = {prototype: _Maybe.prototype};
+
+Maybe.prototype.constructor = Maybe;
+
+function _Maybe(tag, value) {
   this.isNothing = tag === 'Nothing';
   this.isJust = tag === 'Just';
   if (this.isJust) this.value = value;
 }
 
-Maybe.Nothing = new Maybe('Nothing');
+Maybe['@@type'] = 'sanctuary-type-classes/Maybe';
 
-Maybe.Just = function(x) { return new Maybe('Just', x); };
+Maybe.Nothing = new _Maybe('Nothing');
+
+Maybe.Just = function(x) { return new _Maybe('Just', x); };
 
 Maybe[FL.zero] = function() { return Maybe.Nothing; };
-
-Maybe.prototype['@@type'] = 'sanctuary-type-classes/Maybe';
 
 Maybe.prototype[FL.equals] = function(other) {
   return this.isNothing ? other.isNothing

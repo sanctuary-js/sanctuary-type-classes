@@ -3,6 +3,8 @@
 /* eslint-env mocha */
 /* eslint max-len: "off" */
 
+var type = require('sanctuary-type-identifiers');
+
 var Z = require('..');
 
 var Identity = require('./Identity');
@@ -172,7 +174,7 @@ test('TypeClass', function() {
   //  Bar :: TypeClass
   var Bar = Z.TypeClass('my-package/Bar', [Foo], hasMethod('bar'));
 
-  eq(Foo['@@type'], 'sanctuary-type-classes/TypeClass');
+  eq(type(Foo), 'sanctuary-type-classes/TypeClass');
   eq(Foo.name, 'my-package/Foo');
   eq(Foo.test(null), false);
   eq(Foo.test({}), false);
@@ -180,7 +182,7 @@ test('TypeClass', function() {
   eq(Foo.test({bar: function() {}}), false);
   eq(Foo.test({foo: function() {}, bar: function() {}}), true);
 
-  eq(Bar['@@type'], 'sanctuary-type-classes/TypeClass');
+  eq(type(Bar), 'sanctuary-type-classes/TypeClass');
   eq(Bar.name, 'my-package/Bar');
   eq(Bar.test(null), false);
   eq(Bar.test({}), false);
@@ -190,17 +192,17 @@ test('TypeClass', function() {
 });
 
 test('Setoid', function() {
-  eq(Z.Setoid['@@type'], 'sanctuary-type-classes/TypeClass');
+  eq(type(Z.Setoid), 'sanctuary-type-classes/TypeClass');
   eq(Z.Setoid.name, 'sanctuary-type-classes/Setoid');
   eq(Z.Setoid.test(null), true);
   eq(Z.Setoid.test(''), true);
   eq(Z.Setoid.test([]), true);
   eq(Z.Setoid.test({}), true);
-  eq(Z.Setoid.test({'@@type': 'my-package/Quux'}), false);
+  eq(Z.Setoid.test({'@@type': 'my-package/Quux'}), true);
 });
 
 test('Semigroup', function() {
-  eq(Z.Semigroup['@@type'], 'sanctuary-type-classes/TypeClass');
+  eq(type(Z.Semigroup), 'sanctuary-type-classes/TypeClass');
   eq(Z.Semigroup.name, 'sanctuary-type-classes/Semigroup');
   eq(Z.Semigroup.test(null), false);
   eq(Z.Semigroup.test(''), true);
@@ -209,7 +211,7 @@ test('Semigroup', function() {
 });
 
 test('Monoid', function() {
-  eq(Z.Monoid['@@type'], 'sanctuary-type-classes/TypeClass');
+  eq(type(Z.Monoid), 'sanctuary-type-classes/TypeClass');
   eq(Z.Monoid.name, 'sanctuary-type-classes/Monoid');
   eq(Z.Monoid.test(null), false);
   eq(Z.Monoid.test(''), true);
@@ -218,7 +220,7 @@ test('Monoid', function() {
 });
 
 test('Functor', function() {
-  eq(Z.Functor['@@type'], 'sanctuary-type-classes/TypeClass');
+  eq(type(Z.Functor), 'sanctuary-type-classes/TypeClass');
   eq(Z.Functor.name, 'sanctuary-type-classes/Functor');
   eq(Z.Functor.test(null), false);
   eq(Z.Functor.test(''), false);
@@ -227,7 +229,7 @@ test('Functor', function() {
 });
 
 test('Bifunctor', function() {
-  eq(Z.Bifunctor['@@type'], 'sanctuary-type-classes/TypeClass');
+  eq(type(Z.Bifunctor), 'sanctuary-type-classes/TypeClass');
   eq(Z.Bifunctor.name, 'sanctuary-type-classes/Bifunctor');
   eq(Z.Bifunctor.test(null), false);
   eq(Z.Bifunctor.test(''), false);
@@ -237,7 +239,7 @@ test('Bifunctor', function() {
 });
 
 test('Profunctor', function() {
-  eq(Z.Profunctor['@@type'], 'sanctuary-type-classes/TypeClass');
+  eq(type(Z.Profunctor), 'sanctuary-type-classes/TypeClass');
   eq(Z.Profunctor.name, 'sanctuary-type-classes/Profunctor');
   eq(Z.Profunctor.test(null), false);
   eq(Z.Profunctor.test(''), false);
@@ -247,7 +249,7 @@ test('Profunctor', function() {
 });
 
 test('Apply', function() {
-  eq(Z.Apply['@@type'], 'sanctuary-type-classes/TypeClass');
+  eq(type(Z.Apply), 'sanctuary-type-classes/TypeClass');
   eq(Z.Apply.name, 'sanctuary-type-classes/Apply');
   eq(Z.Apply.test(null), false);
   eq(Z.Apply.test(''), false);
@@ -256,7 +258,7 @@ test('Apply', function() {
 });
 
 test('Applicative', function() {
-  eq(Z.Applicative['@@type'], 'sanctuary-type-classes/TypeClass');
+  eq(type(Z.Applicative), 'sanctuary-type-classes/TypeClass');
   eq(Z.Applicative.name, 'sanctuary-type-classes/Applicative');
   eq(Z.Applicative.test(null), false);
   eq(Z.Applicative.test(''), false);
@@ -265,7 +267,7 @@ test('Applicative', function() {
 });
 
 test('Chain', function() {
-  eq(Z.Chain['@@type'], 'sanctuary-type-classes/TypeClass');
+  eq(type(Z.Chain), 'sanctuary-type-classes/TypeClass');
   eq(Z.Chain.name, 'sanctuary-type-classes/Chain');
   eq(Z.Chain.test(null), false);
   eq(Z.Chain.test(''), false);
@@ -274,7 +276,7 @@ test('Chain', function() {
 });
 
 test('ChainRec', function() {
-  eq(Z.ChainRec['@@type'], 'sanctuary-type-classes/TypeClass');
+  eq(type(Z.ChainRec), 'sanctuary-type-classes/TypeClass');
   eq(Z.ChainRec.name, 'sanctuary-type-classes/ChainRec');
   eq(Z.ChainRec.test(null), false);
   eq(Z.ChainRec.test(''), false);
@@ -283,7 +285,7 @@ test('ChainRec', function() {
 });
 
 test('Monad', function() {
-  eq(Z.Monad['@@type'], 'sanctuary-type-classes/TypeClass');
+  eq(type(Z.Monad), 'sanctuary-type-classes/TypeClass');
   eq(Z.Monad.name, 'sanctuary-type-classes/Monad');
   eq(Z.Monad.test(null), false);
   eq(Z.Monad.test(''), false);
@@ -292,7 +294,7 @@ test('Monad', function() {
 });
 
 test('Alt', function() {
-  eq(Z.Alt['@@type'], 'sanctuary-type-classes/TypeClass');
+  eq(type(Z.Alt), 'sanctuary-type-classes/TypeClass');
   eq(Z.Alt.name, 'sanctuary-type-classes/Alt');
   eq(Z.Alt.test(null), false);
   eq(Z.Alt.test(''), false);
@@ -301,7 +303,7 @@ test('Alt', function() {
 });
 
 test('Plus', function() {
-  eq(Z.Plus['@@type'], 'sanctuary-type-classes/TypeClass');
+  eq(type(Z.Plus), 'sanctuary-type-classes/TypeClass');
   eq(Z.Plus.name, 'sanctuary-type-classes/Plus');
   eq(Z.Plus.test(null), false);
   eq(Z.Plus.test(''), false);
@@ -310,7 +312,7 @@ test('Plus', function() {
 });
 
 test('Alternative', function() {
-  eq(Z.Alternative['@@type'], 'sanctuary-type-classes/TypeClass');
+  eq(type(Z.Alternative), 'sanctuary-type-classes/TypeClass');
   eq(Z.Alternative.name, 'sanctuary-type-classes/Alternative');
   eq(Z.Alternative.test(null), false);
   eq(Z.Alternative.test(''), false);
@@ -319,7 +321,7 @@ test('Alternative', function() {
 });
 
 test('Foldable', function() {
-  eq(Z.Foldable['@@type'], 'sanctuary-type-classes/TypeClass');
+  eq(type(Z.Foldable), 'sanctuary-type-classes/TypeClass');
   eq(Z.Foldable.name, 'sanctuary-type-classes/Foldable');
   eq(Z.Foldable.test(null), false);
   eq(Z.Foldable.test(''), false);
@@ -328,7 +330,7 @@ test('Foldable', function() {
 });
 
 test('Traversable', function() {
-  eq(Z.Traversable['@@type'], 'sanctuary-type-classes/TypeClass');
+  eq(type(Z.Traversable), 'sanctuary-type-classes/TypeClass');
   eq(Z.Traversable.name, 'sanctuary-type-classes/Traversable');
   eq(Z.Traversable.test(null), false);
   eq(Z.Traversable.test(''), false);
@@ -337,7 +339,7 @@ test('Traversable', function() {
 });
 
 test('Extend', function() {
-  eq(Z.Extend['@@type'], 'sanctuary-type-classes/TypeClass');
+  eq(type(Z.Extend), 'sanctuary-type-classes/TypeClass');
   eq(Z.Extend.name, 'sanctuary-type-classes/Extend');
   eq(Z.Extend.test(null), false);
   eq(Z.Extend.test(''), false);
@@ -346,7 +348,7 @@ test('Extend', function() {
 });
 
 test('Comonad', function() {
-  eq(Z.Comonad['@@type'], 'sanctuary-type-classes/TypeClass');
+  eq(type(Z.Comonad), 'sanctuary-type-classes/TypeClass');
   eq(Z.Comonad.name, 'sanctuary-type-classes/Comonad');
   eq(Z.Comonad.test(null), false);
   eq(Z.Comonad.test(''), false);
@@ -520,7 +522,9 @@ test('equals', function() {
   eq(Z.equals(Math.sin, Math.cos), false);
   eq(Z.equals(Identity(Identity(Identity(0))), Identity(Identity(Identity(0)))), true);
   eq(Z.equals(Identity(Identity(Identity(0))), Identity(Identity(Identity(1)))), false);
-  eq(Z.equals({'@@type': 'my-package/Quux'}, {'@@type': 'my-package/Quux'}), false);
+  eq(Z.equals({'@@type': 'my-package/Quux'}, {'@@type': 'my-package/Quux'}), true);
+  eq(Z.equals(Nothing.constructor, Maybe), true);
+  eq(Z.equals(Just(0).constructor, Maybe), true);
 });
 
 test('concat', function() {

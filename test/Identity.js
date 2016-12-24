@@ -11,9 +11,9 @@ function Identity(value) {
   this.value = value;
 }
 
-Identity[FL.of] = Identity;
+Identity['@@type'] = 'sanctuary-type-classes/Identity';
 
-Identity.prototype['@@type'] = 'sanctuary-type-classes/Identity';
+Identity[FL.of] = Identity;
 
 Identity.prototype[FL.equals] = function(other) {
   return Z.equals(other.value, this.value);

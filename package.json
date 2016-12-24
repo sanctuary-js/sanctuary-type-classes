@@ -10,7 +10,9 @@
   "scripts": {
     "test": "make lint test"
   },
-  "dependencies": {},
+  "dependencies": {
+    "sanctuary-type-identifiers": "1.0.x"
+  },
   "devDependencies": {
     "doctest": "0.10.x",
     "eslint": "2.9.x",

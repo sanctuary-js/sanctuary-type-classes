@@ -12,7 +12,7 @@ function Tuple(_1, _2) {
   this._2 = _2;
 }
 
-Tuple.prototype['@@type'] = 'sanctuary-type-classes/Tuple';
+Tuple['@@type'] = 'sanctuary-type-classes/Tuple';
 
 Tuple.prototype[FL.equals] = function(other) {
   return Z.equals(other._1, this._1) && Z.equals(other._2, this._2);
