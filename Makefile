@@ -56,7 +56,12 @@ lint:
 	  -- index.js
 	$(ESLINT) \
 	  --env node \
-	  -- $(PREDOCTEST) $(TEST)
+	  -- $(PREDOCTEST)
+	$(ESLINT) \
+	  --env node \
+	  --global test \
+	  --rule 'max-len: [off]' \
+	  -- $(TEST)
 	$(REMEMBER_BOWER) $(shell pwd)
 	@echo 'Checking for missing link definitions...'
 	grep -o '\[[^]]*\]\[[^]]*\]' index.js \

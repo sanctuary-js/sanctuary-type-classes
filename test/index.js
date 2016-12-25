@@ -1,8 +1,5 @@
 'use strict';
 
-/* eslint-env mocha */
-/* eslint max-len: "off" */
-
 var type = require('sanctuary-type-identifiers');
 
 var Z = require('..');
