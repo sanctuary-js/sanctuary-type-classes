@@ -31,30 +31,30 @@
 //. ## Type-class hierarchy
 //.
 //. <pre>
-//:  Setoid   Semigroup   Foldable        Functor         Extend
-//: (equals)   (concat)   (reduce)         (map)         (extend)
-//:               |           \         / | | | | \         /
-//:               |            \       /  | | | |  \       /
-//:               |             \     /   | | | |   \     /
-//:               |              \   /    | | | |    \   /
-//:               |               \ /     | | | |     \ /
-//:            Monoid         Traversable | | | |   Comonad
-//:            (empty)        (traverse)  / | | \  (extract)
-//:                                      /  | |  \
-//:                                     /   / \   \
-//:                            Bifunctor   /   \   Profunctor
-//:                             (bimap)   /     \   (promap)
-//:                                      /       \
-//:                                     /         \
-//:                                   Alt        Apply
-//:                                  (alt)        (ap)
-//:                                   /           / \
-//:                                  /           /   \
-//:                                 /           /     \
-//:                                /           /       \
-//:                               /           /         \
-//:                             Plus    Applicative    Chain
-//:                            (zero)       (of)      (chain)
+//:  Setoid   Semigroup   Foldable        Functor
+//: (equals)   (concat)   (reduce)         (map)
+//:               |           \         / | | | | \
+//:               |            \       /  | | | |  \
+//:               |             \     /   | | | |   \
+//:               |              \   /    | | | |    \
+//:               |               \ /     | | | |     \
+//:            Monoid         Traversable | | | |      \
+//:            (empty)        (traverse)  / | | \       \
+//:                                      /  | |  \       \
+//:                                     /   / \   \       \
+//:                             Profunctor /   \ Bifunctor \
+//:                              (promap) /     \ (bimap)   \
+//:                                      /       \           \
+//:                                     /         \           \
+//:                                   Alt        Apply      Extend
+//:                                  (alt)        (ap)     (extend)
+//:                                   /           / \           \
+//:                                  /           /   \           \
+//:                                 /           /     \           \
+//:                                /           /       \           \
+//:                               /           /         \           \
+//:                             Plus    Applicative    Chain      Comonad
+//:                            (zero)       (of)      (chain)    (extract)
 //:                               \         / \         / \
 //:                                \       /   \       /   \
 //:                                 \     /     \     /     \
@@ -450,7 +450,7 @@
   //. > Extend.test({})
   //. false
   //. ```
-  var Extend = $('Extend', [], {extend: Value});
+  var Extend = $('Extend', [Functor], {extend: Value});
 
   //# Comonad :: TypeClass
   //.
@@ -463,7 +463,7 @@
   //. > Comonad.test([])
   //. false
   //. ```
-  var Comonad = $('Comonad', [Functor, Extend], {extract: Value});
+  var Comonad = $('Comonad', [Extend], {extract: Value});
 
   //  Null$prototype$toString :: Null ~> () -> String
   function Null$prototype$toString() {
