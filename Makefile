@@ -5,7 +5,7 @@ NPM = npm
 PREDOCTEST = scripts/predoctest
 REMEMBER_BOWER = node_modules/.bin/remember-bower
 TRANSCRIBE = node_modules/.bin/transcribe
-XYZ = node_modules/.bin/xyz --repo git@github.com:sanctuary-js/sanctuary-type-classes.git --script scripts/prepublish
+XYZ = node_modules/.bin/xyz --branch v1 --repo git@github.com:sanctuary-js/sanctuary-type-classes.git --script scripts/prepublish
 
 TEST = $(shell find test -name '*.js' | sort)
 
