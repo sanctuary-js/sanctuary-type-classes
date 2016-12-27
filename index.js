@@ -1243,8 +1243,8 @@
   //. > chain(n => s => s.slice(0, n), s => Math.ceil(s.length / 2))('Haskell')
   //. 'Hask'
   //. ```
-  function chain(f, chain) {
-    return Chain.methods.chain(chain)(f);
+  function chain(f, chain_) {
+    return Chain.methods.chain(chain_)(f);
   }
 
   //# join :: Chain m => m (m a) -> m a
@@ -1443,8 +1443,8 @@
   //. > extend(xs => xs.length, ['foo', 'bar', 'baz', 'quux'])
   //. [4]
   //. ```
-  function extend(f, extend) {
-    return Extend.methods.extend(extend)(f);
+  function extend(f, extend_) {
+    return Extend.methods.extend(extend_)(f);
   }
 
   //# extract :: Comonad w => w a -> a
