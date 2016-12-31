@@ -73,10 +73,10 @@ List.prototype[FL.reduce] = function(f, x) {
     Z.reduce(f, f(x, this.head), this.tail);
 };
 
-List.prototype[FL.traverse] = function(f, of) {
+List.prototype[FL.traverse] = function(typeRep, f) {
   return this.tag === 'Nil' ?
-    of(Nil) :
-    Z.ap(Z.map(curry2(Cons), f(this.head)), Z.traverse(of, f, this.tail));
+    Z.of(typeRep, Nil) :
+    Z.ap(Z.map(curry2(Cons), f(this.head)), Z.traverse(typeRep, f, this.tail));
 };
 
 List.prototype.inspect =
