@@ -652,12 +652,12 @@
     return this.reduce(function(acc, x) { return f(acc, x); }, initial);
   }
 
-  //  Array$prototype$traverse :: Applicative f => Array a ~> (a -> f b, c -> f c) -> f (Array b)
-  function Array$prototype$traverse(f, of) {
+  //  Array$prototype$traverse :: Applicative f => Array a ~> (TypeRep f, a -> f b) -> f (Array b)
+  function Array$prototype$traverse(typeRep, f) {
     var xs = this;
     function go(idx, n) {
       switch (n) {
-        case 0: return of([]);
+        case 0: return of(typeRep, []);
         case 2: return lift2(pair, f(xs[idx]), f(xs[idx + 1]));
         default:
           var m = Math.floor(n / 4) * 2;
@@ -1395,7 +1395,7 @@
     return Foldable.methods.reduce(foldable)(f, x);
   }
 
-  //# traverse :: (Applicative f, Traversable t) => (a -> f a, b -> f c, t b) -> f (t c)
+  //# traverse :: (Applicative f, Traversable t) => (TypeRep f, a -> f b, t a) -> f (t b)
   //.
   //. Function wrapper for [`fantasy-land/traverse`][].
   //.
@@ -1405,19 +1405,19 @@
   //. See also [`sequence`](#sequence).
   //.
   //. ```javascript
-  //. > traverse(x => [x], x => x, [[1, 2, 3], [4, 5]])
+  //. > traverse(Array, x => x, [[1, 2, 3], [4, 5]])
   //. [[1, 4], [1, 5], [2, 4], [2, 5], [3, 4], [3, 5]]
   //.
   //. > traverse(Identity, x => Identity(x + 1), [1, 2, 3])
   //. Identity([2, 3, 4])
   //. ```
-  function traverse(of, f, traversable) {
-    return Traversable.methods.traverse(traversable)(f, of);
+  function traverse(typeRep, f, traversable) {
+    return Traversable.methods.traverse(traversable)(typeRep, f);
   }
 
-  //# sequence :: (Applicative f, Traversable t) => (a -> f a, t (f b)) -> f (t b)
+  //# sequence :: (Applicative f, Traversable t) => (TypeRep f, t (f a)) -> f (t a)
   //.
-  //. Inverts the given `t (f b)` to produce an `f (t b)`.
+  //. Inverts the given `t (f a)` to produce an `f (t a)`.
   //.
   //. This function is derived from [`traverse`](#traverse).
   //.
@@ -1428,8 +1428,8 @@
   //. > sequence(Identity, [Identity(1), Identity(2), Identity(3)])
   //. Identity([1, 2, 3])
   //. ```
-  function sequence(of, traversable) {
-    return traverse(of, identity, traversable);
+  function sequence(typeRep, traversable) {
+    return traverse(typeRep, identity, traversable);
   }
 
   //# extend :: Extend w => (w a -> b, w a) -> w b

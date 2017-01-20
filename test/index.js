@@ -19,22 +19,10 @@ var Nothing = Maybe.Nothing;
 var Just = Maybe.Just;
 
 
-//  Array$of :: a -> Array a
-function Array$of(x) {
-  eq(arguments.length, Array$of.length);
-  return Z.of(Array, x);
-}
-
 //  Lazy$of :: a -> Lazy a
 function Lazy$of(x) {
   eq(arguments.length, Lazy$of.length);
   return Z.of(Lazy, x);
-}
-
-//  List$of :: a -> List a
-function List$of(x) {
-  eq(arguments.length, List$of.length);
-  return Z.of(List, x);
 }
 
 //  abs :: Number -> Number
@@ -772,15 +760,15 @@ test('traverse', function() {
   eq(Z.traverse.length, 3);
   eq(Z.traverse.name, 'traverse');
 
-  eq(Z.traverse(Array$of, identity, []), [[]]);
-  eq(Z.traverse(Array$of, identity, [[1], [2], [3]]), [[1, 2, 3]]);
-  eq(Z.traverse(Array$of, identity, [[1, 2, 3], [4, 5]]), [[1, 4], [1, 5], [2, 4], [2, 5], [3, 4], [3, 5]]);
-  eq(Z.traverse(Array$of, identity, repeat(6)(range(10))).length, Math.pow(10, 6));
+  eq(Z.traverse(Array, identity, []), [[]]);
+  eq(Z.traverse(Array, identity, [[1], [2], [3]]), [[1, 2, 3]]);
+  eq(Z.traverse(Array, identity, [[1, 2, 3], [4, 5]]), [[1, 4], [1, 5], [2, 4], [2, 5], [3, 4], [3, 5]]);
+  eq(Z.traverse(Array, identity, repeat(6)(range(10))).length, Math.pow(10, 6));
   eq(Z.traverse(Identity, identInc, []), Identity([]));
   eq(Z.traverse(Identity, identInc, [1, 2, 3]), Identity([2, 3, 4]));
   eq(Z.traverse(Identity, identInc, Nil), Identity(Nil));
   eq(Z.traverse(Identity, identInc, Cons(1, Cons(2, Cons(3, Nil)))), Identity(Cons(2, Cons(3, Cons(4, Nil)))));
-  eq(Z.traverse(Lazy$of, Lazy$of, range(70000)).run().length, 70000);
+  eq(Z.traverse(Lazy, Lazy$of, range(70000)).run().length, 70000);
 });
 
 test('sequence', function() {
@@ -789,12 +777,12 @@ test('sequence', function() {
 
   eq(Z.sequence(Identity, []), Identity([]));
   eq(Z.sequence(Identity, [Identity(1), Identity(2), Identity(3)]), Identity([1, 2, 3]));
-  eq(Z.sequence(Array$of, Identity([])), []);
-  eq(Z.sequence(Array$of, Identity([1, 2, 3])), [Identity(1), Identity(2), Identity(3)]);
+  eq(Z.sequence(Array, Identity([])), []);
+  eq(Z.sequence(Array, Identity([1, 2, 3])), [Identity(1), Identity(2), Identity(3)]);
   eq(Z.sequence(Identity, Nil), Identity(Nil));
   eq(Z.sequence(Identity, Cons(Identity(1), Cons(Identity(2), Cons(Identity(3), Nil)))), Identity(Cons(1, Cons(2, Cons(3, Nil)))));
-  eq(Z.sequence(List$of, Identity(Nil)), Nil);
-  eq(Z.sequence(List$of, Identity(Cons(1, Cons(2, Cons(3, Nil))))), Cons(Identity(1), Cons(Identity(2), Cons(Identity(3), Nil))));
+  eq(Z.sequence(List, Identity(Nil)), Nil);
+  eq(Z.sequence(List, Identity(Cons(1, Cons(2, Cons(3, Nil))))), Cons(Identity(1), Cons(Identity(2), Cons(Identity(3), Nil))));
 });
 
 test('extend', function() {
