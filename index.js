@@ -1422,7 +1422,7 @@
   //. This function is derived from [`traverse`](#traverse).
   //.
   //. ```javascript
-  //. > sequence(x => [x], Identity([1, 2, 3]))
+  //. > sequence(Array, Identity([1, 2, 3]))
   //. [Identity(1), Identity(2), Identity(3)]
   //.
   //. > sequence(Identity, [Identity(1), Identity(2), Identity(3)])
