@@ -317,7 +317,7 @@
   //. > Apply.test([])
   //. true
   //.
-  //. > Apply.test({})
+  //. > Apply.test('')
   //. false
   //. ```
   var Apply = $('Apply', [Functor], {ap: Value});
@@ -740,6 +740,13 @@
     return result;
   }
 
+  //  Object$prototype$ap :: StrMap a ~> StrMap (a -> b) -> StrMap b
+  function Object$prototype$ap(other) {
+    var result = {};
+    for (var k in this) if (k in other) result[k] = other[k](this[k]);
+    return result;
+  }
+
   //  Object$prototype$alt :: StrMap a ~> StrMap a -> StrMap a
   var Object$prototype$alt = Object$prototype$concat;
 
@@ -878,6 +885,7 @@
         'fantasy-land/equals':      Object$prototype$equals,
         'fantasy-land/concat':      Object$prototype$concat,
         'fantasy-land/map':         Object$prototype$map,
+        'fantasy-land/ap':          Object$prototype$ap,
         'fantasy-land/alt':         Object$prototype$alt,
         'fantasy-land/reduce':      Object$prototype$reduce
       }
@@ -1106,11 +1114,14 @@
   //. Function wrapper for [`fantasy-land/ap`][].
   //.
   //. `fantasy-land/ap` implementations are provided for the following
-  //. built-in types: Array and Function.
+  //. built-in types: Array, Object, and Function.
   //.
   //. ```javascript
   //. > ap([Math.sqrt, x => x * x], [1, 4, 9, 16, 25])
   //. [1, 2, 3, 4, 5, 1, 16, 81, 256, 625]
+  //.
+  //. > ap({a: Math.sqrt, b: x => x * x}, {a: 16, b: 10, c: 1})
+  //. {a: 4, b: 100}
   //.
   //. > ap(s => n => s.slice(0, n), s => Math.ceil(s.length / 2))('Haskell')
   //. 'Hask'

@@ -239,7 +239,7 @@ test('Apply', function() {
   eq(Z.Apply.test(null), false);
   eq(Z.Apply.test(''), false);
   eq(Z.Apply.test([]), true);
-  eq(Z.Apply.test({}), false);
+  eq(Z.Apply.test({}), true);
 });
 
 test('Applicative', function() {
@@ -590,6 +590,12 @@ test('ap', function() {
   eq(Z.ap([inc], []), []);
   eq(Z.ap([inc], [1, 2, 3]), [2, 3, 4]);
   eq(Z.ap([inc, square], [1, 2, 3]), [2, 3, 4, 1, 4, 9]);
+  eq(Z.ap({}, {}), {});
+  eq(Z.ap({}, {x: 1, y: 2, z: 3}), {});
+  eq(Z.ap({x: inc}, {}), {});
+  eq(Z.ap({x: inc}, {x: 1}), {x: 2});
+  eq(Z.ap({x: inc, y: square}, {x: 1, y: 2}), {x: 2, y: 4});
+  eq(Z.ap({x: inc, y: square, z: abs}, {w: 4, x: 1, y: 2}), {x: 2, y: 4});
   eq(Z.ap(pow, abs)(-1), pow(-1)(abs(-1)));
   eq(Z.ap(pow, abs)(-2), pow(-2)(abs(-2)));
   eq(Z.ap(pow, abs)(-3), pow(-3)(abs(-3)));
