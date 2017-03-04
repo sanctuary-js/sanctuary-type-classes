@@ -806,3 +806,10 @@ test('extract', function() {
 
   eq(Z.extract(Identity(42)), 42);
 });
+
+test('contramap', function() {
+  eq(Z.contramap.length, 2);
+  eq(Z.contramap.name, 'contramap');
+
+  eq(Z.contramap(length, inc)('abc'), 4);
+});
