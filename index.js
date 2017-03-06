@@ -31,8 +31,8 @@
 //. ## Type-class hierarchy
 //.
 //. <pre>
-//:  Setoid   Semigroup   Foldable        Functor
-//: (equals)   (concat)   (reduce)         (map)
+//:  Setoid   Semigroup   Foldable        Functor      Contravariant
+//: (equals)   (concat)   (reduce)         (map)        (contramap)
 //:               |           \         / | | | | \
 //:               |            \       /  | | | |  \
 //:               |             \     /   | | | |   \
@@ -465,6 +465,19 @@
   //. ```
   var Comonad = $('Comonad', [Extend], {extract: Value});
 
+  //# Contravariant :: TypeClass
+  //.
+  //. `TypeClass` value for [Contravariant][].
+  //.
+  //. ```javascript
+  //. > Contravariant.test(Math.sqrt)
+  //. true
+  //.
+  //. > Contravariant.test([])
+  //. false
+  //. ```
+  var Contravariant = $('Contravariant', [], {contramap: Value});
+
   //  Null$prototype$toString :: Null ~> () -> String
   function Null$prototype$toString() {
     return 'null';
@@ -802,6 +815,12 @@
     return function(x) { return f(chain(x))(x); };
   }
 
+  //  Function$prototype$contramap :: (b -> c) ~> (a -> b) -> (a -> c)
+  function Function$prototype$contramap(f) {
+    var contravariant = this;
+    return function(x) { return contravariant(f(x)); };
+  }
+
   /* eslint-disable key-spacing */
   var implementations = {
     Null: {
@@ -898,7 +917,8 @@
         'fantasy-land/map':         Function$prototype$map,
         'fantasy-land/promap':      Function$prototype$promap,
         'fantasy-land/ap':          Function$prototype$ap,
-        'fantasy-land/chain':       Function$prototype$chain
+        'fantasy-land/chain':       Function$prototype$chain,
+        'fantasy-land/contramap':   Function$prototype$contramap
       }
     }
   };
@@ -1470,6 +1490,21 @@
     return Comonad.methods.extract(comonad)();
   }
 
+  //# contramap :: Contravariant f => (b -> a, f a) -> f b
+  //.
+  //. Function wrapper for [`fantasy-land/contramap`][].
+  //.
+  //. `fantasy-land/contramap` implementations are provided for the following
+  //. built-in types: Function.
+  //.
+  //. ```javascript
+  //. > contramap(s => s.length, Math.sqrt)('Sanctuary')
+  //. 3
+  //. ```
+  function contramap(f, contravariant) {
+    return Contravariant.methods.contramap(contravariant)(f);
+  }
+
   return {
     TypeClass: TypeClass,
     Setoid: Setoid,
@@ -1490,6 +1525,7 @@
     Traversable: Traversable,
     Extend: Extend,
     Comonad: Comonad,
+    Contravariant: Contravariant,
     toString: toString,
     equals: equals,
     concat: concat,
@@ -1514,7 +1550,8 @@
     traverse: traverse,
     sequence: sequence,
     extend: extend,
-    extract: extract
+    extract: extract,
+    contramap: contramap
   };
 
 }));
@@ -1527,6 +1564,7 @@
 //. [Chain]:                    https://github.com/fantasyland/fantasy-land#chain
 //. [ChainRec]:                 https://github.com/fantasyland/fantasy-land#chainrec
 //. [Comonad]:                  https://github.com/fantasyland/fantasy-land#comonad
+//. [Contravariant]:            https://github.com/fantasyland/fantasy-land#contravariant
 //. [Extend]:                   https://github.com/fantasyland/fantasy-land#extend
 //. [FL]:                       https://github.com/fantasyland/fantasy-land
 //. [Foldable]:                 https://github.com/fantasyland/fantasy-land#foldable
@@ -1544,6 +1582,7 @@
 //. [`fantasy-land/chain`]:     https://github.com/fantasyland/fantasy-land#chain-method
 //. [`fantasy-land/chainRec`]:  https://github.com/fantasyland/fantasy-land#chainrec-method
 //. [`fantasy-land/concat`]:    https://github.com/fantasyland/fantasy-land#concat-method
+//. [`fantasy-land/contramap`]: https://github.com/fantasyland/fantasy-land#contramap-method
 //. [`fantasy-land/empty`]:     https://github.com/fantasyland/fantasy-land#empty-method
 //. [`fantasy-land/equals`]:    https://github.com/fantasyland/fantasy-land#equals-method
 //. [`fantasy-land/extend`]:    https://github.com/fantasyland/fantasy-land#extend-method
