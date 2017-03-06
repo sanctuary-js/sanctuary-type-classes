@@ -733,6 +733,9 @@ test('filterM', function() {
   eq(Z.filterM(odd, [1, 2, 3, 4, 5]), [1, 3, 5]);
   eq(Z.filterM(odd, Nil), Nil);
   eq(Z.filterM(odd, Cons(1, Cons(2, Cons(3, Cons(4, Cons(5, Nil)))))), Cons(1, Cons(3, Cons(5, Nil))));
+  eq(Z.filterM(odd, Nothing), Nothing);
+  eq(Z.filterM(odd, Just(0)), Nothing);
+  eq(Z.filterM(odd, Just(1)), Just(1));
 });
 
 test('alt', function() {

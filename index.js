@@ -1333,8 +1333,8 @@
   //.
   //. Filters its second argument in accordance with the given predicate.
   //.
-  //. This function is derived from [`empty`](#empty), [`of`](#of), and
-  //. [`reduce`](#reduce).
+  //. This function is derived from [`concat`](#concat), [`empty`](#empty),
+  //. [`of`](#of), and [`reduce`](#reduce).
   //.
   //. See also [`filterM`](#filterM).
   //.
@@ -1352,12 +1352,12 @@
                   m);
   }
 
-  //# filterM :: (Monad m, Monoid (m a)) => (a -> Boolean, m a) -> m a
+  //# filterM :: (Alternative m, Monad m) => (a -> Boolean, m a) -> m a
   //.
   //. Filters its second argument in accordance with the given predicate.
   //.
-  //. This function is derived from [`empty`](#empty), [`of`](#of), and
-  //. [`chain`](#chain).
+  //. This function is derived from [`of`](#of), [`chain`](#chain), and
+  //. [`zero`](#zero).
   //.
   //. See also [`filter`](#filter).
   //.
@@ -1367,11 +1367,20 @@
   //.
   //. > filterM(x => x % 2 == 1, Cons(1, Cons(2, Cons(3, Nil))))
   //. Cons(1, Cons(3, Nil))
+  //.
+  //. > filterM(x => x % 2 == 1, Nothing)
+  //. Nothing
+  //.
+  //. > filterM(x => x % 2 == 1, Just(0))
+  //. Nothing
+  //.
+  //. > filterM(x => x % 2 == 1, Just(1))
+  //. Just(1)
   //. ```
   function filterM(pred, m) {
     var M = m.constructor;
-    var e = empty(M);
-    return chain(function(x) { return pred(x) ? of(M, x) : e; }, m);
+    var z = zero(M);
+    return chain(function(x) { return pred(x) ? of(M, x) : z; }, m);
   }
 
   //# alt :: Alt f => (f a, f a) -> f a

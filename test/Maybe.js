@@ -19,9 +19,13 @@ Maybe['@@type'] = 'sanctuary-type-classes/Maybe';
 
 Maybe.Nothing = new _Maybe('Nothing');
 
-Maybe[FL.of] = Maybe.Just = function(x) { return new _Maybe('Just', x); };
+Maybe.Just = function(x) { return new _Maybe('Just', x); };
 
-Maybe[FL.empty] = Maybe[FL.zero] = function() { return Maybe.Nothing; };
+Maybe[FL.empty] = function() { return Maybe.Nothing; };
+
+Maybe[FL.of] = Maybe.Just;
+
+Maybe[FL.zero] = Maybe[FL.empty];
 
 Maybe.prototype[FL.equals] = function(other) {
   return this.isNothing ? other.isNothing
@@ -30,6 +34,10 @@ Maybe.prototype[FL.equals] = function(other) {
 
 Maybe.prototype[FL.map] = function(f) {
   return this.isJust ? Maybe.Just(f(this.value)) : Maybe.Nothing;
+};
+
+Maybe.prototype[FL.chain] = function(f) {
+  return this.isJust ? f(this.value) : Maybe.Nothing;
 };
 
 Maybe.prototype[FL.alt] = function(other) {
