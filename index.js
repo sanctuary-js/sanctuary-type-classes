@@ -196,14 +196,25 @@
     return _funcPath(false, path, implementations);
   }
 
+  //  functionName :: Function -> String
+  var functionName = 'name' in function f() {} ?
+    function functionName(f) { return f.name; } :
+    /* istanbul ignore next */
+    function functionName(f) {
+      var match = /function (\w*)/.exec(f);
+      return match == null ? '' : match[1];
+    };
+
   //  $ :: (String, Array TypeClass, StrMap (Array Location)) -> TypeClass
   function $(_name, dependencies, requirements) {
     function getBoundMethod(_name) {
       var name = 'fantasy-land/' + _name;
       return requirements[_name] === Constructor ?
         function(typeRep) {
-          return funcPath([name], typeRep) ||
-                 implPath([/function (\w*)/.exec(typeRep)[1], name]);
+          var f = funcPath([name], typeRep);
+          return f == null && typeof typeRep === 'function' ?
+            implPath([functionName(typeRep), name]) :
+            f;
         } :
         function(x) {
           var isPrototype = x != null &&

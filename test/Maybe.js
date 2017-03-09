@@ -19,9 +19,9 @@ Maybe['@@type'] = 'sanctuary-type-classes/Maybe';
 
 Maybe.Nothing = new _Maybe('Nothing');
 
-Maybe.Just = function(x) { return new _Maybe('Just', x); };
+Maybe[FL.of] = Maybe.Just = function(x) { return new _Maybe('Just', x); };
 
-Maybe[FL.zero] = function() { return Maybe.Nothing; };
+Maybe[FL.empty] = Maybe[FL.zero] = function() { return Maybe.Nothing; };
 
 Maybe.prototype[FL.equals] = function(other) {
   return this.isNothing ? other.isNothing
