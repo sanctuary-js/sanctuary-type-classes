@@ -546,6 +546,7 @@ test('empty', function() {
   eq(Z.empty(Array), []);
   eq(Z.empty(Object), {});
   eq(Z.empty(List), Nil);
+  eq(Z.empty(Maybe), Nothing);
 });
 
 test('map', function() {
@@ -647,6 +648,7 @@ test('of', function() {
   eq(Z.of(Function, 42)(null), 42);
   eq(Z.of(Identity, 42), Identity(42));
   eq(Z.of(List, 42), Cons(42, Nil));
+  eq(Z.of(Maybe, 42), Just(42));
 });
 
 test('chain', function() {
