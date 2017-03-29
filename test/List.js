@@ -35,6 +35,8 @@ List[FL.empty] = function() { return Nil; };
 
 List[FL.of] = function(x) { return Cons(x, Nil); };
 
+List[FL.zero] = List[FL.empty];
+
 List.prototype[FL.equals] = function(other) {
   return this.tag === 'Nil' ?
     other.tag === 'Nil' :
@@ -66,6 +68,8 @@ List.prototype[FL.chain] = function(f) {
     Nil :
     Z.concat(f(this.head), Z.chain(f, this.tail));
 };
+
+List.prototype[FL.alt] = List.prototype[FL.concat];
 
 List.prototype[FL.reduce] = function(f, x) {
   return this.tag === 'Nil' ?
