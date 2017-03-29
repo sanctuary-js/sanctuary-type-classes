@@ -342,6 +342,16 @@ test('Comonad', function() {
   eq(Z.Comonad.test(Identity(0)), true);
 });
 
+test('Contravariant', function() {
+  eq(type(Z.Contravariant), 'sanctuary-type-classes/TypeClass');
+  eq(Z.Contravariant.name, 'sanctuary-type-classes/Contravariant');
+  eq(Z.Contravariant.test(null), false);
+  eq(Z.Contravariant.test(''), false);
+  eq(Z.Contravariant.test([]), false);
+  eq(Z.Contravariant.test({}), false);
+  eq(Z.Contravariant.test(Math.abs), true);
+});
+
 test('toString', function() {
   eq(Z.toString.length, 1);
   eq(Z.toString.name, 'toString');
