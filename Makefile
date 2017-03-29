@@ -3,6 +3,7 @@ ESLINT = node_modules/.bin/eslint --config node_modules/sanctuary-style/eslint-e
 ISTANBUL = node_modules/.bin/istanbul
 NPM = npm
 PREDOCTEST = scripts/predoctest
+REMARK = node_modules/.bin/remark --frail --no-stdout
 REMEMBER_BOWER = node_modules/.bin/remember-bower
 TRANSCRIBE = node_modules/.bin/transcribe
 XYZ = node_modules/.bin/xyz --repo git@github.com:sanctuary-js/sanctuary-type-classes.git --script scripts/prepublish
@@ -26,9 +27,13 @@ README.md: index.js.tmp
 	  -- '$<' \
 	| LC_ALL=C sed 's/<h4 name="\(.*\)#\(.*\)">\(.*\)\1#\2/<h4 name="\1.prototype.\2">\3\1#\2/' >'$@'
 
+# BSD uses [[:<:]] whereas GNU uses \<. The former produces an "Invalid
+# character class name" error on GNU; \< should be used if this occurs.
+SED_WORD_START = $(shell printf '' | sed 's,[[:<:]],,' && printf '[[:<:]]' || printf '\<')
+
 .INTERMEDIATE: index.js.tmp
 index.js.tmp: index.js
-	sed -e '/^[/][/]:/ s,\([[:<:]][[:alnum:]]*\),<a href="#\1">\1</a>,g' -e 's,^//:,//.,' '$<' >'$@'
+	sed -e '/^[/][/]:/ s,\($(SED_WORD_START)[[:alnum:]]*\),<a href="#\1">\1</a>,g' -e 's,^//:,//.,' '$<' >'$@'
 
 
 .PHONY: doctest
@@ -63,13 +68,13 @@ lint:
 	  --rule 'max-len: [off]' \
 	  -- $(TEST)
 	$(REMEMBER_BOWER) $(shell pwd)
-	@echo 'Checking for missing link definitions...'
-	grep -o '\[[^]]*\]\[[^]]*\]' index.js \
-	| sort -u \
-	| sed -e 's:\[\(.*\)\]\[\]:\1:' \
-	      -e 's:\[.*\]\[\(.*\)\]:\1:' \
-	      -e '/0-9/d' \
-	| xargs -I '{}' sh -c "grep '^//[.] \[{}\]: ' index.js"
+	rm -f README.md
+	VERSION=0.0.0 make README.md
+	$(REMARK) \
+	  --use remark-lint-no-undefined-references \
+	  --use remark-lint-no-unused-definitions \
+	  -- README.md
+	git checkout README.md
 
 
 .PHONY: release-major release-minor release-patch
