@@ -186,12 +186,21 @@ test('Setoid', function() {
   eq(Z.Setoid.test({'@@type': 'my-package/Quux'}), true);
 });
 
+test('Ord', function() {
+  eq(type(Z.Ord), 'sanctuary-type-classes/TypeClass');
+  eq(Z.Ord.name, 'sanctuary-type-classes/Ord');
+  eq(Z.Ord.test(null), true);
+  eq(Z.Ord.test(''), true);
+  eq(Z.Ord.test([]), true);
+});
+
 test('Semigroup', function() {
   eq(type(Z.Semigroup), 'sanctuary-type-classes/TypeClass');
   eq(Z.Semigroup.name, 'sanctuary-type-classes/Semigroup');
   eq(Z.Semigroup.test(null), false);
   eq(Z.Semigroup.test(''), true);
   eq(Z.Semigroup.test([]), true);
+  eq(Z.Semigroup.test(Math.abs), true);
   eq(Z.Semigroup.test({}), true);
 });
 
@@ -210,6 +219,7 @@ test('Functor', function() {
   eq(Z.Functor.test(null), false);
   eq(Z.Functor.test(''), false);
   eq(Z.Functor.test([]), true);
+  eq(Z.Functor.test(Math.abs), true);
   eq(Z.Functor.test({}), true);
 });
 
@@ -239,6 +249,7 @@ test('Apply', function() {
   eq(Z.Apply.test(null), false);
   eq(Z.Apply.test(''), false);
   eq(Z.Apply.test([]), true);
+  eq(Z.Apply.test(Math.abs), true);
   eq(Z.Apply.test({}), true);
 });
 
@@ -248,6 +259,7 @@ test('Applicative', function() {
   eq(Z.Applicative.test(null), false);
   eq(Z.Applicative.test(''), false);
   eq(Z.Applicative.test([]), true);
+  eq(Z.Applicative.test(Math.abs), true);
   eq(Z.Applicative.test({}), false);
 });
 
@@ -257,6 +269,7 @@ test('Chain', function() {
   eq(Z.Chain.test(null), false);
   eq(Z.Chain.test(''), false);
   eq(Z.Chain.test([]), true);
+  eq(Z.Chain.test(Math.abs), true);
   eq(Z.Chain.test({}), false);
 });
 
@@ -275,6 +288,7 @@ test('Monad', function() {
   eq(Z.Monad.test(null), false);
   eq(Z.Monad.test(''), false);
   eq(Z.Monad.test([]), true);
+  eq(Z.Monad.test(Math.abs), true);
   eq(Z.Monad.test({}), false);
 });
 
@@ -284,6 +298,7 @@ test('Alt', function() {
   eq(Z.Alt.test(null), false);
   eq(Z.Alt.test(''), false);
   eq(Z.Alt.test([]), true);
+  eq(Z.Alt.test(function(_) { return []; }), true);
   eq(Z.Alt.test({}), true);
 });
 
@@ -432,8 +447,8 @@ test('equals', function() {
   eq(Z.equals(true, new Boolean(true)), false);
   eq(Z.equals(new Boolean(true), true), false);
   eq(Z.equals(0, 0), true);
-  eq(Z.equals(0, -0), false);
-  eq(Z.equals(-0, 0), false);
+  eq(Z.equals(0, -0), true);
+  eq(Z.equals(-0, 0), true);
   eq(Z.equals(-0, -0), true);
   eq(Z.equals(NaN, NaN), true);
   eq(Z.equals(Infinity, Infinity), true);
@@ -443,14 +458,10 @@ test('equals', function() {
   eq(Z.equals(NaN, Math.PI), false);
   eq(Z.equals(Math.PI, NaN), false);
   eq(Z.equals(new Number(0), new Number(0)), true);
-  eq(Z.equals(new Number(0), new Number(-0)), false);
-  eq(Z.equals(new Number(-0), new Number(0)), false);
+  eq(Z.equals(new Number(0), new Number(-0)), true);
+  eq(Z.equals(new Number(-0), new Number(0)), true);
   eq(Z.equals(new Number(-0), new Number(-0)), true);
   eq(Z.equals(new Number(NaN), new Number(NaN)), true);
-  eq(Z.equals(new Number(Infinity), new Number(Infinity)), true);
-  eq(Z.equals(new Number(Infinity), new Number(-Infinity)), false);
-  eq(Z.equals(new Number(-Infinity), new Number(Infinity)), false);
-  eq(Z.equals(new Number(-Infinity), new Number(-Infinity)), true);
   eq(Z.equals(new Number(NaN), new Number(Math.PI)), false);
   eq(Z.equals(new Number(Math.PI), new Number(NaN)), false);
   eq(Z.equals(42, new Number(42)), false);
@@ -483,7 +494,7 @@ test('equals', function() {
   eq(Z.equals([1, 2, 3], [1, 2]), false);
   eq(Z.equals([1, 2], [1, 2, 3]), false);
   eq(Z.equals([1, 2], [2, 1]), false);
-  eq(Z.equals([0], [-0]), false);
+  eq(Z.equals([0], [-0]), true);
   eq(Z.equals([NaN], [NaN]), true);
   eq(Z.equals(ones, ones), true);
   eq(Z.equals(ones, [1, [1, [1, [1, []]]]]), false);
@@ -496,7 +507,7 @@ test('equals', function() {
   eq(Z.equals(args(1, 2, 3), args(1, 2)), false);
   eq(Z.equals(args(1, 2), args(1, 2, 3)), false);
   eq(Z.equals(args(1, 2), args(2, 1)), false);
-  eq(Z.equals(args(0), args(-0)), false);
+  eq(Z.equals(args(0), args(-0)), true);
   eq(Z.equals(args(NaN), args(NaN)), true);
   eq(Z.equals(new Error('abc'), new Error('abc')), true);
   eq(Z.equals(new Error('abc'), new Error('xyz')), false);
@@ -509,7 +520,7 @@ test('equals', function() {
   eq(Z.equals({x: 1, y: 2, z: 3}, {x: 1, y: 2}), false);
   eq(Z.equals({x: 1, y: 2}, {x: 1, y: 2, z: 3}), false);
   eq(Z.equals({x: 1, y: 2}, {x: 2, y: 1}), false);
-  eq(Z.equals({x: 0}, {x: -0}), false);
+  eq(Z.equals({x: 0}, {x: -0}), true);
   eq(Z.equals({x: NaN}, {x: NaN}), true);
   eq(Z.equals(node1, node1), true);
   eq(Z.equals(node2, node2), true);
@@ -522,6 +533,78 @@ test('equals', function() {
   eq(Z.equals({'@@type': 'my-package/Quux'}, {'@@type': 'my-package/Quux'}), true);
   eq(Z.equals(Nothing.constructor, Maybe), true);
   eq(Z.equals(Just(0).constructor, Maybe), true);
+});
+
+test('lte', function() {
+  eq(Z.lte.length, 2);
+  eq(Z.lte.name, 'lte');
+
+  eq(Z.lte(null, null), true);
+  eq(Z.lte(null, undefined), false);
+  eq(Z.lte(undefined, null), false);
+  eq(Z.lte(undefined, undefined), true);
+  eq(Z.lte(false, false), true);
+  eq(Z.lte(false, true), true);
+  eq(Z.lte(true, false), false);
+  eq(Z.lte(true, true), true);
+  eq(Z.lte(new Boolean(false), new Boolean(false)), true);
+  eq(Z.lte(new Boolean(false), new Boolean(true)), true);
+  eq(Z.lte(new Boolean(true), new Boolean(false)), false);
+  eq(Z.lte(new Boolean(true), new Boolean(true)), true);
+  eq(Z.lte(false, new Boolean(false)), false);
+  eq(Z.lte(new Boolean(false), false), false);
+  eq(Z.lte(true, new Boolean(true)), false);
+  eq(Z.lte(new Boolean(true), true), false);
+  eq(Z.lte(0, 0), true);
+  eq(Z.lte(0, -0), true);
+  eq(Z.lte(-0, 0), true);
+  eq(Z.lte(-0, -0), true);
+  eq(Z.lte(NaN, NaN), true);
+  eq(Z.lte(NaN, Math.PI), false);
+  eq(Z.lte(Math.PI, NaN), false);
+  eq(Z.lte(new Number(0), new Number(0)), true);
+  eq(Z.lte(new Number(0), new Number(-0)), true);
+  eq(Z.lte(new Number(-0), new Number(0)), true);
+  eq(Z.lte(new Number(-0), new Number(-0)), true);
+  eq(Z.lte(new Number(NaN), new Number(NaN)), true);
+  eq(Z.lte(new Number(NaN), new Number(Math.PI)), false);
+  eq(Z.lte(new Number(Math.PI), new Number(NaN)), false);
+  eq(Z.lte(42, new Number(42)), false);
+  eq(Z.lte(new Number(42), 42), false);
+  eq(Z.lte(new Date(0), new Date(0)), true);
+  eq(Z.lte(new Date(0), new Date(1)), true);
+  eq(Z.lte(new Date(1), new Date(0)), false);
+  eq(Z.lte(new Date(1), new Date(1)), true);
+  eq(Z.lte(new Date(NaN), new Date(NaN)), true);
+  eq(Z.lte('', ''), true);
+  eq(Z.lte('abc', 'abc'), true);
+  eq(Z.lte('abc', 'xyz'), true);
+  eq(Z.lte('xyz', 'abc'), false);
+  eq(Z.lte(new String(''), new String('')), true);
+  eq(Z.lte(new String('abc'), new String('abc')), true);
+  eq(Z.lte(new String('abc'), new String('xyz')), true);
+  eq(Z.lte(new String('xyz'), new String('abc')), false);
+  eq(Z.lte('abc', new String('abc')), false);
+  eq(Z.lte(new String('abc'), 'abc'), false);
+  eq(Z.lte([], []), true);
+  eq(Z.lte([1, 2], [1, 2]), true);
+  eq(Z.lte([1, 2, 3], [1, 2]), false);
+  eq(Z.lte([1, 2], [1, 2, 3]), true);
+  eq(Z.lte([1, 2], [2, 1]), true);
+  eq(Z.lte([0], [-0]), true);
+  eq(Z.lte([NaN], [NaN]), true);
+  eq(Z.lte(ones, ones), true);
+  eq(Z.lte(args(), args()), true);
+  eq(Z.lte(args(1, 2), args(1, 2)), true);
+  eq(Z.lte(args(1, 2, 3), args(1, 2)), false);
+  eq(Z.lte(args(1, 2), args(1, 2, 3)), true);
+  eq(Z.lte(args(1, 2), args(2, 1)), true);
+  eq(Z.lte(args(0), args(-0)), true);
+  eq(Z.lte(args(NaN), args(NaN)), true);
+  eq(Z.lte(Identity(Identity(Identity(0))), Identity(Identity(Identity(0)))), true);
+  eq(Z.lte(Identity(Identity(Identity(0))), Identity(Identity(Identity(1)))), true);
+  eq(Z.lte(Identity(Identity(Identity(1))), Identity(Identity(Identity(0)))), false);
+  eq(Z.lte(Identity(Identity(Identity(1))), Identity(Identity(Identity(1)))), true);
 });
 
 test('concat', function() {
@@ -541,6 +624,9 @@ test('concat', function() {
   eq(Z.concat({x: 1, y: 2}, {}), {x: 1, y: 2});
   eq(Z.concat({x: 1, y: 2}, {y: 3, z: 4}), {x: 1, y: 3, z: 4});
   eq(Z.concat(Identity(''), Identity('')), Identity(''));
+  eq(Z.concat(function(x) { return [x + 1]; },
+              function(x) { return [x]; })(2),
+     (function(x) { return [x + 1, x]; }(2)));
   eq(Z.concat(Identity(''), Identity('abc')), Identity('abc'));
   eq(Z.concat(Identity('abc'), Identity('')), Identity('abc'));
   eq(Z.concat(Identity('abc'), Identity('def')), Identity('abcdef'));
@@ -756,6 +842,9 @@ test('alt', function() {
   eq(Z.alt(Nothing, Just(1)), Just(1));
   eq(Z.alt(Just(2), Nothing), Just(2));
   eq(Z.alt(Just(3), Just(4)), Just(3));
+  eq(Z.concat(function(x) { return [x + 1]; },
+              function(x) { return [x]; })(2),
+     (function(x) { return [x + 1, x]; }(2)));
 });
 
 test('zero', function() {
