@@ -14,7 +14,7 @@
     "sanctuary-type-identifiers": "1.0.x"
   },
   "devDependencies": {
-    "doctest": "0.10.x",
+    "doctest": "0.12.x",
     "eslint": "3.19.x",
     "fantasy-land": "3.1.0",
     "istanbul": "0.4.x",
