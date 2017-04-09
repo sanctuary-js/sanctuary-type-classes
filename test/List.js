@@ -45,6 +45,16 @@ List.prototype[FL.equals] = function(other) {
       Z.equals(other.tail, this.tail);
 };
 
+List.prototype[FL.lte] = function(other) {
+  if (this.tag === 'Nil') {
+    return true;
+  }
+
+  return Z.equals(other.head, this.head)
+    ? Z.lte(this.tail, other.tail)
+    : Z.lte(this.head, other.head);
+};
+
 List.prototype[FL.concat] = function(other) {
   return this.tag === 'Nil' ?
     other :
