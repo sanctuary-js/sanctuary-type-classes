@@ -16,7 +16,11 @@ Identity['@@type'] = 'sanctuary-type-classes/Identity';
 Identity[FL.of] = Identity;
 
 Identity.prototype[FL.equals] = function(other) {
-  return Z.equals(other.value, this.value);
+  return Z.equals(this.value, other.value);
+};
+
+Identity.prototype[FL.lte] = function(other) {
+  return Z.lte(this.value, other.value);
 };
 
 Identity.prototype[FL.concat] = function(other) {

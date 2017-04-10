@@ -33,13 +33,13 @@
 //. <pre>
 //:  Setoid   Semigroup   Foldable        Functor      Contravariant
 //: (equals)   (concat)   (reduce)         (map)        (contramap)
-//:               |           \         / | | | | \
-//:               |            \       /  | | | |  \
-//:               |             \     /   | | | |   \
-//:               |              \   /    | | | |    \
-//:               |               \ /     | | | |     \
-//:            Monoid         Traversable | | | |      \
-//:            (empty)        (traverse)  / | | \       \
+//:     |         |           \         / | | | | \
+//:     |         |            \       /  | | | |  \
+//:     |         |             \     /   | | | |   \
+//:     |         |              \   /    | | | |    \
+//:     |         |               \ /     | | | |     \
+//:    Ord     Monoid         Traversable | | | |      \
+//:   (lte)    (empty)        (traverse)  / | | \       \
 //:                                      /  | |  \       \
 //:                                     /   / \   \       \
 //:                             Profunctor /   \ Bifunctor \
@@ -110,6 +110,11 @@
     return function(y) {
       return [x, y];
     };
+  }
+
+  //  sameType :: (a, b) -> Boolean
+  function sameType(x, y) {
+    return typeof x === typeof y && type(x) === type(y);
   }
 
   //  type Iteration a = { value :: a, done :: Boolean }
@@ -254,6 +259,19 @@
   //. true
   //. ```
   var Setoid = $('Setoid', [], {equals: Value});
+
+  //# Ord :: TypeClass
+  //.
+  //. `TypeClass` value for [Ord][].
+  //.
+  //. ```javascript
+  //. > Ord.test(0)
+  //. true
+  //.
+  //. > Ord.test(Math.sqrt)
+  //. false
+  //. ```
+  var Ord = $('Ord', [Setoid], {lte: Value});
 
   //# Semigroup :: TypeClass
   //.
@@ -499,6 +517,11 @@
     return true;
   }
 
+  //  Null$prototype$lte :: Null ~> Null -> Boolean
+  function Null$prototype$lte(other) {
+    return true;
+  }
+
   //  Undefined$prototype$toString :: Undefined ~> () -> String
   function Undefined$prototype$toString() {
     return 'undefined';
@@ -506,6 +529,11 @@
 
   //  Undefined$prototype$equals :: Undefined ~> Undefined -> Boolean
   function Undefined$prototype$equals(other) {
+    return true;
+  }
+
+  //  Undefined$prototype$lte :: Undefined ~> Undefined -> Boolean
+  function Undefined$prototype$lte(other) {
     return true;
   }
 
@@ -523,6 +551,13 @@
       this === other;
   }
 
+  //  Boolean$prototype$lte :: Boolean ~> Boolean -> Boolean
+  function Boolean$prototype$lte(other) {
+    return typeof this === 'object' ?
+      lte(this.valueOf(), other.valueOf()) :
+      this === false || other === true;
+  }
+
   //  Number$prototype$toString :: Number ~> () -> String
   function Number$prototype$toString() {
     return typeof this === 'object' ?
@@ -534,7 +569,14 @@
   function Number$prototype$equals(other) {
     return typeof this === 'object' ?
       equals(this.valueOf(), other.valueOf()) :
-      isNaN(this) && isNaN(other) || this === other && 1 / this === 1 / other;
+      isNaN(this) && isNaN(other) || this === other;
+  }
+
+  //  Number$prototype$lte :: Number ~> Number -> Boolean
+  function Number$prototype$lte(other) {
+    return typeof this === 'object' ?
+      lte(this.valueOf(), other.valueOf()) :
+      isNaN(this) && isNaN(other) || this <= other;
   }
 
   //  Date$prototype$toString :: Date ~> () -> String
@@ -546,6 +588,11 @@
   //  Date$prototype$equals :: Date ~> Date -> Boolean
   function Date$prototype$equals(other) {
     return equals(this.valueOf(), other.valueOf());
+  }
+
+  //  Date$prototype$lte :: Date ~> Date -> Boolean
+  function Date$prototype$lte(other) {
+    return lte(this.valueOf(), other.valueOf());
   }
 
   //  RegExp$prototype$equals :: RegExp ~> RegExp -> Boolean
@@ -583,6 +630,13 @@
     return typeof this === 'object' ?
       equals(this.valueOf(), other.valueOf()) :
       this === other;
+  }
+
+  //  String$prototype$lte :: String ~> String -> Boolean
+  function String$prototype$lte(other) {
+    return typeof this === 'object' ?
+      lte(this.valueOf(), other.valueOf()) :
+      this <= other;
   }
 
   //  String$prototype$concat :: String ~> String -> String
@@ -640,6 +694,15 @@
       if (!equals(this[idx], other[idx])) return false;
     }
     return true;
+  }
+
+  //  Array$prototype$lte :: Array a ~> Array a -> Boolean
+  function Array$prototype$lte(other) {
+    for (var idx = 0; true; idx += 1) {
+      if (idx === this.length) return true;
+      if (idx === other.length) return false;
+      if (!equals(this[idx], other[idx])) return lte(this[idx], other[idx]);
+    }
   }
 
   //  Array$prototype$concat :: Array a ~> Array a -> Array a
@@ -711,6 +774,11 @@
     return Array$prototype$equals.call(this, other);
   }
 
+  //  Arguments$prototype$lte :: Arguments ~> Arguments -> Boolean
+  function Arguments$prototype$lte(other) {
+    return Array$prototype$lte.call(this, other);
+  }
+
   //  Error$prototype$toString :: Error ~> () -> String
   function Error$prototype$toString() {
     return 'new ' + this.name + '(' + toString(this.message) + ')';
@@ -749,6 +817,21 @@
     var keys = Object.keys(this).sort();
     return equals(keys, Object.keys(other).sort()) &&
            keys.every(function(k) { return equals(self[k], other[k]); });
+  }
+
+  //  Object$prototype$lte :: StrMap a ~> StrMap a -> Boolean
+  function Object$prototype$lte(other) {
+    var theseKeys = Object.keys(this).sort();
+    var otherKeys = Object.keys(other).sort();
+    while (true) {
+      if (theseKeys.length === 0) return true;
+      if (otherKeys.length === 0) return false;
+      var k = theseKeys.shift();
+      var z = otherKeys.shift();
+      if (k < z) return true;
+      if (k > z) return false;
+      if (!equals(this[k], other[k])) return lte(this[k], other[k]);
+    }
   }
 
   //  Object$prototype$concat :: StrMap a ~> StrMap a -> StrMap a
@@ -839,31 +922,36 @@
     Null: {
       prototype: {
         toString:                   Null$prototype$toString,
-        'fantasy-land/equals':      Null$prototype$equals
+        'fantasy-land/equals':      Null$prototype$equals,
+        'fantasy-land/lte':         Null$prototype$lte
       }
     },
     Undefined: {
       prototype: {
         toString:                   Undefined$prototype$toString,
-        'fantasy-land/equals':      Undefined$prototype$equals
+        'fantasy-land/equals':      Undefined$prototype$equals,
+        'fantasy-land/lte':         Undefined$prototype$lte
       }
     },
     Boolean: {
       prototype: {
         toString:                   Boolean$prototype$toString,
-        'fantasy-land/equals':      Boolean$prototype$equals
+        'fantasy-land/equals':      Boolean$prototype$equals,
+        'fantasy-land/lte':         Boolean$prototype$lte
       }
     },
     Number: {
       prototype: {
         toString:                   Number$prototype$toString,
-        'fantasy-land/equals':      Number$prototype$equals
+        'fantasy-land/equals':      Number$prototype$equals,
+        'fantasy-land/lte':         Number$prototype$lte
       }
     },
     Date: {
       prototype: {
         toString:                   Date$prototype$toString,
-        'fantasy-land/equals':      Date$prototype$equals
+        'fantasy-land/equals':      Date$prototype$equals,
+        'fantasy-land/lte':         Date$prototype$lte
       }
     },
     RegExp: {
@@ -876,6 +964,7 @@
       prototype: {
         toString:                   String$prototype$toString,
         'fantasy-land/equals':      String$prototype$equals,
+        'fantasy-land/lte':         String$prototype$lte,
         'fantasy-land/concat':      String$prototype$concat
       }
     },
@@ -887,6 +976,7 @@
       prototype: {
         toString:                   Array$prototype$toString,
         'fantasy-land/equals':      Array$prototype$equals,
+        'fantasy-land/lte':         Array$prototype$lte,
         'fantasy-land/concat':      Array$prototype$concat,
         'fantasy-land/map':         Array$prototype$map,
         'fantasy-land/ap':          Array$prototype$ap,
@@ -900,7 +990,8 @@
     Arguments: {
       prototype: {
         toString:                   Arguments$prototype$toString,
-        'fantasy-land/equals':      Arguments$prototype$equals
+        'fantasy-land/equals':      Arguments$prototype$equals,
+        'fantasy-land/lte':         Arguments$prototype$lte
       }
     },
     Error: {
@@ -915,6 +1006,7 @@
       prototype: {
         toString:                   Object$prototype$toString,
         'fantasy-land/equals':      Object$prototype$equals,
+        'fantasy-land/lte':         Object$prototype$lte,
         'fantasy-land/concat':      Object$prototype$concat,
         'fantasy-land/map':         Object$prototype$map,
         'fantasy-land/ap':          Object$prototype$ap,
@@ -1002,7 +1094,7 @@
   //.
   //. ```javascript
   //. > equals(0, -0)
-  //. false
+  //. true
   //.
   //. > equals(NaN, NaN)
   //. true
@@ -1018,7 +1110,7 @@
     var $pairs = [];
 
     return function equals(x, y) {
-      if (typeof x !== typeof y || type(x) !== type(y)) return false;
+      if (!sameType(x, y)) return false;
 
       //  This algorithm for comparing circular data structures was
       //  suggested in <http://stackoverflow.com/a/40622794/312785>.
@@ -1034,6 +1126,125 @@
       }
     };
   }());
+
+  //# lt :: (a, b) -> Boolean
+  //.
+  //. Returns `true` if its arguments are of the same type and the first is
+  //. less than the second according to the type's [`fantasy-land/lte`][]
+  //. method; `false` otherwise.
+  //.
+  //. This function is derived from [`lte`](#lte).
+  //.
+  //. See also [`gt`](#gt) and [`gte`](#gte).
+  //.
+  //. ```javascript
+  //. > lt(0, 0)
+  //. false
+  //.
+  //. > lt(0, 1)
+  //. true
+  //.
+  //. > lt(1, 0)
+  //. false
+  //. ```
+  function lt(x, y) {
+    return sameType(x, y) && !lte(y, x);
+  }
+
+  //# lte :: (a, b) -> Boolean
+  //.
+  //. Returns `true` if its arguments are of the same type and the first
+  //. is less than or equal to the second according to the type's
+  //. [`fantasy-land/lte`][] method; `false` otherwise.
+  //.
+  //. `fantasy-land/lte` implementations are provided for the following
+  //. built-in types: Null, Undefined, Boolean, Number, Date, String, Array,
+  //. Arguments, and Object.
+  //.
+  //. The algorithm supports circular data structures in the same manner as
+  //. [`equals`](#equals).
+  //.
+  //. See also [`lt`](#lt), [`gt`](#gt), and [`gte`](#gte).
+  //.
+  //. ```javascript
+  //. > lte(0, 0)
+  //. true
+  //.
+  //. > lte(0, 1)
+  //. true
+  //.
+  //. > lte(1, 0)
+  //. false
+  //. ```
+  var lte = (function() {
+    //  $pairs :: Array (Pair Any Any)
+    var $pairs = [];
+
+    return function lte(x, y) {
+      if (!sameType(x, y)) return false;
+
+      //  This algorithm for comparing circular data structures was
+      //  suggested in <http://stackoverflow.com/a/40622794/312785>.
+      if ($pairs.some(function(p) { return p[0] === x && p[1] === y; })) {
+        return equals(x, y);
+      }
+
+      $pairs.push([x, y]);
+      try {
+        return Ord.test(x) && Ord.test(y) && Ord.methods.lte(x)(y);
+      } finally {
+        $pairs.pop();
+      }
+    };
+  }());
+
+  //# gt :: (a, b) -> Boolean
+  //.
+  //. Returns `true` if its arguments are of the same type and the first is
+  //. greater than the second according to the type's [`fantasy-land/lte`][]
+  //. method; `false` otherwise.
+  //.
+  //. This function is derived from [`lte`](#lte).
+  //.
+  //. See also [`lt`](#lt) and [`gte`](#gte).
+  //.
+  //. ```javascript
+  //. > gt(0, 0)
+  //. false
+  //.
+  //. > gt(0, 1)
+  //. false
+  //.
+  //. > gt(1, 0)
+  //. true
+  //. ```
+  function gt(x, y) {
+    return lt(y, x);
+  }
+
+  //# gte :: (a, b) -> Boolean
+  //.
+  //. Returns `true` if its arguments are of the same type and the first
+  //. is greater than or equal to the second according to the type's
+  //. [`fantasy-land/lte`][] method; `false` otherwise.
+  //.
+  //. This function is derived from [`lte`](#lte).
+  //.
+  //. See also [`lt`](#lt) and [`gt`](#gt).
+  //.
+  //. ```javascript
+  //. > gte(0, 0)
+  //. true
+  //.
+  //. > gte(0, 1)
+  //. false
+  //.
+  //. > gte(1, 0)
+  //. true
+  //. ```
+  function gte(x, y) {
+    return lte(y, x);
+  }
 
   //# concat :: Semigroup a => (a, a) -> a
   //.
@@ -1528,6 +1739,7 @@
   return {
     TypeClass: TypeClass,
     Setoid: Setoid,
+    Ord: Ord,
     Semigroup: Semigroup,
     Monoid: Monoid,
     Functor: Functor,
@@ -1548,6 +1760,10 @@
     Contravariant: Contravariant,
     toString: toString,
     equals: equals,
+    lt: lt,
+    lte: lte,
+    gt: gt,
+    gte: gte,
     concat: concat,
     empty: empty,
     map: map,
@@ -1591,6 +1807,7 @@
 //. [Functor]:                  https://github.com/fantasyland/fantasy-land#functor
 //. [Monad]:                    https://github.com/fantasyland/fantasy-land#monad
 //. [Monoid]:                   https://github.com/fantasyland/fantasy-land#monoid
+//. [Ord]:                      https://github.com/fantasyland/fantasy-land#ord
 //. [Plus]:                     https://github.com/fantasyland/fantasy-land#plus
 //. [Profunctor]:               https://github.com/fantasyland/fantasy-land#profunctor
 //. [Semigroup]:                https://github.com/fantasyland/fantasy-land#semigroup
@@ -1607,6 +1824,7 @@
 //. [`fantasy-land/equals`]:    https://github.com/fantasyland/fantasy-land#equals-method
 //. [`fantasy-land/extend`]:    https://github.com/fantasyland/fantasy-land#extend-method
 //. [`fantasy-land/extract`]:   https://github.com/fantasyland/fantasy-land#extract-method
+//. [`fantasy-land/lte`]:       https://github.com/fantasyland/fantasy-land#lte-method
 //. [`fantasy-land/map`]:       https://github.com/fantasyland/fantasy-land#map-method
 //. [`fantasy-land/of`]:        https://github.com/fantasyland/fantasy-land#of-method
 //. [`fantasy-land/promap`]:    https://github.com/fantasyland/fantasy-land#promap-method
