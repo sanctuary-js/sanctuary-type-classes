@@ -518,7 +518,9 @@
 
   //  Boolean$prototype$equals :: Boolean ~> Boolean -> Boolean
   function Boolean$prototype$equals(other) {
-    return typeof other === typeof this && other.valueOf() === this.valueOf();
+    return typeof this === 'object' ?
+      equals(this.valueOf(), other.valueOf()) :
+      this === other;
   }
 
   //  Number$prototype$toString :: Number ~> () -> String
@@ -530,11 +532,9 @@
 
   //  Number$prototype$equals :: Number ~> Number -> Boolean
   function Number$prototype$equals(other) {
-    return typeof other === 'object' ?
-      typeof this === 'object' &&
-        equals(this.valueOf(), other.valueOf()) :
-      isNaN(other) && isNaN(this) ||
-        other === this && 1 / other === 1 / this;
+    return typeof this === 'object' ?
+      equals(this.valueOf(), other.valueOf()) :
+      isNaN(this) && isNaN(other) || this === other && 1 / this === 1 / other;
   }
 
   //  Date$prototype$toString :: Date ~> () -> String
@@ -580,7 +580,9 @@
 
   //  String$prototype$equals :: String ~> String -> Boolean
   function String$prototype$equals(other) {
-    return typeof other === typeof this && other.valueOf() === this.valueOf();
+    return typeof this === 'object' ?
+      equals(this.valueOf(), other.valueOf()) :
+      this === other;
   }
 
   //  String$prototype$concat :: String ~> String -> String
@@ -1016,9 +1018,7 @@
     var $pairs = [];
 
     return function equals(x, y) {
-      if (type(x) !== type(y)) {
-        return false;
-      }
+      if (typeof x !== typeof y || type(x) !== type(y)) return false;
 
       //  This algorithm for comparing circular data structures was
       //  suggested in <http://stackoverflow.com/a/40622794/312785>.
