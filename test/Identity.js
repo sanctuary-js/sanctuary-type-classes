@@ -19,6 +19,10 @@ Identity.prototype[FL.equals] = function(other) {
   return Z.equals(other.value, this.value);
 };
 
+Identity.prototype[FL.lte] = function(other) {
+  return Z.lte(this.value, other.value);
+};
+
 Identity.prototype[FL.concat] = function(other) {
   return Identity(Z.concat(this.value, other.value));
 };

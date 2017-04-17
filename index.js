@@ -255,6 +255,16 @@
   //. ```
   var Setoid = $('Setoid', [], {equals: Value});
 
+  //# Ord :: TypeClass
+  //.
+  //. `TypeClass` value for [Ord][].
+  //.
+  //. ```javascript
+  //. > Ord.test(null)
+  //. true
+  //. ```
+  var Ord = $('Ord', [Setoid], {lte: Value});
+
   //# Semigroup :: TypeClass
   //.
   //. `TypeClass` value for [Semigroup][].
@@ -499,6 +509,11 @@
     return true;
   }
 
+  //  Null$prototype$lte :: Null ~> Null -> Boolean
+  function Null$prototype$lte(other) {
+    return true;
+  }
+
   //  Undefined$prototype$toString :: Undefined ~> () -> String
   function Undefined$prototype$toString() {
     return 'undefined';
@@ -506,6 +521,11 @@
 
   //  Undefined$prototype$equals :: Undefined ~> Undefined -> Boolean
   function Undefined$prototype$equals(other) {
+    return true;
+  }
+
+  //  Undefined$prototype$lte :: Undefined ~> Undefined -> Boolean
+  function Undefined$prototype$lte(other) {
     return true;
   }
 
@@ -523,6 +543,12 @@
       this === other;
   }
 
+  //  Boolean$prototype$lte :: Boolean ~> Boolean -> Boolean
+  function Boolean$prototype$lte(other) {
+    return typeof other === typeof this &&
+      (!this.valueOf() || other.valueOf());
+  }
+
   //  Number$prototype$toString :: Number ~> () -> String
   function Number$prototype$toString() {
     return typeof this === 'object' ?
@@ -532,9 +558,17 @@
 
   //  Number$prototype$equals :: Number ~> Number -> Boolean
   function Number$prototype$equals(other) {
-    return typeof this === 'object' ?
-      equals(this.valueOf(), other.valueOf()) :
-      isNaN(this) && isNaN(other) || this === other && 1 / this === 1 / other;
+    return typeof other === 'object' ?
+      typeof this === 'object' &&
+        equals(this.valueOf(), other.valueOf()) :
+      isNaN(other) && isNaN(this) || this === other;
+  }
+
+  //  Number$prototype$lte :: Number ~> Number -> Boolean
+  function Number$prototype$lte(other) {
+    return isNaN(this) ? isNaN(other) :
+      (typeof this === 'object' ? this.valueOf() : this)
+        <= (typeof other === 'object' ? other.valueOf() : other);
   }
 
   //  Date$prototype$toString :: Date ~> () -> String
@@ -546,6 +580,11 @@
   //  Date$prototype$equals :: Date ~> Date -> Boolean
   function Date$prototype$equals(other) {
     return equals(this.valueOf(), other.valueOf());
+  }
+
+  //  Date$prototype$lte :: Date ~> Date -> Boolean
+  function Date$prototype$lte(other) {
+    return lte(this.valueOf(), other.valueOf());
   }
 
   //  RegExp$prototype$equals :: RegExp ~> RegExp -> Boolean
@@ -583,6 +622,12 @@
     return typeof this === 'object' ?
       equals(this.valueOf(), other.valueOf()) :
       this === other;
+  }
+
+  //  String$prototype$lte :: String ~> String -> Boolean
+  function String$prototype$lte(other) {
+    return typeof this === typeof other
+      && this.valueOf() <= other.valueOf();
   }
 
   //  String$prototype$concat :: String ~> String -> String
@@ -639,6 +684,19 @@
     for (var idx = 0; idx < this.length; idx += 1) {
       if (!equals(this[idx], other[idx])) return false;
     }
+    return true;
+  }
+
+  //  Array$prototype$lte :: Array a ~> Array a -> Boolean
+  function Array$prototype$lte(other) {
+    for (var idx = 0; idx < this.length; idx += 1) {
+      if (idx >= other.length) return false;
+
+      if (!equals(this[idx], other[idx])) {
+        return lte(this[idx], other[idx]);
+      }
+    }
+
     return true;
   }
 
@@ -709,6 +767,11 @@
   //  Arguments$prototype$equals :: Arguments ~> Arguments -> Boolean
   function Arguments$prototype$equals(other) {
     return Array$prototype$equals.call(this, other);
+  }
+
+  //  Arguments$prototype$lte :: Arguments ~> Arguments -> Boolean
+  function Arguments$prototype$lte(other) {
+    return Array$prototype$lte.call(this, other);
   }
 
   //  Error$prototype$toString :: Error ~> () -> String
@@ -828,6 +891,18 @@
     return function(x) { return f(chain(x))(x); };
   }
 
+  //  Function$prototype$alt :: Alt a => (x -> a) ~> (x -> a) -> x -> a
+  function Function$prototype$alt(f) {
+    var alt_ = this;
+    return function(x) { return alt(alt_(x), f(x)); };
+  }
+
+  //  Function$prototype$concat :: Semigroup a => (x -> a) ~> (x -> a) -> x -> a
+  function Function$prototype$concat(f) {
+    var semigroup = this;
+    return function(x) { return concat(semigroup(x), f(x)); };
+  }
+
   //  Function$prototype$contramap :: (b -> c) ~> (a -> b) -> (a -> c)
   function Function$prototype$contramap(f) {
     var contravariant = this;
@@ -839,31 +914,36 @@
     Null: {
       prototype: {
         toString:                   Null$prototype$toString,
-        'fantasy-land/equals':      Null$prototype$equals
+        'fantasy-land/equals':      Null$prototype$equals,
+        'fantasy-land/lte':         Null$prototype$lte
       }
     },
     Undefined: {
       prototype: {
         toString:                   Undefined$prototype$toString,
-        'fantasy-land/equals':      Undefined$prototype$equals
+        'fantasy-land/equals':      Undefined$prototype$equals,
+        'fantasy-land/lte':         Undefined$prototype$lte
       }
     },
     Boolean: {
       prototype: {
         toString:                   Boolean$prototype$toString,
-        'fantasy-land/equals':      Boolean$prototype$equals
+        'fantasy-land/equals':      Boolean$prototype$equals,
+        'fantasy-land/lte':         Boolean$prototype$lte
       }
     },
     Number: {
       prototype: {
         toString:                   Number$prototype$toString,
-        'fantasy-land/equals':      Number$prototype$equals
+        'fantasy-land/equals':      Number$prototype$equals,
+        'fantasy-land/lte':         Number$prototype$lte
       }
     },
     Date: {
       prototype: {
         toString:                   Date$prototype$toString,
-        'fantasy-land/equals':      Date$prototype$equals
+        'fantasy-land/equals':      Date$prototype$equals,
+        'fantasy-land/lte':         Date$prototype$lte
       }
     },
     RegExp: {
@@ -876,6 +956,7 @@
       prototype: {
         toString:                   String$prototype$toString,
         'fantasy-land/equals':      String$prototype$equals,
+        'fantasy-land/lte':         String$prototype$lte,
         'fantasy-land/concat':      String$prototype$concat
       }
     },
@@ -887,6 +968,7 @@
       prototype: {
         toString:                   Array$prototype$toString,
         'fantasy-land/equals':      Array$prototype$equals,
+        'fantasy-land/lte':         Array$prototype$lte,
         'fantasy-land/concat':      Array$prototype$concat,
         'fantasy-land/map':         Array$prototype$map,
         'fantasy-land/ap':          Array$prototype$ap,
@@ -900,7 +982,8 @@
     Arguments: {
       prototype: {
         toString:                   Arguments$prototype$toString,
-        'fantasy-land/equals':      Arguments$prototype$equals
+        'fantasy-land/equals':      Arguments$prototype$equals,
+        'fantasy-land/lte':         Arguments$prototype$lte
       }
     },
     Error: {
@@ -926,6 +1009,8 @@
       'fantasy-land/of':            Function$of,
       'fantasy-land/chainRec':      Function$chainRec,
       prototype: {
+        'fantasy-land/alt':         Function$prototype$alt,
+        'fantasy-land/concat':      Function$prototype$concat,
         'fantasy-land/equals':      Function$prototype$equals,
         'fantasy-land/map':         Function$prototype$map,
         'fantasy-land/promap':      Function$prototype$promap,
@@ -1002,7 +1087,7 @@
   //.
   //. ```javascript
   //. > equals(0, -0)
-  //. false
+  //. true
   //.
   //. > equals(NaN, NaN)
   //. true
@@ -1032,6 +1117,39 @@
       } finally {
         $pairs.pop();
       }
+    };
+  }());
+
+  //# lte :: (a, b) -> Boolean
+  //.
+  //. Returns `true` if its arguments are of the same type and the first be
+  //. less than or equal to the second according to the type's
+  //. [`fantasy-land/equals`][] method; `false` otherwise.
+  //.
+  //. `fantasy-land/lte` implementations are provided for the following
+  //. built-in types: Null, Undefined, Boolean, Number, Date, String,
+  //. Array, Arguments, and Function.
+  //.
+  //. ```javascript
+  //. > lte(0, -0)
+  //. true
+  //.
+  //. > lte(NaN, NaN)
+  //. true
+  //.
+  //. > lte(Cons('foo', Nil), Cons('foo', Cons('bar', Nil)))
+  //. true
+  //.
+  //. > lte(Cons('foo', Cons('bar', Nil)), Cons('bar', Cons('foo', Nil)))
+  //. false
+  //. ```
+  var lte = (function() {
+    return function lte(x, y) {
+      if (type(x) !== type(y)) {
+        return false;
+      }
+
+      return Ord.test(x) && Ord.test(y) && Ord.methods.lte(x)(y);
     };
   }());
 
@@ -1528,6 +1646,7 @@
   return {
     TypeClass: TypeClass,
     Setoid: Setoid,
+    Ord: Ord,
     Semigroup: Semigroup,
     Monoid: Monoid,
     Functor: Functor,
@@ -1548,6 +1667,7 @@
     Contravariant: Contravariant,
     toString: toString,
     equals: equals,
+    lte: lte,
     concat: concat,
     empty: empty,
     map: map,
@@ -1594,6 +1714,7 @@
 //. [Plus]:                     https://github.com/fantasyland/fantasy-land#plus
 //. [Profunctor]:               https://github.com/fantasyland/fantasy-land#profunctor
 //. [Semigroup]:                https://github.com/fantasyland/fantasy-land#semigroup
+//. [Ord]:                      https://github.com/fantasyland/fantasy-land#ord
 //. [Setoid]:                   https://github.com/fantasyland/fantasy-land#setoid
 //. [Traversable]:              https://github.com/fantasyland/fantasy-land#traversable
 //. [`fantasy-land/alt`]:       https://github.com/fantasyland/fantasy-land#alt-method
