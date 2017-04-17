@@ -538,7 +538,9 @@
 
   //  Boolean$prototype$equals :: Boolean ~> Boolean -> Boolean
   function Boolean$prototype$equals(other) {
-    return typeof other === typeof this && other.valueOf() === this.valueOf();
+    return typeof this === 'object' ?
+      equals(this.valueOf(), other.valueOf()) :
+      this === other;
   }
 
   //  Boolean$prototype$lte :: Boolean ~> Boolean -> Boolean
@@ -617,7 +619,9 @@
 
   //  String$prototype$equals :: String ~> String -> Boolean
   function String$prototype$equals(other) {
-    return typeof other === typeof this && other.valueOf() === this.valueOf();
+    return typeof this === 'object' ?
+      equals(this.valueOf(), other.valueOf()) :
+      this === other;
   }
 
   //  String$prototype$lte :: String ~> String -> Boolean
@@ -1099,9 +1103,7 @@
     var $pairs = [];
 
     return function equals(x, y) {
-      if (type(x) !== type(y)) {
-        return false;
-      }
+      if (typeof x !== typeof y || type(x) !== type(y)) return false;
 
       //  This algorithm for comparing circular data structures was
       //  suggested in <http://stackoverflow.com/a/40622794/312785>.

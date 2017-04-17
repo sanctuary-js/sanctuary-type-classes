@@ -466,6 +466,8 @@ test('equals', function() {
   eq(Z.equals(new Number(Math.PI), new Number(NaN)), false);
   eq(Z.equals(42, new Number(42)), false);
   eq(Z.equals(new Number(42), 42), false);
+  eq(Z.equals(NaN, new Number(NaN)), false);
+  eq(Z.equals(new Number(NaN), NaN), false);
   eq(Z.equals(new Date(0), new Date(0)), true);
   eq(Z.equals(new Date(0), new Date(1)), false);
   eq(Z.equals(new Date(1), new Date(0)), false);
