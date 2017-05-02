@@ -861,9 +861,9 @@
 
   //  Object$prototype$reduce :: StrMap a ~> ((b, a) -> b, b) -> b
   function Object$prototype$reduce(f, initial) {
-    var result = initial;
-    for (var k in this) result = f(result, this[k]);
-    return result;
+    var self = this;
+    function reducer(acc, k) { return f(acc, self[k]); }
+    return Object.keys(this).sort().reduce(reducer, initial);
   }
 
   //  Function$of :: b -> (a -> b)

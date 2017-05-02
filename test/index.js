@@ -930,6 +930,8 @@ test('reduce', function() {
   eq(Z.reduce(Z.concat, 'x', ['a', 'b', 'c']), 'xabc');
   eq(Z.reduce(add, 0, {}), 0);
   eq(Z.reduce(add, 0, {a: 1, b: 2, c: 3, d: 4, e: 5}), 15);
+  eq(Z.reduce(function(xs, x) { return Z.concat(xs, [x]); }, [], {a: 1, b: 2, c: 3}), [1, 2, 3]);
+  eq(Z.reduce(function(xs, x) { return Z.concat(xs, [x]); }, [], {c: 3, b: 2, a: 1}), [1, 2, 3]);
   eq(Z.reduce(Z.concat, 'x', Nil), 'x');
   eq(Z.reduce(Z.concat, 'x', Cons('a', Cons('b', Cons('c', Nil)))), 'xabc');
 });
