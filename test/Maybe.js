@@ -36,6 +36,10 @@ Maybe.prototype[FL.map] = function(f) {
   return this.isJust ? Maybe.Just(f(this.value)) : Maybe.Nothing;
 };
 
+Maybe.prototype[FL.ap] = function(other) {
+  return other.isJust ? Z.map(other.value, this) : Maybe.Nothing;
+};
+
 Maybe.prototype[FL.chain] = function(f) {
   return this.isJust ? f(this.value) : Maybe.Nothing;
 };
