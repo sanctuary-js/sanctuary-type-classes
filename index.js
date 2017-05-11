@@ -463,7 +463,7 @@
   //. > Traversable.test([])
   //. true
   //.
-  //. > Traversable.test({})
+  //. > Traversable.test('')
   //. false
   //. ```
   var Traversable = $('Traversable', [Functor, Foldable], {traverse: Value});
@@ -866,6 +866,15 @@
     return Object.keys(this).sort().reduce(reducer, initial);
   }
 
+  //  Object$prototype$traverse :: Applicative f => StrMap a ~> (TypeRep f, a -> f b) -> f (StrMap b)
+  function Object$prototype$traverse(typeRep, f) {
+    var self = this;
+    return Object.keys(this).reduce(function(applicative, k) {
+      function set(o) { return function(v) { o[k] = v; return o; }; }
+      return lift2(set, applicative, f(self[k]));
+    }, of(typeRep, {}));
+  }
+
   //  Function$of :: b -> (a -> b)
   function Function$of(x) {
     return function(_) { return x; };
@@ -1011,7 +1020,8 @@
         'fantasy-land/map':         Object$prototype$map,
         'fantasy-land/ap':          Object$prototype$ap,
         'fantasy-land/alt':         Object$prototype$alt,
-        'fantasy-land/reduce':      Object$prototype$reduce
+        'fantasy-land/reduce':      Object$prototype$reduce,
+        'fantasy-land/traverse':    Object$prototype$traverse
       }
     },
     Function: {
@@ -1662,7 +1672,7 @@
   //. Function wrapper for [`fantasy-land/traverse`][].
   //.
   //. `fantasy-land/traverse` implementations are provided for the following
-  //. built-in types: Array.
+  //. built-in types: Array and Object.
   //.
   //. See also [`sequence`](#sequence).
   //.

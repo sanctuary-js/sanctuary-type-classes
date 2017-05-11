@@ -89,6 +89,16 @@ var ones = [1]; ones.push(ones);
 //  ones_ :: Pair Number (Pair Number (Pair Number ...))
 var ones_ = [1]; ones_.push([1, ones_]);
 
+//  parseInt_ :: Integer -> String -> Maybe Integer
+function parseInt_(radix) {
+  eq(arguments.length, parseInt_.length);
+  return function parseInt$1(s) {
+    eq(arguments.length, parseInt$1.length);
+    var n = parseInt(s, radix);
+    return isNaN(n) ? Nothing : Just(n);
+  };
+}
+
 //  pow :: Number -> Number -> Number
 function pow(base) {
   eq(arguments.length, pow.length);
@@ -330,7 +340,7 @@ test('Traversable', function() {
   eq(Z.Traversable.test(null), false);
   eq(Z.Traversable.test(''), false);
   eq(Z.Traversable.test([]), true);
-  eq(Z.Traversable.test({}), false);
+  eq(Z.Traversable.test({}), true);
 });
 
 test('Extend', function() {
@@ -944,6 +954,8 @@ test('traverse', function() {
   eq(Z.traverse(Array, identity, [[1], [2], [3]]), [[1, 2, 3]]);
   eq(Z.traverse(Array, identity, [[1, 2, 3], [4, 5]]), [[1, 4], [1, 5], [2, 4], [2, 5], [3, 4], [3, 5]]);
   eq(Z.traverse(Array, identity, repeat(6)(range(10))).length, Math.pow(10, 6));
+  eq(Z.traverse(Maybe, parseInt_(16), {a: 'A', b: 'B', c: 'C'}), Just({a: 10, b: 11, c: 12}));
+  eq(Z.traverse(Maybe, parseInt_(16), {a: 'A', b: 'B', c: 'C', x: 'X'}), Nothing);
   eq(Z.traverse(Identity, identInc, []), Identity([]));
   eq(Z.traverse(Identity, identInc, [1, 2, 3]), Identity([2, 3, 4]));
   eq(Z.traverse(Identity, identInc, Nil), Identity(Nil));
@@ -963,6 +975,8 @@ test('sequence', function() {
   eq(Z.sequence(Identity, Cons(Identity(1), Cons(Identity(2), Cons(Identity(3), Nil)))), Identity(Cons(1, Cons(2, Cons(3, Nil)))));
   eq(Z.sequence(List, Identity(Nil)), Nil);
   eq(Z.sequence(List, Identity(Cons(1, Cons(2, Cons(3, Nil))))), Cons(Identity(1), Cons(Identity(2), Cons(Identity(3), Nil))));
+  eq(Z.sequence(Maybe, {a: Just('A'), b: Just('B'), c: Just('C')}), Just({a: 'A', b: 'B', c: 'C'}));
+  eq(Z.sequence(Maybe, {a: Just('A'), b: Just('B'), c: Just('C'), x: Nothing}), Nothing);
 });
 
 test('extend', function() {
