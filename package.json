@@ -16,7 +16,7 @@
   "devDependencies": {
     "doctest": "0.12.x",
     "eslint": "3.19.x",
-    "fantasy-land": "3.2.0",
+    "fantasy-land": "3.3.0",
     "istanbul": "0.4.x",
     "mocha": "2.x.x",
     "remark-cli": "3.x.x",
