@@ -221,25 +221,22 @@
   //  Value :: Location
   var Value = 'Value';
 
-  //  _funcPath :: (Boolean, Array String, a) -> Nullable Function
-  function _funcPath(allowInheritedProps, path, _x) {
-    var x = _x;
-    for (var idx = 0; idx < path.length; idx += 1) {
-      var k = path[idx];
-      if (x == null || !(allowInheritedProps || has(k, x))) return null;
-      x = x[k];
+  //  funcPath :: (Array String, a) -> Nullable Function
+  function funcPath(path, value) {
+    var x = value;
+    for (var idx = 0; idx < path.length && x != null; idx += 1) {
+      x = x[path[idx]];
     }
     return typeof x === 'function' ? x : null;
   }
 
-  //  funcPath :: (Array String, a) -> Nullable Function
-  function funcPath(path, x) {
-    return _funcPath(true, path, x);
-  }
-
   //  implPath :: Array String -> Nullable Function
   function implPath(path) {
-    return _funcPath(false, path, implementations);
+    var x = implementations;
+    for (var idx = 0; idx < path.length && has(path[idx], x); idx += 1) {
+      x = x[path[idx]];
+    }
+    return typeof x === 'function' ? x : null;
   }
 
   //  functionName :: Function -> String
