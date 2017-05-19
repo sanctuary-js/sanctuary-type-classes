@@ -206,6 +206,26 @@ test('Ord', function() {
   eq(Z.Ord.test(Math.abs), false);
 });
 
+test('Semigroupoid', function() {
+  eq(type(Z.Semigroupoid), 'sanctuary-type-classes/TypeClass');
+  eq(Z.Semigroupoid.name, 'sanctuary-type-classes/Semigroupoid');
+  eq(Z.Semigroupoid.test(null), false);
+  eq(Z.Semigroupoid.test(''), false);
+  eq(Z.Semigroupoid.test([]), false);
+  eq(Z.Semigroupoid.test({}), false);
+  eq(Z.Semigroupoid.test(Math.abs), true);
+});
+
+test('Category', function() {
+  eq(type(Z.Category), 'sanctuary-type-classes/TypeClass');
+  eq(Z.Category.name, 'sanctuary-type-classes/Category');
+  eq(Z.Category.test(null), false);
+  eq(Z.Category.test(''), false);
+  eq(Z.Category.test([]), false);
+  eq(Z.Category.test({}), false);
+  eq(Z.Category.test(Math.abs), true);
+});
+
 test('Semigroup', function() {
   eq(type(Z.Semigroup), 'sanctuary-type-classes/TypeClass');
   eq(Z.Semigroup.name, 'sanctuary-type-classes/Semigroup');
@@ -687,6 +707,20 @@ test('gte', function() {
   eq(Z.gte(0, 1), false);
   eq(Z.gte(1, 0), true);
   eq(Z.gte('abc', 123), false);
+});
+
+test('compose', function() {
+  eq(Z.compose.length, 2);
+  eq(Z.compose.name, 'compose');
+
+  eq(Z.compose(Math.sqrt, inc)(99), 10);
+});
+
+test('id', function() {
+  eq(Z.id.length, 1);
+  eq(Z.id.name, 'id');
+
+  eq(Z.id(Function)(42), 42);
 });
 
 test('concat', function() {

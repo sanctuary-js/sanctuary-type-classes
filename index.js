@@ -31,37 +31,37 @@
 //. ## Type-class hierarchy
 //.
 //. <pre>
-//:  Setoid   Semigroup   Foldable        Functor      Contravariant
-//: (equals)   (concat)   (reduce)         (map)        (contramap)
-//:     |         |           \         / | | | | \
-//:     |         |            \       /  | | | |  \
-//:     |         |             \     /   | | | |   \
-//:     |         |              \   /    | | | |    \
-//:     |         |               \ /     | | | |     \
-//:    Ord     Monoid         Traversable | | | |      \
-//:   (lte)    (empty)        (traverse)  / | | \       \
-//:                                      /  | |  \       \
-//:                                     /   / \   \       \
-//:                             Profunctor /   \ Bifunctor \
-//:                              (promap) /     \ (bimap)   \
-//:                                      /       \           \
-//:                                     /         \           \
-//:                                   Alt        Apply      Extend
-//:                                  (alt)        (ap)     (extend)
-//:                                   /           / \           \
-//:                                  /           /   \           \
-//:                                 /           /     \           \
-//:                                /           /       \           \
-//:                               /           /         \           \
-//:                             Plus    Applicative    Chain      Comonad
-//:                            (zero)       (of)      (chain)    (extract)
-//:                               \         / \         / \
-//:                                \       /   \       /   \
-//:                                 \     /     \     /     \
-//:                                  \   /       \   /       \
-//:                                   \ /         \ /         \
-//:                               Alternative    Monad     ChainRec
-//:                                                       (chainRec)
+//:  Setoid   Semigroupoid  Semigroup   Foldable        Functor      Contravariant
+//: (equals)    (compose)    (concat)   (reduce)         (map)        (contramap)
+//:     |           |           |           \         / | | | | \
+//:     |           |           |            \       /  | | | |  \
+//:     |           |           |             \     /   | | | |   \
+//:     |           |           |              \   /    | | | |    \
+//:     |           |           |               \ /     | | | |     \
+//:    Ord      Category     Monoid         Traversable | | | |      \
+//:   (lte)       (id)       (empty)        (traverse)  / | | \       \
+//:                                                    /  | |  \       \
+//:                                                   /   / \   \       \
+//:                                           Profunctor /   \ Bifunctor \
+//:                                            (promap) /     \ (bimap)   \
+//:                                                    /       \           \
+//:                                                   /         \           \
+//:                                                 Alt        Apply      Extend
+//:                                                (alt)        (ap)     (extend)
+//:                                                 /           / \           \
+//:                                                /           /   \           \
+//:                                               /           /     \           \
+//:                                              /           /       \           \
+//:                                             /           /         \           \
+//:                                           Plus    Applicative    Chain      Comonad
+//:                                          (zero)       (of)      (chain)    (extract)
+//:                                             \         / \         / \
+//:                                              \       /   \       /   \
+//:                                               \     /     \     /     \
+//:                                                \   /       \   /       \
+//:                                                 \ /         \ /         \
+//:                                             Alternative    Monad     ChainRec
+//:                                                                     (chainRec)
 //. </pre>
 //.
 //. ## API
@@ -272,6 +272,32 @@
   //. false
   //. ```
   var Ord = $('Ord', [Setoid], {lte: Value});
+
+  //# Semigroupoid :: TypeClass
+  //.
+  //. `TypeClass` value for [Semigroupoid][].
+  //.
+  //. ```javascript
+  //. > Semigroupoid.test(Math.sqrt)
+  //. true
+  //.
+  //. > Semigroupoid.test(0)
+  //. false
+  //. ```
+  var Semigroupoid = $('Semigroupoid', [], {compose: Value});
+
+  //# Category :: TypeClass
+  //.
+  //. `TypeClass` value for [Category][].
+  //.
+  //. ```javascript
+  //. > Category.test(Math.sqrt)
+  //. true
+  //.
+  //. > Category.test(0)
+  //. false
+  //. ```
+  var Category = $('Category', [Semigroupoid], {id: Constructor});
 
   //# Semigroup :: TypeClass
   //.
@@ -875,6 +901,11 @@
     }, of(typeRep, {}));
   }
 
+  //  Function$id :: () -> a -> a
+  function Function$id() {
+    return identity;
+  }
+
   //  Function$of :: b -> (a -> b)
   function Function$of(x) {
     return function(_) { return x; };
@@ -894,6 +925,12 @@
   //  Function$prototype$equals :: Function ~> Function -> Boolean
   function Function$prototype$equals(other) {
     return other === this;
+  }
+
+  //  Function$prototype$compose :: (a -> b) ~> (b -> c) -> (a -> c)
+  function Function$prototype$compose(other) {
+    var semigroupoid = this;
+    return function(x) { return other(semigroupoid(x)); };
   }
 
   //  Function$prototype$map :: (a -> b) ~> (b -> c) -> (a -> c)
@@ -1025,10 +1062,12 @@
       }
     },
     Function: {
+      'fantasy-land/id':            Function$id,
       'fantasy-land/of':            Function$of,
       'fantasy-land/chainRec':      Function$chainRec,
       prototype: {
         'fantasy-land/equals':      Function$prototype$equals,
+        'fantasy-land/compose':     Function$prototype$compose,
         'fantasy-land/map':         Function$prototype$map,
         'fantasy-land/promap':      Function$prototype$promap,
         'fantasy-land/ap':          Function$prototype$ap,
@@ -1254,6 +1293,36 @@
   //. ```
   function gte(x, y) {
     return lte(y, x);
+  }
+
+  //# compose :: Semigroupoid c => (c j k, c i j) -> c i k
+  //.
+  //. Function wrapper for [`fantasy-land/compose`][].
+  //.
+  //. `fantasy-land/compose` implementations are provided for the following
+  //. built-in types: Function.
+  //.
+  //. ```javascript
+  //. > compose(Math.sqrt, x => x + 1)(99)
+  //. 10
+  //. ```
+  function compose(x, y) {
+    return Semigroupoid.methods.compose(y)(x);
+  }
+
+  //# id :: Category c => TypeRep c -> c
+  //.
+  //. Function wrapper for [`fantasy-land/id`][].
+  //.
+  //. `fantasy-land/id` implementations are provided for the following
+  //. built-in types: Function.
+  //.
+  //. ```javascript
+  //. > id(Function)('foo')
+  //. 'foo'
+  //. ```
+  function id(typeRep) {
+    return Category.methods.id(typeRep)();
   }
 
   //# concat :: Semigroup a => (a, a) -> a
@@ -1750,6 +1819,8 @@
     TypeClass: TypeClass,
     Setoid: Setoid,
     Ord: Ord,
+    Semigroupoid: Semigroupoid,
+    Category: Category,
     Semigroup: Semigroup,
     Monoid: Monoid,
     Functor: Functor,
@@ -1774,6 +1845,8 @@
     lte: lte,
     gt: gt,
     gte: gte,
+    compose: compose,
+    id: id,
     concat: concat,
     empty: empty,
     map: map,
@@ -1807,6 +1880,7 @@
 //. [Applicative]:              https://github.com/fantasyland/fantasy-land#applicative
 //. [Apply]:                    https://github.com/fantasyland/fantasy-land#apply
 //. [Bifunctor]:                https://github.com/fantasyland/fantasy-land#bifunctor
+//. [Category]:                 https://github.com/fantasyland/fantasy-land#category
 //. [Chain]:                    https://github.com/fantasyland/fantasy-land#chain
 //. [ChainRec]:                 https://github.com/fantasyland/fantasy-land#chainrec
 //. [Comonad]:                  https://github.com/fantasyland/fantasy-land#comonad
@@ -1821,6 +1895,7 @@
 //. [Plus]:                     https://github.com/fantasyland/fantasy-land#plus
 //. [Profunctor]:               https://github.com/fantasyland/fantasy-land#profunctor
 //. [Semigroup]:                https://github.com/fantasyland/fantasy-land#semigroup
+//. [Semigroupoid]:             https://github.com/fantasyland/fantasy-land#semigroupoid
 //. [Setoid]:                   https://github.com/fantasyland/fantasy-land#setoid
 //. [Traversable]:              https://github.com/fantasyland/fantasy-land#traversable
 //. [`fantasy-land/alt`]:       https://github.com/fantasyland/fantasy-land#alt-method
@@ -1828,12 +1903,14 @@
 //. [`fantasy-land/bimap`]:     https://github.com/fantasyland/fantasy-land#bimap-method
 //. [`fantasy-land/chain`]:     https://github.com/fantasyland/fantasy-land#chain-method
 //. [`fantasy-land/chainRec`]:  https://github.com/fantasyland/fantasy-land#chainrec-method
+//. [`fantasy-land/compose`]:   https://github.com/fantasyland/fantasy-land#compose-method
 //. [`fantasy-land/concat`]:    https://github.com/fantasyland/fantasy-land#concat-method
 //. [`fantasy-land/contramap`]: https://github.com/fantasyland/fantasy-land#contramap-method
 //. [`fantasy-land/empty`]:     https://github.com/fantasyland/fantasy-land#empty-method
 //. [`fantasy-land/equals`]:    https://github.com/fantasyland/fantasy-land#equals-method
 //. [`fantasy-land/extend`]:    https://github.com/fantasyland/fantasy-land#extend-method
 //. [`fantasy-land/extract`]:   https://github.com/fantasyland/fantasy-land#extract-method
+//. [`fantasy-land/id`]:        https://github.com/fantasyland/fantasy-land#id-method
 //. [`fantasy-land/lte`]:       https://github.com/fantasyland/fantasy-land#lte-method
 //. [`fantasy-land/map`]:       https://github.com/fantasyland/fantasy-land#map-method
 //. [`fantasy-land/of`]:        https://github.com/fantasyland/fantasy-land#of-method
