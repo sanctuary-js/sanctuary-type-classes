@@ -125,11 +125,12 @@
   //  iterationDone :: a -> Iteration a
   function iterationDone(x) { return {value: x, done: true}; }
 
-  //# TypeClass :: (String, Array TypeClass, a -> Boolean) -> TypeClass
+  //# TypeClass :: (String, String, Array TypeClass, a -> Boolean) -> TypeClass
   //.
   //. The arguments are:
   //.
   //.   - the name of the type class, prefixed by its npm package name;
+  //.   - the documentation URL of the type class;
   //.   - an array of dependencies; and
   //.   - a predicate which accepts any JavaScript value and returns `true`
   //.     if the value satisfies the requirements of the type class; `false`
@@ -142,10 +143,20 @@
   //. const hasMethod = name => x => x != null && typeof x[name] == 'function';
   //.
   //. //    Foo :: TypeClass
-  //. const Foo = Z.TypeClass('my-package/Foo', [], hasMethod('foo'));
+  //. const Foo = Z.TypeClass(
+  //.   'my-package/Foo',
+  //.   'http://example.com/my-package#Foo',
+  //.   [],
+  //.   hasMethod('foo')
+  //. );
   //.
   //. //    Bar :: TypeClass
-  //. const Bar = Z.TypeClass('my-package/Bar', [Foo], hasMethod('bar'));
+  //. const Bar = Z.TypeClass(
+  //.   'my-package/Bar',
+  //.   'http://example.com/my-package#Bar',
+  //.   [Foo],
+  //.   hasMethod('bar')
+  //. );
   //. ```
   //.
   //. Types whose values have a `foo` method are members of the Foo type class.
@@ -160,11 +171,12 @@
   //. `TypeClass` values may be used with [sanctuary-def][type-classes]
   //. to define parametrically polymorphic functions which verify their
   //. type-class constraints at run time.
-  function TypeClass(name, dependencies, test) {
+  function TypeClass(name, url, dependencies, test) {
     if (!(this instanceof TypeClass)) {
-      return new TypeClass(name, dependencies, test);
+      return new TypeClass(name, url, dependencies, test);
     }
     this.name = name;
+    this.url = url;
     this.test = function(x) {
       return dependencies.every(function(d) { return d.test(x); }) && test(x);
     };
@@ -232,15 +244,21 @@
         };
     }
 
-    var name = 'sanctuary-type-classes/' + _name;
+    var version = '5.2.0';  // updated programmatically
     var keys = Object.keys(requirements);
 
-    var typeClass = TypeClass(name, dependencies, function(x) {
-      return keys.every(function(_name) {
-        var arg = requirements[_name] === Constructor ? x.constructor : x;
-        return getBoundMethod(_name)(arg) != null;
-      });
-    });
+    var typeClass = TypeClass(
+      'sanctuary-type-classes/' + _name,
+      'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version
+        + '#' + _name,
+      dependencies,
+      function(x) {
+        return keys.every(function(_name) {
+          var arg = requirements[_name] === Constructor ? x.constructor : x;
+          return getBoundMethod(_name)(arg) != null;
+        });
+      }
+    );
 
     typeClass.methods = keys.reduce(function(methods, _name) {
       methods[_name] = getBoundMethod(_name);
