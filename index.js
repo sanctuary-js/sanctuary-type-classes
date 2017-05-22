@@ -240,7 +240,7 @@
   }
 
   //  functionName :: Function -> String
-  var functionName = has('name', function f() {}) ?
+  var functionName = has('name', Function) ?
     function functionName(f) { return f.name; } :
     /* istanbul ignore next */
     function functionName(f) {
