@@ -221,6 +221,9 @@
   //  Value :: Location
   var Value = 'Value';
 
+  //  prefix :: String
+  var prefix = 'fantasy-land/';
+
   //  funcPath :: (Array String, a) -> Nullable Function
   function funcPath(path, value) {
     var x = value;
@@ -248,30 +251,43 @@
       return match == null ? '' : match[1];
     };
 
+  //  getFunction :: String -> TypeRep a -> Nullable Function
+  function getFunction(_name) {
+    var name = prefix + _name;
+    return function(typeRep) {
+      var f = funcPath([name], typeRep);
+      return f == null && typeof typeRep === 'function' ?
+        implPath([functionName(typeRep), name]) :
+        f;
+    };
+  }
+
+  //  getBoundMethod :: String -> a -> Nullable Function
+  function getBoundMethod(_name) {
+    var name = prefix + _name;
+    return function(x) {
+      var isPrototype = x != null &&
+                        x.constructor != null &&
+                        x.constructor.prototype === x;
+      var m = null;
+      if (!isPrototype) m = funcPath([name], x);
+      if (m == null)    m = implPath([type(x), 'prototype', name]);
+      return m && m.bind(x);
+    };
+  }
+
   //  $ :: (String, Array TypeClass, StrMap (Array Location)) -> TypeClass
   function $(_name, dependencies, requirements) {
-    function getBoundMethod(_name) {
-      var name = 'fantasy-land/' + _name;
-      return requirements[_name] === Constructor ?
-        function(typeRep) {
-          var f = funcPath([name], typeRep);
-          return f == null && typeof typeRep === 'function' ?
-            implPath([functionName(typeRep), name]) :
-            f;
-        } :
-        function(x) {
-          var isPrototype = x != null &&
-                            x.constructor != null &&
-                            x.constructor.prototype === x;
-          var m = null;
-          if (!isPrototype) m = funcPath([name], x);
-          if (m == null)    m = implPath([type(x), 'prototype', name]);
-          return m && m.bind(x);
-        };
-    }
-
     var version = '9.0.0';  // updated programmatically
     var keys = Object.keys(requirements);
+
+    var functionKeys = keys.filter(function(k) {
+      return requirements[k] === Constructor;
+    });
+
+    var methodKeys = keys.filter(function(k) {
+      return requirements[k] === Value;
+    });
 
     var typeClass = TypeClass(
       'sanctuary-type-classes/' + _name,
@@ -279,17 +295,24 @@
         + '#' + _name,
       dependencies,
       function(x) {
-        return keys.every(function(_name) {
-          var arg = requirements[_name] === Constructor ? x.constructor : x;
-          return getBoundMethod(_name)(arg) != null;
+        return functionKeys.every(function(k) {
+          return typeClass.functions[k](x.constructor) != null;
+        }) &&
+        methodKeys.every(function(k) {
+          return typeClass.methods[k](x) != null;
         });
       }
     );
 
-    typeClass.methods = keys.reduce(function(methods, _name) {
-      methods[_name] = getBoundMethod(_name);
-      return methods;
-    }, {});
+    typeClass.functions = {};
+    functionKeys.forEach(function(k) {
+      typeClass.functions[k] = getFunction(k);
+    });
+
+    typeClass.methods = {};
+    methodKeys.forEach(function(k) {
+      typeClass.methods[k] = getBoundMethod(k);
+    });
 
     return typeClass;
   }
@@ -1345,7 +1368,7 @@
   //. 'foo'
   //. ```
   function id(typeRep) {
-    return Category.methods.id(typeRep)();
+    return Category.functions.id(typeRep)();
   }
 
   //# concat :: Semigroup a => (a, a) -> a
@@ -1393,7 +1416,7 @@
   //. Nil
   //. ```
   function empty(typeRep) {
-    return Monoid.methods.empty(typeRep)();
+    return Monoid.functions.empty(typeRep)();
   }
 
   //# invert :: Group g => g -> g
@@ -1735,7 +1758,7 @@
   //. Cons(42, Nil)
   //. ```
   function of(typeRep, x) {
-    return Applicative.methods.of(typeRep)(x);
+    return Applicative.functions.of(typeRep)(x);
   }
 
   //# append :: (Applicative f, Semigroup (f a)) => (a, f a) -> f a
@@ -1834,7 +1857,7 @@
   //. ['oo!', 'oo?', 'on!', 'on?', 'no!', 'no?', 'nn!', 'nn?']
   //. ```
   function chainRec(typeRep, f, x) {
-    return ChainRec.methods.chainRec(typeRep)(f, x);
+    return ChainRec.functions.chainRec(typeRep)(f, x);
   }
 
   //# alt :: Alt f => (f a, f a) -> f a
@@ -1879,7 +1902,7 @@
   //. Nothing
   //. ```
   function zero(typeRep) {
-    return Plus.methods.zero(typeRep)();
+    return Plus.functions.zero(typeRep)();
   }
 
   //# reduce :: Foldable f => ((b, a) -> b, b, f a) -> b
