@@ -100,6 +100,16 @@
     /* eslint-enable no-unused-vars */
   }
 
+  //  clean :: Object -> Object
+  function clean(x) {
+    var o = Object.create(null);
+    for (var k in x) {
+      /* istanbul ignore else */
+      if (has(k, x)) o[k] = x[k];
+    }
+    return o;
+  }
+
   //  concat_ :: Array a -> Array a -> Array a
   function concat_(xs) {
     return function(ys) {
@@ -231,18 +241,14 @@
 
   //  functionImpl :: (String, String) -> Nullable Function
   function functionImpl(type, name) {
-    return has(type, implementations) &&
-           has(name, implementations[type]) ?
-             implementations[type][name] :
-             null;
+    return implementations[type] && implementations[type][name] || null;
   }
 
   //  methodImpl :: (String, String) -> Nullable Function
   function methodImpl(type, name) {
-    return has(type, implementations) &&
-           has(name, implementations[type].prototype) ?
-             implementations[type].prototype[name] :
-             null;
+    return implementations[type] &&
+           implementations[type].prototype[name] ||
+           null;
   }
 
   //  functionName :: Function -> String
@@ -1024,56 +1030,56 @@
   }
 
   /* eslint-disable key-spacing */
-  var implementations = {
-    Null: {
-      'prototype': {
+  var implementations = clean({
+    Null: clean({
+      'prototype': clean({
         'fantasy-land/equals':      Null$prototype$equals,
         'fantasy-land/lte':         Null$prototype$lte
-      }
-    },
-    Undefined: {
-      'prototype': {
+      })
+    }),
+    Undefined: clean({
+      'prototype': clean({
         'fantasy-land/equals':      Undefined$prototype$equals,
         'fantasy-land/lte':         Undefined$prototype$lte
-      }
-    },
-    Boolean: {
-      'prototype': {
+      })
+    }),
+    Boolean: clean({
+      'prototype': clean({
         'fantasy-land/equals':      Boolean$prototype$equals,
         'fantasy-land/lte':         Boolean$prototype$lte
-      }
-    },
-    Number: {
-      'prototype': {
+      })
+    }),
+    Number: clean({
+      'prototype': clean({
         'fantasy-land/equals':      Number$prototype$equals,
         'fantasy-land/lte':         Number$prototype$lte
-      }
-    },
-    Date: {
-      'prototype': {
+      })
+    }),
+    Date: clean({
+      'prototype': clean({
         'fantasy-land/equals':      Date$prototype$equals,
         'fantasy-land/lte':         Date$prototype$lte
-      }
-    },
-    RegExp: {
-      'prototype': {
+      })
+    }),
+    RegExp: clean({
+      'prototype': clean({
         'fantasy-land/equals':      RegExp$prototype$equals
-      }
-    },
-    String: {
+      })
+    }),
+    String: clean({
       'fantasy-land/empty':         String$empty,
-      'prototype': {
+      'prototype': clean({
         'fantasy-land/equals':      String$prototype$equals,
         'fantasy-land/lte':         String$prototype$lte,
         'fantasy-land/concat':      String$prototype$concat
-      }
-    },
-    Array: {
+      })
+    }),
+    Array: clean({
       'fantasy-land/empty':         Array$empty,
       'fantasy-land/of':            Array$of,
       'fantasy-land/chainRec':      Array$chainRec,
       'fantasy-land/zero':          Array$zero,
-      'prototype': {
+      'prototype': clean({
         'fantasy-land/equals':      Array$prototype$equals,
         'fantasy-land/lte':         Array$prototype$lte,
         'fantasy-land/concat':      Array$prototype$concat,
@@ -1085,23 +1091,23 @@
         'fantasy-land/reduce':      Array$prototype$reduce,
         'fantasy-land/traverse':    Array$prototype$traverse,
         'fantasy-land/extend':      Array$prototype$extend
-      }
-    },
-    Arguments: {
-      'prototype': {
+      })
+    }),
+    Arguments: clean({
+      'prototype': clean({
         'fantasy-land/equals':      Arguments$prototype$equals,
         'fantasy-land/lte':         Arguments$prototype$lte
-      }
-    },
-    Error: {
-      'prototype': {
+      })
+    }),
+    Error: clean({
+      'prototype': clean({
         'fantasy-land/equals':      Error$prototype$equals
-      }
-    },
-    Object: {
+      })
+    }),
+    Object: clean({
       'fantasy-land/empty':         Object$empty,
       'fantasy-land/zero':          Object$zero,
-      'prototype': {
+      'prototype': clean({
         'fantasy-land/equals':      Object$prototype$equals,
         'fantasy-land/lte':         Object$prototype$lte,
         'fantasy-land/concat':      Object$prototype$concat,
@@ -1111,13 +1117,13 @@
         'fantasy-land/alt':         Object$prototype$alt,
         'fantasy-land/reduce':      Object$prototype$reduce,
         'fantasy-land/traverse':    Object$prototype$traverse
-      }
-    },
-    Function: {
+      })
+    }),
+    Function: clean({
       'fantasy-land/id':            Function$id,
       'fantasy-land/of':            Function$of,
       'fantasy-land/chainRec':      Function$chainRec,
-      'prototype': {
+      'prototype': clean({
         'fantasy-land/equals':      Function$prototype$equals,
         'fantasy-land/compose':     Function$prototype$compose,
         'fantasy-land/map':         Function$prototype$map,
@@ -1126,9 +1132,9 @@
         'fantasy-land/chain':       Function$prototype$chain,
         'fantasy-land/extend':      Function$prototype$extend,
         'fantasy-land/contramap':   Function$prototype$contramap
-      }
-    }
-  };
+      })
+    })
+  });
   /* eslint-enable key-spacing */
 
   //# equals :: (a, b) -> Boolean
