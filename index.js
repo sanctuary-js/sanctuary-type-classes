@@ -229,13 +229,20 @@
     return x != null && typeof x[prop] === 'function' ? x[prop] : null;
   }
 
-  //  implPath :: Array String -> Nullable Function
-  function implPath(path) {
-    var x = implementations;
-    for (var idx = 0; idx < path.length && has(path[idx], x); idx += 1) {
-      x = x[path[idx]];
-    }
-    return typeof x === 'function' ? x : null;
+  //  functionImpl :: (String, String) -> Nullable Function
+  function functionImpl(type, name) {
+    return has(type, implementations) &&
+           has(name, implementations[type]) ?
+             implementations[type][name] :
+             null;
+  }
+
+  //  methodImpl :: (String, String) -> Nullable Function
+  function methodImpl(type, name) {
+    return has(type, implementations) &&
+           has(name, implementations[type].prototype) ?
+             implementations[type].prototype[name] :
+             null;
   }
 
   //  functionName :: Function -> String
@@ -253,7 +260,7 @@
     return function(typeRep) {
       var f = funcProp(name, typeRep);
       return f == null && typeof typeRep === 'function' ?
-        implPath([functionName(typeRep), name]) :
+        functionImpl(functionName(typeRep), name) :
         f;
     };
   }
@@ -267,7 +274,7 @@
                         x.constructor.prototype === x;
       var m = null;
       if (!isPrototype) m = funcProp(name, x);
-      if (m == null)    m = implPath([type(x), 'prototype', name]);
+      if (m == null)    m = methodImpl(type(x), name);
       return m && m.bind(x);
     };
   }
