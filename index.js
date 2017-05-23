@@ -796,7 +796,7 @@
 
   //  Array$prototype$extend :: Array a ~> (Array a -> b) -> Array b
   function Array$prototype$extend(f) {
-    return [f(this)];
+    return this.map(function(_, idx, xs) { return f(xs.slice(idx)); });
   }
 
   //  Arguments$prototype$toString :: Arguments ~> String
@@ -1791,8 +1791,8 @@
   //. built-in types: Array.
   //.
   //. ```javascript
-  //. > extend(xs => xs.length, ['foo', 'bar', 'baz', 'quux'])
-  //. [4]
+  //. > extend(ss => ss.join(''), ['x', 'y', 'z'])
+  //. ['xyz', 'yz', 'z']
   //. ```
   function extend(f, extend_) {
     return Extend.methods.extend(extend_)(f);

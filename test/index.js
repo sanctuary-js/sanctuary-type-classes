@@ -66,6 +66,15 @@ function inc(x) {
   return x + 1;
 }
 
+//  joinWith :: String -> Array String -> String
+function joinWith(s) {
+  eq(arguments.length, joinWith.length);
+  return function joinWith$1(ss) {
+    eq(arguments.length, joinWith$1.length);
+    return ss.join(s);
+  };
+}
+
 //  length :: List a -> Integer
 function length(xs) {
   eq(arguments.length, length.length);
@@ -1054,8 +1063,10 @@ test('extend', function() {
   eq(Z.extend.length, 2);
   eq(Z.extend.name, 'extend');
 
-  eq(Z.extend(length, []), [0]);
-  eq(Z.extend(length, [1, 2, 3]), [3]);
+  eq(Z.extend(joinWith(''), []), []);
+  eq(Z.extend(joinWith(''), ['x']), ['x']);
+  eq(Z.extend(joinWith(''), ['x', 'y']), ['xy', 'y']);
+  eq(Z.extend(joinWith(''), ['x', 'y', 'z']), ['xyz', 'yz', 'z']);
   eq(Z.extend(function(id) { return Z.reduce(add, 1, id); }, Identity(42)), Identity(43));
 });
 
