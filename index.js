@@ -640,15 +640,7 @@
   function String$prototype$toString() {
     return typeof this === 'object' ?
       'new String(' + toString(this.valueOf()) + ')' :
-      '"' + this.replace(/\\/g, '\\\\')
-                .replace(/[\b]/g, '\\b')  // \b matches word boundary;
-                .replace(/\f/g, '\\f')    // [\b] matches backspace
-                .replace(/\n/g, '\\n')
-                .replace(/\r/g, '\\r')
-                .replace(/\t/g, '\\t')
-                .replace(/\v/g, '\\v')
-                .replace(/\0/g, '\\0')
-                .replace(/"/g, '\\"') + '"';
+      JSON.stringify(this);
   }
 
   //  String$prototype$equals :: String ~> String -> Boolean
