@@ -139,6 +139,9 @@ function toUpper(s) {
   return s.toUpperCase();
 }
 
+//  version :: String
+var version = '5.2.0';  // updated programmatically
+
 //  wrap :: String -> String -> String -> String
 function wrap(before) {
   eq(arguments.length, wrap.length);
@@ -154,7 +157,7 @@ function wrap(before) {
 
 test('TypeClass', function() {
   eq(typeof Z.TypeClass, 'function');
-  eq(Z.TypeClass.length, 3);
+  eq(Z.TypeClass.length, 4);
 
   //  hasMethod :: String -> a -> Boolean
   function hasMethod(name) {
@@ -164,13 +167,24 @@ test('TypeClass', function() {
   }
 
   //  Foo :: TypeClass
-  var Foo = Z.TypeClass('my-package/Foo', [], hasMethod('foo'));
+  var Foo = Z.TypeClass(
+    'my-package/Foo',
+    'http://example.com/my-package#Foo',
+    [],
+    hasMethod('foo')
+  );
 
   //  Bar :: TypeClass
-  var Bar = Z.TypeClass('my-package/Bar', [Foo], hasMethod('bar'));
+  var Bar = Z.TypeClass(
+    'my-package/Bar',
+    'http://example.com/my-package#Bar',
+    [Foo],
+    hasMethod('bar')
+  );
 
   eq(type(Foo), 'sanctuary-type-classes/TypeClass');
   eq(Foo.name, 'my-package/Foo');
+  eq(Foo.url, 'http://example.com/my-package#Foo');
   eq(Foo.test(null), false);
   eq(Foo.test({}), false);
   eq(Foo.test({foo: function() {}}), true);
@@ -179,6 +193,7 @@ test('TypeClass', function() {
 
   eq(type(Bar), 'sanctuary-type-classes/TypeClass');
   eq(Bar.name, 'my-package/Bar');
+  eq(Bar.url, 'http://example.com/my-package#Bar');
   eq(Bar.test(null), false);
   eq(Bar.test({}), false);
   eq(Bar.test({foo: function() {}}), false);
@@ -189,6 +204,7 @@ test('TypeClass', function() {
 test('Setoid', function() {
   eq(type(Z.Setoid), 'sanctuary-type-classes/TypeClass');
   eq(Z.Setoid.name, 'sanctuary-type-classes/Setoid');
+  eq(Z.Setoid.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Setoid');
   eq(Z.Setoid.test(null), true);
   eq(Z.Setoid.test(''), true);
   eq(Z.Setoid.test([]), true);
@@ -199,6 +215,7 @@ test('Setoid', function() {
 test('Ord', function() {
   eq(type(Z.Ord), 'sanctuary-type-classes/TypeClass');
   eq(Z.Ord.name, 'sanctuary-type-classes/Ord');
+  eq(Z.Ord.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Ord');
   eq(Z.Ord.test(null), true);
   eq(Z.Ord.test(''), true);
   eq(Z.Ord.test([]), true);
@@ -209,6 +226,7 @@ test('Ord', function() {
 test('Semigroupoid', function() {
   eq(type(Z.Semigroupoid), 'sanctuary-type-classes/TypeClass');
   eq(Z.Semigroupoid.name, 'sanctuary-type-classes/Semigroupoid');
+  eq(Z.Semigroupoid.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Semigroupoid');
   eq(Z.Semigroupoid.test(null), false);
   eq(Z.Semigroupoid.test(''), false);
   eq(Z.Semigroupoid.test([]), false);
@@ -219,6 +237,7 @@ test('Semigroupoid', function() {
 test('Category', function() {
   eq(type(Z.Category), 'sanctuary-type-classes/TypeClass');
   eq(Z.Category.name, 'sanctuary-type-classes/Category');
+  eq(Z.Category.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Category');
   eq(Z.Category.test(null), false);
   eq(Z.Category.test(''), false);
   eq(Z.Category.test([]), false);
@@ -229,6 +248,7 @@ test('Category', function() {
 test('Semigroup', function() {
   eq(type(Z.Semigroup), 'sanctuary-type-classes/TypeClass');
   eq(Z.Semigroup.name, 'sanctuary-type-classes/Semigroup');
+  eq(Z.Semigroup.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Semigroup');
   eq(Z.Semigroup.test(null), false);
   eq(Z.Semigroup.test(''), true);
   eq(Z.Semigroup.test([]), true);
@@ -238,6 +258,7 @@ test('Semigroup', function() {
 test('Monoid', function() {
   eq(type(Z.Monoid), 'sanctuary-type-classes/TypeClass');
   eq(Z.Monoid.name, 'sanctuary-type-classes/Monoid');
+  eq(Z.Monoid.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Monoid');
   eq(Z.Monoid.test(null), false);
   eq(Z.Monoid.test(''), true);
   eq(Z.Monoid.test([]), true);
@@ -247,6 +268,7 @@ test('Monoid', function() {
 test('Functor', function() {
   eq(type(Z.Functor), 'sanctuary-type-classes/TypeClass');
   eq(Z.Functor.name, 'sanctuary-type-classes/Functor');
+  eq(Z.Functor.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Functor');
   eq(Z.Functor.test(null), false);
   eq(Z.Functor.test(''), false);
   eq(Z.Functor.test([]), true);
@@ -256,6 +278,7 @@ test('Functor', function() {
 test('Bifunctor', function() {
   eq(type(Z.Bifunctor), 'sanctuary-type-classes/TypeClass');
   eq(Z.Bifunctor.name, 'sanctuary-type-classes/Bifunctor');
+  eq(Z.Bifunctor.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Bifunctor');
   eq(Z.Bifunctor.test(null), false);
   eq(Z.Bifunctor.test(''), false);
   eq(Z.Bifunctor.test([]), false);
@@ -266,6 +289,7 @@ test('Bifunctor', function() {
 test('Profunctor', function() {
   eq(type(Z.Profunctor), 'sanctuary-type-classes/TypeClass');
   eq(Z.Profunctor.name, 'sanctuary-type-classes/Profunctor');
+  eq(Z.Profunctor.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Profunctor');
   eq(Z.Profunctor.test(null), false);
   eq(Z.Profunctor.test(''), false);
   eq(Z.Profunctor.test([]), false);
@@ -276,6 +300,7 @@ test('Profunctor', function() {
 test('Apply', function() {
   eq(type(Z.Apply), 'sanctuary-type-classes/TypeClass');
   eq(Z.Apply.name, 'sanctuary-type-classes/Apply');
+  eq(Z.Apply.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Apply');
   eq(Z.Apply.test(null), false);
   eq(Z.Apply.test(''), false);
   eq(Z.Apply.test([]), true);
@@ -285,6 +310,7 @@ test('Apply', function() {
 test('Applicative', function() {
   eq(type(Z.Applicative), 'sanctuary-type-classes/TypeClass');
   eq(Z.Applicative.name, 'sanctuary-type-classes/Applicative');
+  eq(Z.Applicative.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Applicative');
   eq(Z.Applicative.test(null), false);
   eq(Z.Applicative.test(''), false);
   eq(Z.Applicative.test([]), true);
@@ -294,6 +320,7 @@ test('Applicative', function() {
 test('Chain', function() {
   eq(type(Z.Chain), 'sanctuary-type-classes/TypeClass');
   eq(Z.Chain.name, 'sanctuary-type-classes/Chain');
+  eq(Z.Chain.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Chain');
   eq(Z.Chain.test(null), false);
   eq(Z.Chain.test(''), false);
   eq(Z.Chain.test([]), true);
@@ -303,6 +330,7 @@ test('Chain', function() {
 test('ChainRec', function() {
   eq(type(Z.ChainRec), 'sanctuary-type-classes/TypeClass');
   eq(Z.ChainRec.name, 'sanctuary-type-classes/ChainRec');
+  eq(Z.ChainRec.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#ChainRec');
   eq(Z.ChainRec.test(null), false);
   eq(Z.ChainRec.test(''), false);
   eq(Z.ChainRec.test([]), true);
@@ -312,6 +340,7 @@ test('ChainRec', function() {
 test('Monad', function() {
   eq(type(Z.Monad), 'sanctuary-type-classes/TypeClass');
   eq(Z.Monad.name, 'sanctuary-type-classes/Monad');
+  eq(Z.Monad.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Monad');
   eq(Z.Monad.test(null), false);
   eq(Z.Monad.test(''), false);
   eq(Z.Monad.test([]), true);
@@ -321,6 +350,7 @@ test('Monad', function() {
 test('Alt', function() {
   eq(type(Z.Alt), 'sanctuary-type-classes/TypeClass');
   eq(Z.Alt.name, 'sanctuary-type-classes/Alt');
+  eq(Z.Alt.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Alt');
   eq(Z.Alt.test(null), false);
   eq(Z.Alt.test(''), false);
   eq(Z.Alt.test([]), true);
@@ -330,6 +360,7 @@ test('Alt', function() {
 test('Plus', function() {
   eq(type(Z.Plus), 'sanctuary-type-classes/TypeClass');
   eq(Z.Plus.name, 'sanctuary-type-classes/Plus');
+  eq(Z.Plus.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Plus');
   eq(Z.Plus.test(null), false);
   eq(Z.Plus.test(''), false);
   eq(Z.Plus.test([]), true);
@@ -339,6 +370,7 @@ test('Plus', function() {
 test('Alternative', function() {
   eq(type(Z.Alternative), 'sanctuary-type-classes/TypeClass');
   eq(Z.Alternative.name, 'sanctuary-type-classes/Alternative');
+  eq(Z.Alternative.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Alternative');
   eq(Z.Alternative.test(null), false);
   eq(Z.Alternative.test(''), false);
   eq(Z.Alternative.test([]), true);
@@ -348,6 +380,7 @@ test('Alternative', function() {
 test('Foldable', function() {
   eq(type(Z.Foldable), 'sanctuary-type-classes/TypeClass');
   eq(Z.Foldable.name, 'sanctuary-type-classes/Foldable');
+  eq(Z.Foldable.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Foldable');
   eq(Z.Foldable.test(null), false);
   eq(Z.Foldable.test(''), false);
   eq(Z.Foldable.test([]), true);
@@ -357,6 +390,7 @@ test('Foldable', function() {
 test('Traversable', function() {
   eq(type(Z.Traversable), 'sanctuary-type-classes/TypeClass');
   eq(Z.Traversable.name, 'sanctuary-type-classes/Traversable');
+  eq(Z.Traversable.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Traversable');
   eq(Z.Traversable.test(null), false);
   eq(Z.Traversable.test(''), false);
   eq(Z.Traversable.test([]), true);
@@ -366,6 +400,7 @@ test('Traversable', function() {
 test('Extend', function() {
   eq(type(Z.Extend), 'sanctuary-type-classes/TypeClass');
   eq(Z.Extend.name, 'sanctuary-type-classes/Extend');
+  eq(Z.Extend.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Extend');
   eq(Z.Extend.test(null), false);
   eq(Z.Extend.test(''), false);
   eq(Z.Extend.test([]), true);
@@ -375,6 +410,7 @@ test('Extend', function() {
 test('Comonad', function() {
   eq(type(Z.Comonad), 'sanctuary-type-classes/TypeClass');
   eq(Z.Comonad.name, 'sanctuary-type-classes/Comonad');
+  eq(Z.Comonad.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Comonad');
   eq(Z.Comonad.test(null), false);
   eq(Z.Comonad.test(''), false);
   eq(Z.Comonad.test([]), false);
@@ -385,6 +421,7 @@ test('Comonad', function() {
 test('Contravariant', function() {
   eq(type(Z.Contravariant), 'sanctuary-type-classes/TypeClass');
   eq(Z.Contravariant.name, 'sanctuary-type-classes/Contravariant');
+  eq(Z.Contravariant.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Contravariant');
   eq(Z.Contravariant.test(null), false);
   eq(Z.Contravariant.test(''), false);
   eq(Z.Contravariant.test([]), false);
