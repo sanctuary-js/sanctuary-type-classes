@@ -224,13 +224,9 @@
   //  prefix :: String
   var prefix = 'fantasy-land/';
 
-  //  funcPath :: (Array String, a) -> Nullable Function
-  function funcPath(path, value) {
-    var x = value;
-    for (var idx = 0; idx < path.length && x != null; idx += 1) {
-      x = x[path[idx]];
-    }
-    return typeof x === 'function' ? x : null;
+  //  funcProp :: (String, a) -> Nullable Function
+  function funcProp(prop, x) {
+    return x != null && typeof x[prop] === 'function' ? x[prop] : null;
   }
 
   //  implPath :: Array String -> Nullable Function
@@ -255,7 +251,7 @@
   function getFunction(_name) {
     var name = prefix + _name;
     return function(typeRep) {
-      var f = funcPath([name], typeRep);
+      var f = funcProp(name, typeRep);
       return f == null && typeof typeRep === 'function' ?
         implPath([functionName(typeRep), name]) :
         f;
@@ -270,7 +266,7 @@
                         x.constructor != null &&
                         x.constructor.prototype === x;
       var m = null;
-      if (!isPrototype) m = funcPath([name], x);
+      if (!isPrototype) m = funcProp(name, x);
       if (m == null)    m = implPath([type(x), 'prototype', name]);
       return m && m.bind(x);
     };
