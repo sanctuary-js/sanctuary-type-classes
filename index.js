@@ -260,28 +260,42 @@
       return match == null ? '' : match[1];
     };
 
-  //  getFunction :: String -> TypeRep a -> Nullable Function
-  function getFunction(_name) {
+  //  getFunction :: (String, TypeRep a) -> Nullable Function
+  function getFunction(_name, typeRep) {
     var name = prefix + _name;
+    return (funcProp(name, typeRep) ||
+             typeof typeRep === 'function' &&
+             functionImpl(functionName(typeRep), name)) ||
+           null;
+  }
+
+  function isPrototype(o) {
+    return o != null && o.constructor != null && o.constructor.prototype === o;
+  }
+
+  //  hasMethod :: (String, Any) -> Boolean
+  function hasMethod(_name, value) {
+    var name = prefix + _name;
+    return methodImpl(type(value), name) != null ||
+           isPrototype(value) === false &&
+           funcProp(name, value) != null;
+  }
+
+  //  makeFunction :: String -> TypeRep a -> Function
+  function makeFunction(_name) {
     return function(typeRep) {
-      var f = funcProp(name, typeRep);
-      return f == null && typeof typeRep === 'function' ?
-        functionImpl(functionName(typeRep), name) :
-        f;
+      return getFunction(_name, typeRep);
     };
   }
 
-  //  getBoundMethod :: String -> a -> Nullable Function
-  function getBoundMethod(_name) {
+  //  makeMethod :: String -> (a, b, c, d, e) -> f
+  function makeMethod(_name) {
     var name = prefix + _name;
-    return function(x) {
-      var isPrototype = x != null &&
-                        x.constructor != null &&
-                        x.constructor.prototype === x;
-      var m = null;
-      if (!isPrototype) m = funcProp(name, x);
-      if (m == null)    m = methodImpl(type(x), name);
-      return m && m.bind(x);
+    return function(value, a, b, c, d) {
+      if (!isPrototype(value) && funcProp(name, value) != null) {
+        return value[name](a, b, c, d);
+      }
+      return methodImpl(type(value), name).call(value, a, b, c, d);
     };
   }
 
@@ -305,22 +319,22 @@
       dependencies,
       function(x) {
         return functionKeys.every(function(k) {
-          return typeClass.functions[k](x.constructor) != null;
+          return getFunction(k, x.constructor) != null;
         }) &&
         methodKeys.every(function(k) {
-          return typeClass.methods[k](x) != null;
+          return hasMethod(k, x);
         });
       }
     );
 
     typeClass.functions = {};
     functionKeys.forEach(function(k) {
-      typeClass.functions[k] = getFunction(k);
+      typeClass.functions[k] = makeFunction(k);
     });
 
     typeClass.methods = {};
     methodKeys.forEach(function(k) {
-      typeClass.methods[k] = getBoundMethod(k);
+      typeClass.methods[k] = makeMethod(k);
     });
 
     return typeClass;
@@ -1180,7 +1194,7 @@
 
       $pairs.push([x, y]);
       try {
-        return Setoid.test(x) && Setoid.test(y) && Setoid.methods.equals(x)(y);
+        return Setoid.test(x) && Setoid.test(y) && Setoid.methods.equals(x, y);
       } finally {
         $pairs.pop();
       }
@@ -1251,7 +1265,7 @@
 
       $pairs.push([x, y]);
       try {
-        return Ord.test(x) && Ord.test(y) && Ord.methods.lte(x)(y);
+        return Ord.test(x) && Ord.test(y) && Ord.methods.lte(x, y);
       } finally {
         $pairs.pop();
       }
@@ -1362,7 +1376,7 @@
   //. 10
   //. ```
   function compose(x, y) {
-    return Semigroupoid.methods.compose(y)(x);
+    return Semigroupoid.methods.compose(y, x);
   }
 
   //# id :: Category c => TypeRep c -> c
@@ -1401,7 +1415,7 @@
   //. Cons('foo', Cons('bar', Cons('baz', Cons('quux', Nil))))
   //. ```
   function concat(x, y) {
-    return Semigroup.methods.concat(x)(y);
+    return Semigroup.methods.concat(x, y);
   }
 
   //# empty :: Monoid m => TypeRep m -> m
@@ -1437,7 +1451,7 @@
   //. Sum(-5)
   //. ```
   function invert(group) {
-    return Group.methods.invert(group)();
+    return Group.methods.invert(group);
   }
 
   //# filter :: Filterable f => (a -> Boolean, f a) -> f a
@@ -1470,7 +1484,7 @@
   //. Just(1)
   //. ```
   function filter(pred, filterable) {
-    return Filterable.methods.filter(filterable)(pred);
+    return Filterable.methods.filter(filterable, pred);
   }
 
   //# reject :: Filterable f => (a -> Boolean, f a) -> f a
@@ -1577,7 +1591,7 @@
   //. Cons(1, Cons(2, Cons(3, Nil)))
   //. ```
   function map(f, functor) {
-    return Functor.methods.map(functor)(f);
+    return Functor.methods.map(functor, f);
   }
 
   //# flip :: Functor f => (f (a -> b), a) -> f b
@@ -1600,7 +1614,7 @@
   //. Cons(1, Cons(2, Nil))
   //. ```
   function flip(functor, x) {
-    return Functor.methods.map(functor)(thrush(x));
+    return Functor.methods.map(functor, thrush(x));
   }
 
   //# bimap :: Bifunctor f => (a -> b, c -> d, f a c) -> f b d
@@ -1612,7 +1626,7 @@
   //. Tuple('FOO', 8)
   //. ```
   function bimap(f, g, bifunctor) {
-    return Bifunctor.methods.bimap(bifunctor)(f, g);
+    return Bifunctor.methods.bimap(bifunctor, f, g);
   }
 
   //# mapLeft :: Bifunctor f => (a -> b, f a c) -> f b c
@@ -1639,7 +1653,7 @@
   //. 11
   //. ```
   function promap(f, g, profunctor) {
-    return Profunctor.methods.promap(profunctor)(f, g);
+    return Profunctor.methods.promap(profunctor, f, g);
   }
 
   //# ap :: Apply f => (f (a -> b), f a) -> f b
@@ -1666,7 +1680,7 @@
   //. Cons(4, Cons(10, Cons(256, Cons(10000, Nil))))
   //. ```
   function ap(applyF, applyX) {
-    return Apply.methods.ap(applyX)(applyF);
+    return Apply.methods.ap(applyX, applyF);
   }
 
   //# lift2 :: Apply f => (a -> b -> c, f a, f b) -> f c
@@ -1826,7 +1840,7 @@
   //. 'Hask'
   //. ```
   function chain(f, chain_) {
-    return Chain.methods.chain(chain_)(f);
+    return Chain.methods.chain(chain_, f);
   }
 
   //# join :: Chain m => m (m a) -> m a
@@ -1890,7 +1904,7 @@
   //. Just(2)
   //. ```
   function alt(x, y) {
-    return Alt.methods.alt(x)(y);
+    return Alt.methods.alt(x, y);
   }
 
   //# zero :: Plus f => TypeRep f -> f a
@@ -1929,7 +1943,7 @@
   //. 'foobarbaz'
   //. ```
   function reduce(f, x, foldable) {
-    return Foldable.methods.reduce(foldable)(f, x);
+    return Foldable.methods.reduce(foldable, f, x);
   }
 
   //# size :: Foldable f => f a -> Integer
@@ -2130,7 +2144,7 @@
   //. Identity([2, 3, 4])
   //. ```
   function traverse(typeRep, f, traversable) {
-    return Traversable.methods.traverse(traversable)(typeRep, f);
+    return Traversable.methods.traverse(traversable, typeRep, f);
   }
 
   //# sequence :: (Applicative f, Traversable t) => (TypeRep f, t (f a)) -> f (t a)
@@ -2165,7 +2179,7 @@
   //. [4, 3, 2, 1]
   //. ```
   function extend(f, extend_) {
-    return Extend.methods.extend(extend_)(f);
+    return Extend.methods.extend(extend_, f);
   }
 
   //# duplicate :: Extend w => w a -> w (w a)
@@ -2200,7 +2214,7 @@
   //. 42
   //. ```
   function extract(comonad) {
-    return Comonad.methods.extract(comonad)();
+    return Comonad.methods.extract(comonad);
   }
 
   //# contramap :: Contravariant f => (b -> a, f a) -> f b
@@ -2215,7 +2229,7 @@
   //. 3
   //. ```
   function contramap(f, contravariant) {
-    return Contravariant.methods.contramap(contravariant)(f);
+    return Contravariant.methods.contramap(contravariant, f);
   }
 
   return {
