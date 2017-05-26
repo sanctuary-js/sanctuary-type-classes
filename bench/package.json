@@ -1,0 +1,7 @@
+{
+  "name": "sanctuary-type-classes-benchmarks",
+  "version": "0.0.0",
+  "description": "A package.json for the purpose of being able to install dependencies in here",
+  "license": "MIT",
+  "private": true
+}
