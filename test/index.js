@@ -784,7 +784,7 @@ test('concat', function() {
   eq(Z.concat({}, {}), {});
   eq(Z.concat({}, {x: 1, y: 2}), {x: 1, y: 2});
   eq(Z.concat({x: 1, y: 2}, {}), {x: 1, y: 2});
-  eq(Z.concat({x: 1, y: 2}, {y: 3, z: 4}), {x: 1, y: 3, z: 4});
+  eq(Z.concat({x: 1, y: 2}, {y: 3, z: 4}), {x: 1, y: 2, z: 4});
   eq(Z.concat(Identity(''), Identity('')), Identity(''));
   eq(Z.concat(Identity(''), Identity('abc')), Identity('abc'));
   eq(Z.concat(Identity('abc'), Identity('')), Identity('abc'));

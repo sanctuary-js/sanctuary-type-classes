@@ -873,8 +873,8 @@
   //  Object$prototype$concat :: StrMap a ~> StrMap a -> StrMap a
   function Object$prototype$concat(other) {
     var result = {};
-    for (var k in this) result[k] = this[k];
-    for (k in other) result[k] = other[k];
+    for (var k in other) result[k] = other[k];
+    for (k in this) result[k] = this[k];
     return result;
   }
 
@@ -1350,7 +1350,7 @@
   //. [1, 2, 3, 4, 5, 6]
   //.
   //. > concat({x: 1, y: 2}, {y: 3, z: 4})
-  //. {x: 1, y: 3, z: 4}
+  //. {x: 1, y: 2, z: 4}
   //.
   //. > concat(Cons('foo', Cons('bar', Cons('baz', Nil))), Cons('quux', Nil))
   //. Cons('foo', Cons('bar', Cons('baz', Cons('quux', Nil))))
