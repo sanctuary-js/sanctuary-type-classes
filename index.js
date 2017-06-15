@@ -1746,6 +1746,31 @@
     return Foldable.methods.reduce(foldable)(f, x);
   }
 
+  //# size :: Foldable f => f a -> Integer
+  //.
+  //. Returns the number of elements of the given structure.
+  //.
+  //. This function is derived from [`reduce`](#reduce).
+  //.
+  //. ```javascript
+  //. > size([])
+  //. 0
+  //.
+  //. > size(['foo', 'bar', 'baz'])
+  //. 3
+  //.
+  //. > size(Nil)
+  //. 0
+  //.
+  //. > size(Cons('foo', Cons('bar', Cons('baz', Nil))))
+  //. 3
+  //. ```
+  function size(foldable) {
+    //  Fast path for arrays.
+    if (Array.isArray(foldable)) return foldable.length;
+    return reduce(function(n, _) { return n + 1; }, 0, foldable);
+  }
+
   //# traverse :: (Applicative f, Traversable t) => (TypeRep f, a -> f b, t a) -> f (t b)
   //.
   //. Function wrapper for [`fantasy-land/traverse`][].
@@ -1876,6 +1901,7 @@
     alt: alt,
     zero: zero,
     reduce: reduce,
+    size: size,
     traverse: traverse,
     sequence: sequence,
     extend: extend,

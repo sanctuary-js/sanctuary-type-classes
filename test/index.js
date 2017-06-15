@@ -1026,6 +1026,24 @@ test('reduce', function() {
   eq(Z.reduce(Z.concat, 'x', Cons('a', Cons('b', Cons('c', Nil)))), 'xabc');
 });
 
+test('size', function() {
+  eq(Z.size.length, 1);
+  eq(Z.size.name, 'size');
+
+  eq(Z.size([]), 0);
+  eq(Z.size(['foo']), 1);
+  eq(Z.size(['foo', 'bar']), 2);
+  eq(Z.size(['foo', 'bar', 'baz']), 3);
+  eq(Z.size(Nil), 0);
+  eq(Z.size(Cons('foo', Nil)), 1);
+  eq(Z.size(Cons('foo', Cons('bar', Nil))), 2);
+  eq(Z.size(Cons('foo', Cons('bar', Cons('baz', Nil)))), 3);
+  eq(Z.size(Identity('quux')), 1);
+  eq(Z.size(Nothing), 0);
+  eq(Z.size(Just(0)), 1);
+  eq(Z.size(Tuple('abc', 123)), 1);
+});
+
 test('traverse', function() {
   eq(Z.traverse.length, 3);
   eq(Z.traverse.name, 'traverse');

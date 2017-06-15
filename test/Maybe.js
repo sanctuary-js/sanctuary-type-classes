@@ -48,6 +48,10 @@ Maybe.prototype[FL.alt] = function(other) {
   return this.isJust ? this : other;
 };
 
+Maybe.prototype[FL.reduce] = function(f, x) {
+  return this.isJust ? f(x, this.value) : x;
+};
+
 Maybe.prototype.inspect =
 Maybe.prototype.toString = function() {
   return this.isJust ? 'Just(' + Z.toString(this.value) + ')' : 'Nothing';
