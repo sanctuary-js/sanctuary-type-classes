@@ -13,6 +13,14 @@ function _Maybe(tag, value) {
   this.isNothing = tag === 'Nothing';
   this.isJust = tag === 'Just';
   if (this.isJust) this.value = value;
+
+  if (this.isNothing || Z.Setoid.test(this.value)) {
+    this[FL.equals] = Maybe$prototype$equals;
+  }
+
+  if (this.isNothing || Z.Semigroup.test(this.value)) {
+    this[FL.concat] = Maybe$prototype$concat;
+  }
 }
 
 Maybe['@@type'] = 'sanctuary-type-classes/Maybe';
@@ -27,10 +35,16 @@ Maybe[FL.of] = Maybe.Just;
 
 Maybe[FL.zero] = Maybe[FL.empty];
 
-Maybe.prototype[FL.equals] = function(other) {
+function Maybe$prototype$equals(other) {
   return this.isNothing ? other.isNothing
-                        : other.isJust && Z.equals(other.value, this.value);
-};
+                        : other.isJust && Z.equals(this.value, other.value);
+}
+
+function Maybe$prototype$concat(other) {
+  return this.isNothing ? other :
+         other.isNothing ? this :
+         /* otherwise */ Maybe.Just(Z.concat(this.value, other.value));
+}
 
 Maybe.prototype[FL.map] = function(f) {
   return this.isJust ? Maybe.Just(f(this.value)) : Maybe.Nothing;

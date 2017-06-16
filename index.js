@@ -1568,6 +1568,44 @@
     return Applicative.methods.of(typeRep)(x);
   }
 
+  //# append :: (Applicative f, Semigroup (f a)) => (a, f a) -> f a
+  //.
+  //. Returns the result of appending the first argument to the second.
+  //.
+  //. This function is derived from [`concat`](#concat) and [`of`](#of).
+  //.
+  //. See also [`prepend`](#prepend).
+  //.
+  //. ```javascript
+  //. > append(3, [1, 2])
+  //. [1, 2, 3]
+  //.
+  //. > append(3, Cons(1, Cons(2, Nil)))
+  //. Cons(1, Cons(2, Cons(3, Nil)))
+  //. ```
+  function append(x, xs) {
+    return concat(xs, of(xs.constructor, x));
+  }
+
+  //# prepend :: (Applicative f, Semigroup (f a)) => (a, f a) -> f a
+  //.
+  //. Returns the result of prepending the first argument to the second.
+  //.
+  //. This function is derived from [`concat`](#concat) and [`of`](#of).
+  //.
+  //. See also [`append`](#append).
+  //.
+  //. ```javascript
+  //. > prepend(1, [2, 3])
+  //. [1, 2, 3]
+  //.
+  //. > prepend(1, Cons(2, Cons(3, Nil)))
+  //. Cons(1, Cons(2, Cons(3, Nil)))
+  //. ```
+  function prepend(x, xs) {
+    return concat(of(xs.constructor, x), xs);
+  }
+
   //# chain :: Chain m => (a -> m b, m a) -> m b
   //.
   //. Function wrapper for [`fantasy-land/chain`][].
@@ -1893,6 +1931,8 @@
     apFirst: apFirst,
     apSecond: apSecond,
     of: of,
+    append: append,
+    prepend: prepend,
     chain: chain,
     join: join,
     chainRec: chainRec,

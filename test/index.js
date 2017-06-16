@@ -908,6 +908,32 @@ test('of', function() {
   eq(Z.of(Maybe, 42), Just(42));
 });
 
+test('append', function() {
+  eq(Z.append.length, 2);
+  eq(Z.append.name, 'append');
+
+  eq(Z.append(3, []), [3]);
+  eq(Z.append(3, [1, 2]), [1, 2, 3]);
+  eq(Z.append(3, Nil), Cons(3, Nil));
+  eq(Z.append(3, Cons(1, Cons(2, Nil))), Cons(1, Cons(2, Cons(3, Nil))));
+  eq(Z.append([5, 6], [[1, 2], [3, 4]]), [[1, 2], [3, 4], [5, 6]]);
+  eq(Z.append([2], Nothing), Just([2]));
+  eq(Z.append([2], Just([1])), Just([1, 2]));
+});
+
+test('prepend', function() {
+  eq(Z.prepend.length, 2);
+  eq(Z.prepend.name, 'prepend');
+
+  eq(Z.prepend(1, []), [1]);
+  eq(Z.prepend(1, [2, 3]), [1, 2, 3]);
+  eq(Z.prepend(1, Nil), Cons(1, Nil));
+  eq(Z.prepend(1, Cons(2, Cons(3, Nil))), Cons(1, Cons(2, Cons(3, Nil))));
+  eq(Z.prepend([1, 2], [[3, 4], [5, 6]]), [[1, 2], [3, 4], [5, 6]]);
+  eq(Z.prepend([1], Nothing), Just([1]));
+  eq(Z.prepend([1], Just([2])), Just([1, 2]));
+});
+
 test('chain', function() {
   eq(Z.chain.length, 2);
   eq(Z.chain.name, 'chain');
