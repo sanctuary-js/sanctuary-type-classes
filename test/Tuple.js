@@ -26,6 +26,10 @@ Tuple.prototype[FL.bimap] = function(f, g) {
   return Tuple(f(this._1), g(this._2));
 };
 
+Tuple.prototype[FL.reduce] = function(f, x) {
+  return f(x, this._2);
+};
+
 Tuple.prototype.inspect =
 Tuple.prototype.toString = function() {
   return 'Tuple(' + Z.toString(this._1) + ', ' + Z.toString(this._2) + ')';
