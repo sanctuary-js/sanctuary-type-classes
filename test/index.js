@@ -755,6 +755,22 @@ test('gte', function() {
   eq(Z.gte('abc', 123), false);
 });
 
+test('min', function() {
+  eq(Z.min.length, 2);
+  eq(Z.min.name, 'min');
+
+  eq(Z.min(0, 1), 0);
+  eq(Z.min(['x', 'x'], ['x']), ['x']);
+});
+
+test('max', function() {
+  eq(Z.max.length, 2);
+  eq(Z.max.name, 'max');
+
+  eq(Z.max(0, 1), 1);
+  eq(Z.max(['x', 'x'], ['x']), ['x', 'x']);
+});
+
 test('compose', function() {
   eq(Z.compose.length, 2);
   eq(Z.compose.name, 'compose');

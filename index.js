@@ -1305,6 +1305,50 @@
     return lte(y, x);
   }
 
+  //# min :: Ord a => (a, a) -> a
+  //.
+  //. Returns the smaller of its two arguments.
+  //.
+  //. This function is derived from [`lte`](#lte).
+  //.
+  //. See also [`max`](#max).
+  //.
+  //. ```javascript
+  //. > min(10, 2)
+  //. 2
+  //.
+  //. > min(new Date('1999-12-31'), new Date('2000-01-01'))
+  //. new Date('1999-12-31')
+  //.
+  //. > min('10', '2')
+  //. '10'
+  //. ```
+  function min(x, y) {
+    return lte(x, y) ? x : y;
+  }
+
+  //# max :: Ord a => (a, a) -> a
+  //.
+  //. Returns the larger of its two arguments.
+  //.
+  //. This function is derived from [`lte`](#lte).
+  //.
+  //. See also [`min`](#min).
+  //.
+  //. ```javascript
+  //. > max(10, 2)
+  //. 10
+  //.
+  //. > max(new Date('1999-12-31'), new Date('2000-01-01'))
+  //. new Date('2000-01-01')
+  //.
+  //. > max('10', '2')
+  //. '2'
+  //. ```
+  function max(x, y) {
+    return lte(x, y) ? y : x;
+  }
+
   //# compose :: Semigroupoid c => (c j k, c i j) -> c i k
   //.
   //. Function wrapper for [`fantasy-land/compose`][].
@@ -1918,6 +1962,8 @@
     lte: lte,
     gt: gt,
     gte: gte,
+    min: min,
+    max: max,
     compose: compose,
     id: id,
     concat: concat,
