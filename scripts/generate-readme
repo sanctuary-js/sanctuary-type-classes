@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euf -o pipefail
 
+cp index.js index.js.orig
+trap 'mv index.js.orig index.js' EXIT
+
 gawk '
   {
     if ($0 == "//. <pre>") {
@@ -13,4 +16,6 @@ gawk '
       print
     }
   }
-' index.js >index.js.tmp
+' index.js.orig >index.js
+
+node_modules/.bin/sanctuary-generate-readme

@@ -8,24 +8,17 @@
     "url": "git://github.com/sanctuary-js/sanctuary-type-classes.git"
   },
   "scripts": {
-    "test": "make lint test"
+    "doctest": "sanctuary-doctest",
+    "lint": "sanctuary-lint",
+    "release": "sanctuary-release",
+    "test": "npm run lint && sanctuary-test && npm run doctest"
   },
   "dependencies": {
     "sanctuary-type-identifiers": "1.0.x"
   },
   "devDependencies": {
-    "doctest": "0.12.x",
-    "eslint": "4.9.x",
     "fantasy-land": "3.5.0",
-    "istanbul": "0.4.x",
-    "mocha": "2.x.x",
-    "remark-cli": "3.x.x",
-    "remark-lint-no-undefined-references": "1.x.x",
-    "remark-lint-no-unused-definitions": "1.x.x",
-    "remember-bower": "0.1.x",
-    "sanctuary-style": "1.0.x",
-    "transcribe": "0.5.x",
-    "xyz": "2.0.x"
+    "sanctuary-scripts": "1.0.x"
   },
   "files": [
     "/LICENSE",
