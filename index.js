@@ -97,6 +97,11 @@
     };
   }
 
+  //  forEachKey :: (StrMap a, StrMap a ~> String -> Undefined) -> Undefined
+  function forEachKey(strMap, f) {
+    Object.keys(strMap).forEach(f, strMap);
+  }
+
   //  has :: (String, Object) -> Boolean
   function has(k, o) {
     return Object.prototype.hasOwnProperty.call(o, k);
@@ -214,7 +219,7 @@
   }
 
   //  functionName :: Function -> String
-  var functionName = 'name' in function f() {} ?
+  var functionName = has('name', function f() {}) ?
     function functionName(f) { return f.name; } :
     /* istanbul ignore next */
     function functionName(f) {
@@ -873,22 +878,25 @@
   //  Object$prototype$concat :: StrMap a ~> StrMap a -> StrMap a
   function Object$prototype$concat(other) {
     var result = {};
-    for (var k in this) result[k] = this[k];
-    for (k in other) result[k] = other[k];
+    function assign(k) { result[k] = this[k]; }
+    forEachKey(this, assign);
+    forEachKey(other, assign);
     return result;
   }
 
   //  Object$prototype$map :: StrMap a ~> (a -> b) -> StrMap b
   function Object$prototype$map(f) {
     var result = {};
-    for (var k in this) result[k] = f(this[k]);
+    forEachKey(this, function(k) { result[k] = f(this[k]); });
     return result;
   }
 
   //  Object$prototype$ap :: StrMap a ~> StrMap (a -> b) -> StrMap b
   function Object$prototype$ap(other) {
     var result = {};
-    for (var k in this) if (k in other) result[k] = other[k](this[k]);
+    forEachKey(this, function(k) {
+      if (has(k, other)) result[k] = other[k](this[k]);
+    });
     return result;
   }
 

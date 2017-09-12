@@ -25,6 +25,14 @@ function Lazy$of(x) {
   return Z.of(Lazy, x);
 }
 
+//  Point :: () -> Point
+function Point() {
+  eq(arguments.length, Point.length);
+  if (!(this instanceof Point)) return new Point();
+}
+Point.prototype.x = 0;
+Point.prototype.y = 0;
+
 //  abs :: Number -> Number
 function abs(x) {
   eq(arguments.length, abs.length);
@@ -801,6 +809,9 @@ test('concat', function() {
   eq(Z.concat({}, {x: 1, y: 2}), {x: 1, y: 2});
   eq(Z.concat({x: 1, y: 2}, {}), {x: 1, y: 2});
   eq(Z.concat({x: 1, y: 2}, {y: 3, z: 4}), {x: 1, y: 3, z: 4});
+  eq(Z.concat({x: 1}, Point()), {x: 1});
+  eq(Z.concat(Point(), {x: 1}), {x: 1});
+  eq(Z.concat(Point(), Point()), {});
   eq(Z.concat(Identity(''), Identity('')), Identity(''));
   eq(Z.concat(Identity(''), Identity('abc')), Identity('abc'));
   eq(Z.concat(Identity('abc'), Identity('')), Identity('abc'));
@@ -830,6 +841,7 @@ test('map', function() {
   eq(Z.map(inc, [1, 2, 3]), [2, 3, 4]);
   eq(Z.map(inc, {}), {});
   eq(Z.map(inc, {x: 2, y: 4}), {x: 3, y: 5});
+  eq(Z.map(inc, Point()), {});
   eq(Z.map(inc, length)('abc'), 4);
   eq(Z.map(inc, Identity(42)), Identity(43));
   eq(Z.map(inc, Nil), Nil);
@@ -870,6 +882,8 @@ test('ap', function() {
   eq(Z.ap({x: inc}, {x: 1}), {x: 2});
   eq(Z.ap({x: inc, y: square}, {x: 1, y: 2}), {x: 2, y: 4});
   eq(Z.ap({x: inc, y: square, z: abs}, {w: 4, x: 1, y: 2}), {x: 2, y: 4});
+  eq(Z.ap({}, {toString: 42}), {});
+  eq(Z.ap({x: inc, y: inc}, Point()), {});
   eq(Z.ap(pow, abs)(-1), pow(-1)(abs(-1)));
   eq(Z.ap(pow, abs)(-2), pow(-2)(abs(-2)));
   eq(Z.ap(pow, abs)(-3), pow(-3)(abs(-3)));
@@ -1039,6 +1053,9 @@ test('alt', function() {
   eq(Z.alt({}, {a: 1, b: 2, c: 3}), {a: 1, b: 2, c: 3});
   eq(Z.alt({a: 1, b: 2, c: 3}, {}), {a: 1, b: 2, c: 3});
   eq(Z.alt({a: 1, b: 2, c: 3}, {d: 4, e: 5, f: 6}), {a: 1, b: 2, c: 3, d: 4, e: 5, f: 6});
+  eq(Z.alt({a: 1}, Point()), {a: 1});
+  eq(Z.alt(Point(), {a: 1}), {a: 1});
+  eq(Z.alt(Point(), Point()), {});
   eq(Z.alt(Nothing, Nothing), Nothing);
   eq(Z.alt(Nothing, Just(1)), Just(1));
   eq(Z.alt(Just(2), Nothing), Just(2));
