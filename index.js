@@ -1853,6 +1853,42 @@
     return reduce(function(n, _) { return n + 1; }, 0, foldable);
   }
 
+  //# elem :: (Setoid a, Foldable f) => (a, f a) -> Boolean
+  //.
+  //. Takes a value and a structure and returns `true` if the
+  //. value is an element of the structure; `false` otherwise.
+  //.
+  //. This function is derived from [`equals`](#equals) and
+  //. [`reduce`](#reduce).
+  //.
+  //. ```javascript
+  //. > elem('c', ['a', 'b', 'c'])
+  //. true
+  //.
+  //. > elem('x', ['a', 'b', 'c'])
+  //. false
+  //.
+  //. > elem(3, {x: 1, y: 2, z: 3})
+  //. true
+  //.
+  //. > elem(8, {x: 1, y: 2, z: 3})
+  //. false
+  //.
+  //. > elem(0, Just(0))
+  //. true
+  //.
+  //. > elem(0, Just(1))
+  //. false
+  //.
+  //. > elem(0, Nothing)
+  //. false
+  //. ```
+  function elem(x, foldable) {
+    return reduce(function(b, y) { return b || equals(x, y); },
+                  false,
+                  foldable);
+  }
+
   //# traverse :: (Applicative f, Traversable t) => (TypeRep f, a -> f b, t a) -> f (t b)
   //.
   //. Function wrapper for [`fantasy-land/traverse`][].
@@ -1988,6 +2024,7 @@
     zero: zero,
     reduce: reduce,
     size: size,
+    elem: elem,
     traverse: traverse,
     sequence: sequence,
     extend: extend,
