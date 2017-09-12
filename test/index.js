@@ -1117,6 +1117,36 @@ test('reverse', function() {
   eq(Z.reverse(Cons(1, Cons(2, Cons(3, Nil)))), Cons(3, Cons(2, Cons(1, Nil))));
 });
 
+test('sort', function() {
+  eq(Z.sort.length, 1);
+  eq(Z.sort.name, 'sort');
+
+  eq(Z.sort([]), []);
+  eq(Z.sort(['foo']), ['foo']);
+  eq(Z.sort(['foo', 'bar']), ['bar', 'foo']);
+  eq(Z.sort(['foo', 'bar', 'baz']), ['bar', 'baz', 'foo']);
+  eq(Z.sort(Nil), Nil);
+  eq(Z.sort(Cons('foo', Nil)), Cons('foo', Nil));
+  eq(Z.sort(Cons('foo', Cons('bar', Nil))), Cons('bar', Cons('foo', Nil)));
+  eq(Z.sort(Cons('foo', Cons('bar', Cons('baz', Nil)))), Cons('bar', Cons('baz', Cons('foo', Nil))));
+});
+
+test('sortBy', function() {
+  eq(Z.sortBy.length, 2);
+  eq(Z.sortBy.name, 'sortBy');
+
+  function rank(card) { return card.rank; }
+  function suit(card) { return card.suit; }
+  var _7s = {rank: 7, suit: 's'};
+  var _5h = {rank: 5, suit: 'h'};
+  var _2h = {rank: 2, suit: 'h'};
+  var _5s = {rank: 5, suit: 's'};
+  eq(Z.sortBy(rank, [_7s, _5h, _2h, _5s]), [_2h, _5h, _5s, _7s]);
+  eq(Z.sortBy(rank, [_7s, _5s, _2h, _5h]), [_2h, _5s, _5h, _7s]);
+  eq(Z.sortBy(suit, [_7s, _5h, _2h, _5s]), [_5h, _2h, _7s, _5s]);
+  eq(Z.sortBy(suit, [_5s, _2h, _5h, _7s]), [_2h, _5h, _5s, _7s]);
+});
+
 test('traverse', function() {
   eq(Z.traverse.length, 3);
   eq(Z.traverse.name, 'traverse');
