@@ -1889,6 +1889,29 @@
                   foldable);
   }
 
+  //# reverse :: (Applicative f, Foldable f, Monoid (f a)) => f a -> f a
+  //.
+  //. Reverses the elements of the given structure.
+  //.
+  //. This function is derived from [`concat`](#concat), [`empty`](#empty),
+  //. [`of`](#of), and [`reduce`](#reduce).
+  //.
+  //. ```javascript
+  //. > reverse([1, 2, 3])
+  //. [3, 2, 1]
+  //.
+  //. > reverse(Cons(1, Cons(2, Cons(3, Nil))))
+  //. Cons(3, Cons(2, Cons(1, Nil)))
+  //. ```
+  function reverse(foldable) {
+    //  Fast path for arrays.
+    if (Array.isArray(foldable)) return foldable.slice().reverse();
+    var F = foldable.constructor;
+    return reduce(function(xs, x) { return concat(of(F, x), xs); },
+                  empty(F),
+                  foldable);
+  }
+
   //# traverse :: (Applicative f, Traversable t) => (TypeRep f, a -> f b, t a) -> f (t b)
   //.
   //. Function wrapper for [`fantasy-land/traverse`][].
@@ -2025,6 +2048,7 @@
     reduce: reduce,
     size: size,
     elem: elem,
+    reverse: reverse,
     traverse: traverse,
     sequence: sequence,
     extend: extend,

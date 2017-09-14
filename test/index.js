@@ -1103,6 +1103,20 @@ test('elem', function() {
   eq(Z.elem(0, Nothing), false);
 });
 
+test('reverse', function() {
+  eq(Z.reverse.length, 1);
+  eq(Z.reverse.name, 'reverse');
+
+  eq(Z.reverse([]), []);
+  eq(Z.reverse([1]), [1]);
+  eq(Z.reverse([1, 2]), [2, 1]);
+  eq(Z.reverse([1, 2, 3]), [3, 2, 1]);
+  eq(Z.reverse(Nil), Nil);
+  eq(Z.reverse(Cons(1, Nil)), Cons(1, Nil));
+  eq(Z.reverse(Cons(1, Cons(2, Nil))), Cons(2, Cons(1, Nil)));
+  eq(Z.reverse(Cons(1, Cons(2, Cons(3, Nil)))), Cons(3, Cons(2, Cons(1, Nil))));
+});
+
 test('traverse', function() {
   eq(Z.traverse.length, 3);
   eq(Z.traverse.name, 'traverse');
