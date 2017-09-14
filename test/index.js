@@ -1086,6 +1086,23 @@ test('size', function() {
   eq(Z.size(Tuple('abc', 123)), 1);
 });
 
+test('elem', function() {
+  eq(Z.elem.length, 2);
+  eq(Z.elem.name, 'elem');
+
+  eq(Z.elem('a', ['a', 'b', 'c']), true);
+  eq(Z.elem('b', ['a', 'b', 'c']), true);
+  eq(Z.elem('c', ['a', 'b', 'c']), true);
+  eq(Z.elem('d', ['a', 'b', 'c']), false);
+  eq(Z.elem(1, {x: 1, y: 2, z: 3}), true);
+  eq(Z.elem(2, {x: 1, y: 2, z: 3}), true);
+  eq(Z.elem(3, {x: 1, y: 2, z: 3}), true);
+  eq(Z.elem(4, {x: 1, y: 2, z: 3}), false);
+  eq(Z.elem(0, Just(0)), true);
+  eq(Z.elem(0, Just(1)), false);
+  eq(Z.elem(0, Nothing), false);
+});
+
 test('traverse', function() {
   eq(Z.traverse.length, 3);
   eq(Z.traverse.name, 'traverse');
