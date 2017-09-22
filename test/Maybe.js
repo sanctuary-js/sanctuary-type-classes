@@ -18,6 +18,10 @@ function _Maybe(tag, value) {
     this[FL.equals] = Maybe$prototype$equals;
   }
 
+  if (this.isNothing || Z.Ord.test(this.value)) {
+    this[FL.lte] = Maybe$prototype$lte;
+  }
+
   if (this.isNothing || Z.Semigroup.test(this.value)) {
     this[FL.concat] = Maybe$prototype$concat;
   }
@@ -38,6 +42,10 @@ Maybe[FL.zero] = Maybe[FL.empty];
 function Maybe$prototype$equals(other) {
   return this.isNothing ? other.isNothing
                         : other.isJust && Z.equals(this.value, other.value);
+}
+
+function Maybe$prototype$lte(other) {
+  return this.isNothing || other.isJust && Z.lte(this.value, other.value);
 }
 
 function Maybe$prototype$concat(other) {

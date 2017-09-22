@@ -1912,6 +1912,75 @@
                   foldable);
   }
 
+  //# sort :: (Ord a, Applicative f, Foldable f, Monoid (f a)) => f a -> f a
+  //.
+  //. Performs a [stable sort][] of the elements of the given structure,
+  //. using [`lte`](#lte) for comparisons.
+  //.
+  //. This function is derived from [`lte`](#lte), [`concat`](#concat),
+  //. [`empty`](#empty), [`of`](#of), and [`reduce`](#reduce).
+  //.
+  //. See also [`sortBy`](#sortBy).
+  //.
+  //. ```javascript
+  //. > sort(['foo', 'bar', 'baz'])
+  //. ['bar', 'baz', 'foo']
+  //.
+  //. > sort([Just(2), Nothing, Just(1)])
+  //. [Nothing, Just(1), Just(2)]
+  //.
+  //. > sort(Cons('foo', Cons('bar', Cons('baz', Nil))))
+  //. Cons('bar', Cons('baz', Cons('foo', Nil)))
+  //. ```
+  function sort(foldable) {
+    return sortBy(identity, foldable);
+  }
+
+  //# sortBy :: (Ord b, Applicative f, Foldable f, Monoid (f a)) => (a -> b, f a) -> f a
+  //.
+  //. Performs a [stable sort][] of the elements of the given structure,
+  //. using [`lte`](#lte) to compare the values produced by applying the
+  //. given function to each element of the structure.
+  //.
+  //. This function is derived from [`lte`](#lte), [`concat`](#concat),
+  //. [`empty`](#empty), [`of`](#of), and [`reduce`](#reduce).
+  //.
+  //. See also [`sort`](#sort).
+  //.
+  //. ```javascript
+  //. > sortBy(s => s.length, ['red', 'green', 'blue'])
+  //. ['red', 'blue', 'green']
+  //.
+  //. > sortBy(s => s.length, ['black', 'white'])
+  //. ['black', 'white']
+  //.
+  //. > sortBy(s => s.length, ['white', 'black'])
+  //. ['white', 'black']
+  //.
+  //. > sortBy(s => s.length, Cons('red', Cons('green', Cons('blue', Nil))))
+  //. Cons('red', Cons('blue', Cons('green', Nil)))
+  //. ```
+  function sortBy(f, foldable) {
+    var rs = reduce(function(xs, x) {
+      var fx = f(x);
+      var lower = 0;
+      var upper = xs.length;
+      while (lower < upper) {
+        var idx = Math.floor((lower + upper) / 2);
+        if (lte(xs[idx].fx, fx)) lower = idx + 1; else upper = idx;
+      }
+      xs.splice(lower, 0, {x: x, fx: fx});
+      return xs;
+    }, [], foldable);
+
+    var F = foldable.constructor;
+    var result = empty(F);
+    for (var idx = 0; idx < rs.length; idx += 1) {
+      result = concat(result, of(F, rs[idx].x));
+    }
+    return result;
+  }
+
   //# traverse :: (Applicative f, Traversable t) => (TypeRep f, a -> f b, t a) -> f (t b)
   //.
   //. Function wrapper for [`fantasy-land/traverse`][].
@@ -2049,6 +2118,8 @@
     size: size,
     elem: elem,
     reverse: reverse,
+    sort: sort,
+    sortBy: sortBy,
     traverse: traverse,
     sequence: sequence,
     extend: extend,
@@ -2101,4 +2172,5 @@
 //. [`fantasy-land/reduce`]:    https://github.com/fantasyland/fantasy-land#reduce-method
 //. [`fantasy-land/traverse`]:  https://github.com/fantasyland/fantasy-land#traverse-method
 //. [`fantasy-land/zero`]:      https://github.com/fantasyland/fantasy-land#zero-method
+//. [stable sort]:              https://en.wikipedia.org/wiki/Sorting_algorithm#Stability
 //. [type-classes]:             https://github.com/sanctuary-js/sanctuary-def#type-classes
