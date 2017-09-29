@@ -1728,6 +1728,8 @@
   //. Cons(1, Cons(3, Nil))
   //. ```
   function filter(pred, m) {
+    //  Fast path for arrays.
+    if (Array.isArray(m)) return m.filter(function(x) { return pred(x); });
     var M = m.constructor;
     return reduce(function(m, x) { return pred(x) ? concat(m, of(M, x)) : m; },
                   empty(M),
@@ -1981,6 +1983,56 @@
     return result;
   }
 
+  //# takeWhile :: (Applicative f, Foldable f, Monoid (f a)) => (a -> Boolean, f a) -> f a
+  //.
+  //. Discards the first inner value which does not satisfy the predicate, and
+  //. all subsequent inner values.
+  //.
+  //. This function is derived from [`concat`](#concat), [`empty`](#empty),
+  //. [`of`](#of), and [`reduce`](#reduce).
+  //.
+  //. See also [`dropWhile`](#dropWhile).
+  //.
+  //. ```javascript
+  //. > takeWhile(s => /x/.test(s), ['xy', 'xz', 'yx', 'yz', 'zx', 'zy'])
+  //. ['xy', 'xz', 'yx']
+  //.
+  //. > takeWhile(s => /y/.test(s), ['xy', 'xz', 'yx', 'yz', 'zx', 'zy'])
+  //. ['xy']
+  //.
+  //. > takeWhile(s => /z/.test(s), ['xy', 'xz', 'yx', 'yz', 'zx', 'zy'])
+  //. []
+  //. ```
+  function takeWhile(pred, foldable) {
+    var take = true;
+    return filter(function(x) { return take = take && pred(x); }, foldable);
+  }
+
+  //# dropWhile :: (Applicative f, Foldable f, Monoid (f a)) => (a -> Boolean, f a) -> f a
+  //.
+  //. Retains the first inner value which does not satisfy the predicate, and
+  //. all subsequent inner values.
+  //.
+  //. This function is derived from [`concat`](#concat), [`empty`](#empty),
+  //. [`of`](#of), and [`reduce`](#reduce).
+  //.
+  //. See also [`takeWhile`](#takeWhile).
+  //.
+  //. ```javascript
+  //. > dropWhile(s => /x/.test(s), ['xy', 'xz', 'yx', 'yz', 'zx', 'zy'])
+  //. ['yz', 'zx', 'zy']
+  //.
+  //. > dropWhile(s => /y/.test(s), ['xy', 'xz', 'yx', 'yz', 'zx', 'zy'])
+  //. ['xz', 'yx', 'yz', 'zx', 'zy']
+  //.
+  //. > dropWhile(s => /z/.test(s), ['xy', 'xz', 'yx', 'yz', 'zx', 'zy'])
+  //. ['xy', 'xz', 'yx', 'yz', 'zx', 'zy']
+  //. ```
+  function dropWhile(pred, foldable) {
+    var take = false;
+    return filter(function(x) { return take = take || !pred(x); }, foldable);
+  }
+
   //# traverse :: (Applicative f, Traversable t) => (TypeRep f, a -> f b, t a) -> f (t b)
   //.
   //. Function wrapper for [`fantasy-land/traverse`][].
@@ -2120,6 +2172,8 @@
     reverse: reverse,
     sort: sort,
     sortBy: sortBy,
+    takeWhile: takeWhile,
+    dropWhile: dropWhile,
     traverse: traverse,
     sequence: sequence,
     extend: extend,
