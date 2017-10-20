@@ -40,13 +40,13 @@
 //:     |           |           |               \ /     | | | |     \
 //:    Ord      Category     Monoid         Traversable | | | |      \
 //:   (lte)       (id)       (empty)        (traverse)  / | | \       \
-//:                                                    /  | |  \       \
-//:                                                   /   / \   \       \
-//:                                           Profunctor /   \ Bifunctor \
-//:                                            (promap) /     \ (bimap)   \
-//:                                                    /       \           \
-//:                                                   /         \           \
-//:                                                 Alt        Apply      Extend
+//:                             |                      /  | |  \       \
+//:                             |                     /   / \   \       \
+//:                             |             Profunctor /   \ Bifunctor \
+//:                             |              (promap) /     \ (bimap)   \
+//:                             |                      /       \           \
+//:                           Group                   /         \           \
+//:                          (invert)               Alt        Apply      Extend
 //:                                                (alt)        (ap)     (extend)
 //:                                                 /           / \           \
 //:                                                /           /   \           \
@@ -347,6 +347,19 @@
   //. false
   //. ```
   var Monoid = $('Monoid', [Semigroup], {empty: Constructor});
+
+  //# Group :: TypeClass
+  //.
+  //. `TypeClass` value for [Group][].
+  //.
+  //. ```javascript
+  //. > Group.test(Sum(0))
+  //. true
+  //.
+  //. > Group.test('')
+  //. false
+  //. ```
+  var Group = $('Group', [Monoid], {invert: Value});
 
   //# Functor :: TypeClass
   //.
@@ -1435,6 +1448,18 @@
     return Monoid.methods.empty(typeRep)();
   }
 
+  //# invert :: Group g => g -> g
+  //.
+  //. Function wrapper for [`fantasy-land/invert`][].
+  //.
+  //. ```javascript
+  //. invert(Sum(5))
+  //. Sum(-5)
+  //. ```
+  function invert(group) {
+    return Group.methods.invert(group)();
+  }
+
   //# map :: Functor f => (a -> b, f a) -> f b
   //.
   //. Function wrapper for [`fantasy-land/map`][].
@@ -2128,6 +2153,7 @@
     Category: Category,
     Semigroup: Semigroup,
     Monoid: Monoid,
+    Group: Group,
     Functor: Functor,
     Bifunctor: Bifunctor,
     Profunctor: Profunctor,
@@ -2156,6 +2182,7 @@
     id: id,
     concat: concat,
     empty: empty,
+    invert: invert,
     map: map,
     bimap: bimap,
     promap: promap,
@@ -2205,6 +2232,7 @@
 //. [FL]:                       https://github.com/fantasyland/fantasy-land
 //. [Foldable]:                 https://github.com/fantasyland/fantasy-land#foldable
 //. [Functor]:                  https://github.com/fantasyland/fantasy-land#functor
+//. [Group]:                    https://github.com/fantasyland/fantasy-land#group
 //. [Monad]:                    https://github.com/fantasyland/fantasy-land#monad
 //. [Monoid]:                   https://github.com/fantasyland/fantasy-land#monoid
 //. [Ord]:                      https://github.com/fantasyland/fantasy-land#ord
@@ -2227,6 +2255,7 @@
 //. [`fantasy-land/extend`]:    https://github.com/fantasyland/fantasy-land#extend-method
 //. [`fantasy-land/extract`]:   https://github.com/fantasyland/fantasy-land#extract-method
 //. [`fantasy-land/id`]:        https://github.com/fantasyland/fantasy-land#id-method
+//. [`fantasy-land/invert`]:    https://github.com/fantasyland/fantasy-land#invert-method
 //. [`fantasy-land/lte`]:       https://github.com/fantasyland/fantasy-land#lte-method
 //. [`fantasy-land/map`]:       https://github.com/fantasyland/fantasy-land#map-method
 //. [`fantasy-land/of`]:        https://github.com/fantasyland/fantasy-land#of-method

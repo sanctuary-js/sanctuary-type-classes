@@ -8,6 +8,7 @@ var Identity = require('./Identity');
 var Lazy = require('./Lazy');
 var List = require('./List');
 var Maybe = require('./Maybe');
+var Sum = require('./Sum');
 var Tuple = require('./Tuple');
 var eq = require('./eq');
 
@@ -280,6 +281,17 @@ test('Monoid', function() {
   eq(Z.Monoid.test(''), true);
   eq(Z.Monoid.test([]), true);
   eq(Z.Monoid.test({}), true);
+});
+
+test('Group', function() {
+  eq(type(Z.Group), 'sanctuary-type-classes/TypeClass');
+  eq(Z.Group.name, 'sanctuary-type-classes/Group');
+  eq(Z.Group.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Group');
+  eq(Z.Group.test(null), false);
+  eq(Z.Group.test(''), false);
+  eq(Z.Group.test([]), false);
+  eq(Z.Group.test({}), false);
+  eq(Z.Group.test(Sum(0)), true);
 });
 
 test('Functor', function() {
@@ -831,6 +843,14 @@ test('empty', function() {
   eq(Z.empty(Object), {});
   eq(Z.empty(List), Nil);
   eq(Z.empty(Maybe), Nothing);
+});
+
+test('invert', function() {
+  eq(Z.invert.length, 1);
+  eq(Z.invert.name, 'invert');
+
+  eq(Z.invert(Sum(5)), Sum(-5));
+  eq(Z.invert(Sum(-5)), Sum(5));
 });
 
 test('map', function() {
