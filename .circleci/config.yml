@@ -20,6 +20,8 @@ jobs:
           key: nvm-cache-{{ checksum ".circleci/config.yml" }}
           paths:
             - /home/circleci/.nvm
+      - run: sudo apt-get update
+      - run: sudo apt-get install gawk
       - run:
           name: npm install && npm test
           command: |

@@ -30,39 +30,41 @@
 //.
 //. ## Type-class hierarchy
 //.
+/* eslint-disable max-len */
 //. <pre>
-//:  Setoid   Semigroupoid  Semigroup   Foldable        Functor      Contravariant
-//: (equals)    (compose)    (concat)   (reduce)         (map)        (contramap)
-//:     |           |           |           \         / | | | | \
-//:     |           |           |            \       /  | | | |  \
-//:     |           |           |             \     /   | | | |   \
-//:     |           |           |              \   /    | | | |    \
-//:     |           |           |               \ /     | | | |     \
-//:    Ord      Category     Monoid         Traversable | | | |      \
-//:   (lte)       (id)       (empty)        (traverse)  / | | \       \
-//:                             |                      /  | |  \       \
-//:                             |                     /   / \   \       \
-//:                             |             Profunctor /   \ Bifunctor \
-//:                             |              (promap) /     \ (bimap)   \
-//:                             |                      /       \           \
-//:                           Group                   /         \           \
-//:                          (invert)               Alt        Apply      Extend
-//:                                                (alt)        (ap)     (extend)
-//:                                                 /           / \           \
-//:                                                /           /   \           \
-//:                                               /           /     \           \
-//:                                              /           /       \           \
-//:                                             /           /         \           \
-//:                                           Plus    Applicative    Chain      Comonad
-//:                                          (zero)       (of)      (chain)    (extract)
-//:                                             \         / \         / \
-//:                                              \       /   \       /   \
-//:                                               \     /     \     /     \
-//:                                                \   /       \   /       \
-//:                                                 \ /         \ /         \
-//:                                             Alternative    Monad     ChainRec
-//:                                                                     (chainRec)
+//.  Setoid   Semigroupoid  Semigroup   Foldable        Functor      Contravariant
+//. (equals)    (compose)    (concat)   (reduce)         (map)        (contramap)
+//.     |           |           |           \         / | | | | \
+//.     |           |           |            \       /  | | | |  \
+//.     |           |           |             \     /   | | | |   \
+//.     |           |           |              \   /    | | | |    \
+//.     |           |           |               \ /     | | | |     \
+//.    Ord      Category     Monoid         Traversable | | | |      \
+//.   (lte)       (id)       (empty)        (traverse)  / | | \       \
+//.                             |                      /  | |  \       \
+//.                             |                     /   / \   \       \
+//.                             |             Profunctor /   \ Bifunctor \
+//.                             |              (promap) /     \ (bimap)   \
+//.                             |                      /       \           \
+//.                           Group                   /         \           \
+//.                          (invert)               Alt        Apply      Extend
+//.                                                (alt)        (ap)     (extend)
+//.                                                 /           / \           \
+//.                                                /           /   \           \
+//.                                               /           /     \           \
+//.                                              /           /       \           \
+//.                                             /           /         \           \
+//.                                           Plus    Applicative    Chain      Comonad
+//.                                          (zero)       (of)      (chain)    (extract)
+//.                                             \         / \         / \
+//.                                              \       /   \       /   \
+//.                                               \     /     \     /     \
+//.                                                \   /       \   /       \
+//.                                                 \ /         \ /         \
+//.                                             Alternative    Monad     ChainRec
+//.                                                                     (chainRec)
 //. </pre>
+/* eslint-enable max-len */
 //.
 //. ## API
 

@@ -495,7 +495,7 @@ test('toString', function() {
   eq(Z.toString(['foo']), '["foo"]');
   eq(Z.toString(['foo', 'bar']), '["foo", "bar"]');
   eq(Z.toString(/x/.exec('xyz')), '["x", "index": 0, "input": "xyz"]');
-  eq(Z.toString((function() { var xs = []; xs.z = true; xs.a = true; return xs; }())), '["a": true, "z": true]');
+  eq(Z.toString(function() { var xs = []; xs.z = true; xs.a = true; return xs; }()), '["a": true, "z": true]');
   eq(Z.toString(ones), '[1, <Circular>]');
   eq(Z.toString(ones_), '[1, [1, <Circular>]]');
   eq(Z.toString(args()), '(function () { return arguments; }())');
@@ -879,12 +879,9 @@ test('promap', function() {
   eq(Z.promap.length, 3);
   eq(Z.promap.name, 'promap');
 
-  eq(Z.promap(
-       function(xs) { return xs.reduce(function(acc, x) { return acc.concat([x.length]); }, []); },
-       square,
-       function(xs) { return xs.reduce(function(acc, x) { return acc + x; }, 0); }
-     )(['foo', 'bar', 'baz', 'quux']),
-     169);
+  function lengths(xs) { return Z.map(length, xs); }
+  function sum(xs) { return Z.reduce(add, 0, xs); }
+  eq(Z.promap(lengths, square, sum)(['foo', 'bar', 'baz', 'quux']), 169);
 });
 
 test('ap', function() {

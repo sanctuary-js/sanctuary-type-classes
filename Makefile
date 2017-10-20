@@ -1,5 +1,6 @@
 DOCTEST = node_modules/.bin/doctest --module commonjs --prefix .
-ESLINT = node_modules/.bin/eslint --config node_modules/sanctuary-style/eslint-es3.json --env es3
+ESLINT = node_modules/.bin/eslint --report-unused-disable-directives
+GENERATE_README = scripts/generate-readme
 ISTANBUL = node_modules/.bin/istanbul
 NPM = npm
 PREDOCTEST = scripts/predoctest
@@ -27,13 +28,9 @@ README.md: index.js.tmp
 	  -- '$<' \
 	| LC_ALL=C sed 's/<h4 name="\(.*\)#\(.*\)">\(.*\)\1#\2/<h4 name="\1.prototype.\2">\3\1#\2/' >'$@'
 
-# BSD uses [[:<:]] whereas GNU uses \<. The former produces an "Invalid
-# character class name" error on GNU; \< should be used if this occurs.
-SED_WORD_START = $(shell printf '' | sed 's,[[:<:]],,' && printf '[[:<:]]' || printf '\<')
-
 .INTERMEDIATE: index.js.tmp
 index.js.tmp: index.js
-	sed -e '/^[/][/]:/ s,\($(SED_WORD_START)[[:alnum:]]*\),<a href="#\1">\1</a>,g' -e 's,^//:,//.,' '$<' >'$@'
+	$(GENERATE_README)
 
 
 .PHONY: doctest
@@ -51,22 +48,7 @@ index-no-blockquotes.js: index.js $(PREDOCTEST)
 
 .PHONY: lint
 lint:
-	$(ESLINT) \
-	  --global define \
-	  --global module \
-	  --global require \
-	  --global self \
-	  --rule 'max-len: [error, {code: 79, ignoreUrls: true, ignorePattern: "^ *//([#:] |  .* :: |[.] > )"}]' \
-	  --rule 'spaced-comment: [error, always, {line: {exceptions: ["."], markers: ["#", ".", ":"]}}]' \
-	  -- index.js
-	$(ESLINT) \
-	  --env node \
-	  -- $(PREDOCTEST)
-	$(ESLINT) \
-	  --env node \
-	  --global test \
-	  --rule 'max-len: [off]' \
-	  -- $(TEST)
+	$(ESLINT) -- index.js $(PREDOCTEST) $(TEST)
 	$(REMEMBER_BOWER) $(shell pwd)
 	rm -f README.md
 	VERSION=0.0.0 make README.md
