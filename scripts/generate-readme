@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euf -o pipefail
+
+gawk '
+  {
+    if ($0 == "//. <pre>") {
+      pre = 1 ; print
+    } else if ($0 == "//. </pre>") {
+      pre = 0 ; print
+    } else if (pre) {
+      print gensub(/[[:alnum:]]+/, "<a href=\"#&\">&</a>", "g")
+    } else {
+      print
+    }
+  }
+' index.js >index.js.tmp
