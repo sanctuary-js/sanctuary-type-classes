@@ -929,7 +929,12 @@
   function Object$prototype$traverse(typeRep, f) {
     var self = this;
     return Object.keys(this).reduce(function(applicative, k) {
-      function set(o) { return function(v) { o[k] = v; return o; }; }
+      function set(o) {
+        return function(v) {
+          var singleton = {}; singleton[k] = v;
+          return Object$prototype$concat.call(o, singleton);
+        };
+      }
       return lift2(set, applicative, f(self[k]));
     }, of(typeRep, {}));
   }
