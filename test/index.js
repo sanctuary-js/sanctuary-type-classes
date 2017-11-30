@@ -1232,6 +1232,7 @@ test('traverse', function() {
   eq(Z.traverse(Identity, identInc, Nil), Identity(Nil));
   eq(Z.traverse(Identity, identInc, Cons(1, Cons(2, Cons(3, Nil)))), Identity(Cons(2, Cons(3, Cons(4, Nil)))));
   eq(Z.traverse(Lazy, Lazy$of, range(70000)).run().length, 70000);
+  eq(Z.traverse(Array, identity, {a: [1, 2], b: [3, 4]}), [{a: 1, b: 3}, {a: 1, b: 4}, {a: 2, b: 3}, {a: 2, b: 4}]);
 });
 
 test('sequence', function() {
@@ -1248,6 +1249,7 @@ test('sequence', function() {
   eq(Z.sequence(List, Identity(Cons(1, Cons(2, Cons(3, Nil))))), Cons(Identity(1), Cons(Identity(2), Cons(Identity(3), Nil))));
   eq(Z.sequence(Maybe, {a: Just('A'), b: Just('B'), c: Just('C')}), Just({a: 'A', b: 'B', c: 'C'}));
   eq(Z.sequence(Maybe, {a: Just('A'), b: Just('B'), c: Just('C'), x: Nothing}), Nothing);
+  eq(Z.sequence(Array, {a: [1, 2], b: [3, 4]}), [{a: 1, b: 3}, {a: 1, b: 4}, {a: 2, b: 3}, {a: 2, b: 4}]);
 });
 
 test('extend', function() {
