@@ -1460,7 +1460,7 @@
   //. Function wrapper for [`fantasy-land/invert`][].
   //.
   //. ```javascript
-  //. invert(Sum(5))
+  //. > invert(Sum(5))
   //. Sum(-5)
   //. ```
   function invert(group) {
