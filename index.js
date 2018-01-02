@@ -995,6 +995,14 @@
     return function(x) { return f(chain(x))(x); };
   }
 
+  //  Function$prototype$extend :: Semigroup a => (a -> b) ~> ((a -> b) -> c) -> (a -> c)
+  function Function$prototype$extend(f) {
+    var extend = this;
+    return function(x) {
+      return f(function(y) { return extend(concat(x, y)); });
+    };
+  }
+
   //  Function$prototype$contramap :: (b -> c) ~> (a -> b) -> (a -> c)
   function Function$prototype$contramap(f) {
     var contravariant = this;
@@ -1110,6 +1118,7 @@
         'fantasy-land/promap':      Function$prototype$promap,
         'fantasy-land/ap':          Function$prototype$ap,
         'fantasy-land/chain':       Function$prototype$chain,
+        'fantasy-land/extend':      Function$prototype$extend,
         'fantasy-land/contramap':   Function$prototype$contramap
       }
     }
@@ -2115,11 +2124,14 @@
   //. Function wrapper for [`fantasy-land/extend`][].
   //.
   //. `fantasy-land/extend` implementations are provided for the following
-  //. built-in types: Array.
+  //. built-in types: Array and Function.
   //.
   //. ```javascript
   //. > extend(ss => ss.join(''), ['x', 'y', 'z'])
   //. ['xyz', 'yz', 'z']
+  //.
+  //. > extend(f => f([3, 4]), reverse)([1, 2])
+  //. [4, 3, 2, 1]
   //. ```
   function extend(f, extend_) {
     return Extend.methods.extend(extend_)(f);
