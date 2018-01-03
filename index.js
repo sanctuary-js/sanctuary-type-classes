@@ -2137,6 +2137,29 @@
     return Extend.methods.extend(extend_)(f);
   }
 
+  //# duplicate :: Extend w => w a -> w (w a)
+  //.
+  //. Adds one level of nesting to a comonadic structure.
+  //.
+  //. This function is derived from [`extend`](#extend).
+  //.
+  //. ```javascript
+  //. > duplicate(Identity(1))
+  //. Identity(Identity(1))
+  //.
+  //. > duplicate([1])
+  //. [[1]]
+  //.
+  //. > duplicate([1, 2, 3])
+  //. [[1, 2, 3], [2, 3], [3]]
+  //.
+  //. > duplicate(reverse)([1, 2])([3, 4])
+  //. [4, 3, 2, 1]
+  //. ```
+  function duplicate(extend_) {
+    return extend(identity, extend_);
+  }
+
   //# extract :: Comonad w => w a -> a
   //.
   //. Function wrapper for [`fantasy-land/extract`][].
@@ -2231,6 +2254,7 @@
     traverse: traverse,
     sequence: sequence,
     extend: extend,
+    duplicate: duplicate,
     extract: extract,
     contramap: contramap
   };

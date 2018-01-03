@@ -51,9 +51,9 @@ function args() {
   return arguments;
 }
 
-//  duplicate :: a -> Pair a a
-function duplicate(x) {
-  eq(arguments.length, duplicate.length);
+//  double :: a -> Pair a a
+function double(x) {
+  eq(arguments.length, double.length);
   return [x, x];
 }
 
@@ -985,8 +985,8 @@ test('chain', function() {
   eq(Z.chain.length, 2);
   eq(Z.chain.name, 'chain');
 
-  eq(Z.chain(duplicate, []), []);
-  eq(Z.chain(duplicate, [1, 2, 3]), [1, 1, 2, 2, 3, 3]);
+  eq(Z.chain(double, []), []);
+  eq(Z.chain(double, [1, 2, 3]), [1, 1, 2, 2, 3, 3]);
   eq(Z.chain(identity, [[1, 2], [3, 4], [5, 6]]), [1, 2, 3, 4, 5, 6]);
   eq(Z.chain(repeat, abs)(-1), [-1]);
   eq(Z.chain(repeat, abs)(-2), [-2, -2]);
@@ -1262,6 +1262,18 @@ test('extend', function() {
   eq(Z.extend(joinWith(''), ['x', 'y', 'z']), ['xyz', 'yz', 'z']);
   eq(Z.extend(function(id) { return Z.reduce(add, 1, id); }, Identity(42)), Identity(43));
   eq(Z.extend(function(f) { return f([3, 4]); }, Z.reverse)([1, 2]), [4, 3, 2, 1]);
+});
+
+test('duplicate', function() {
+  eq(Z.duplicate.length, 1);
+  eq(Z.duplicate.name, 'duplicate');
+
+  eq(Z.duplicate([]), []);
+  eq(Z.duplicate([[]]), [[[]]]);
+  eq(Z.duplicate([1, 2, 3]), [[1, 2, 3], [2, 3], [3]]);
+  eq(Z.duplicate([[1, 2, 3]]), [[[1, 2, 3]]]);
+  eq(Z.duplicate(Identity(1)), Identity(Identity(1)));
+  eq(Z.duplicate(Identity(Identity(1))), Identity(Identity(Identity(1))));
 });
 
 test('extract', function() {
