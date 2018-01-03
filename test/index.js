@@ -1261,6 +1261,7 @@ test('extend', function() {
   eq(Z.extend(joinWith(''), ['x', 'y']), ['xy', 'y']);
   eq(Z.extend(joinWith(''), ['x', 'y', 'z']), ['xyz', 'yz', 'z']);
   eq(Z.extend(function(id) { return Z.reduce(add, 1, id); }, Identity(42)), Identity(43));
+  eq(Z.extend(function(f) { return f([3, 4]); }, Z.reverse)([1, 2]), [4, 3, 2, 1]);
 });
 
 test('extract', function() {
