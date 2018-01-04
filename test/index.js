@@ -483,7 +483,7 @@ test('toString', function() {
   eq(Z.toString(new Date(0)), 'new Date("1970-01-01T00:00:00.000Z")');
   eq(Z.toString(new Date(42)), 'new Date("1970-01-01T00:00:00.042Z")');
   eq(Z.toString(new Date(NaN)), 'new Date(NaN)');
-  eq(Z.toString(new Date('2001-02-03T04:05:06')), 'new Date("2001-02-03T04:05:06.000Z")');
+  eq(Z.toString(new Date('2001-02-03')), 'new Date("2001-02-03T00:00:00.000Z")');
   eq(Z.toString(/def/g), '/def/g');
   eq(Z.toString(''), '""');
   eq(Z.toString('abc'), '"abc"');
