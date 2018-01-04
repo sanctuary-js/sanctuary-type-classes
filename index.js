@@ -251,7 +251,7 @@
         };
     }
 
-    var version = '7.1.1';  // updated programmatically
+    var version = '7.2.0';  // updated programmatically
     var keys = Object.keys(requirements);
 
     var typeClass = TypeClass(
