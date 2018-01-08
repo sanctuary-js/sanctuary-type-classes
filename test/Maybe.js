@@ -54,6 +54,10 @@ function Maybe$prototype$concat(other) {
          /* otherwise */ Maybe.Just(Z.concat(this.value, other.value));
 }
 
+Maybe.prototype[FL.filter] = function(pred) {
+  return this.isJust && pred(this.value) ? this : Maybe.Nothing;
+};
+
 Maybe.prototype[FL.map] = function(f) {
   return this.isJust ? Maybe.Just(f(this.value)) : Maybe.Nothing;
 };

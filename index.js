@@ -32,8 +32,8 @@
 //.
 /* eslint-disable max-len */
 //. <pre>
-//.  Setoid   Semigroupoid  Semigroup   Foldable        Functor      Contravariant
-//. (equals)    (compose)    (concat)   (reduce)         (map)        (contramap)
+//.  Setoid   Semigroupoid  Semigroup   Foldable        Functor      Contravariant  Filterable
+//. (equals)    (compose)    (concat)   (reduce)         (map)        (contramap)    (filter)
 //.     |           |           |           \         / | | | | \
 //.     |           |           |            \       /  | | | |  \
 //.     |           |           |             \     /   | | | |   \
@@ -362,6 +362,19 @@
   //. false
   //. ```
   var Group = $('Group', [Monoid], {invert: Value});
+
+  //# Filterable :: TypeClass
+  //.
+  //. `TypeClass` value for [Filterable][].
+  //.
+  //. ```javascript
+  //. > Filterable.test({})
+  //. true
+  //.
+  //. > Filterable.test('')
+  //. false
+  //. ```
+  var Filterable = $('Filterable', [], {filter: Value});
 
   //# Functor :: TypeClass
   //.
@@ -766,6 +779,11 @@
     return this.concat(other);
   }
 
+  //  Array$prototype$filter :: Array a ~> (a -> Boolean) -> Array a
+  function Array$prototype$filter(pred) {
+    return this.filter(function(x) { return pred(x); });
+  }
+
   //  Array$prototype$map :: Array a ~> (a -> b) -> Array b
   function Array$prototype$map(f) {
     return this.map(function(x) { return f(x); });
@@ -896,6 +914,13 @@
     function assign(k) { result[k] = this[k]; }
     forEachKey(this, assign);
     forEachKey(other, assign);
+    return result;
+  }
+
+  //  Object$prototype$filter :: StrMap a ~> (a -> Boolean) -> StrMap a
+  function Object$prototype$filter(pred) {
+    var result = {};
+    forEachKey(this, function(k) { if (pred(this[k])) result[k] = this[k]; });
     return result;
   }
 
@@ -1070,6 +1095,7 @@
         'fantasy-land/equals':      Array$prototype$equals,
         'fantasy-land/lte':         Array$prototype$lte,
         'fantasy-land/concat':      Array$prototype$concat,
+        'fantasy-land/filter':      Array$prototype$filter,
         'fantasy-land/map':         Array$prototype$map,
         'fantasy-land/ap':          Array$prototype$ap,
         'fantasy-land/chain':       Array$prototype$chain,
@@ -1100,6 +1126,7 @@
         'fantasy-land/equals':      Object$prototype$equals,
         'fantasy-land/lte':         Object$prototype$lte,
         'fantasy-land/concat':      Object$prototype$concat,
+        'fantasy-land/filter':      Object$prototype$filter,
         'fantasy-land/map':         Object$prototype$map,
         'fantasy-land/ap':          Object$prototype$ap,
         'fantasy-land/alt':         Object$prototype$alt,
@@ -1476,6 +1503,69 @@
     return Group.methods.invert(group)();
   }
 
+  //# filter :: Filterable f => (a -> Boolean, f a) -> f a
+  //.
+  //. Function wrapper for [`fantasy-land/filter`][]. Discards every element
+  //. of the given structure which does not satisfy the predicate.
+  //.
+  //. `fantasy-land/filter` implementations are provided for the following
+  //. built-in types: Array and Object.
+  //.
+  //. See also [`reject`](#reject).
+  //.
+  //. ```javascript
+  //. > filter(x => x % 2 == 1, [1, 2, 3])
+  //. [1, 3]
+  //.
+  //. > filter(x => x % 2 == 1, {x: 1, y: 2, z: 3})
+  //. {x: 1, z: 3}
+  //.
+  //. > filter(x => x % 2 == 1, Cons(1, Cons(2, Cons(3, Nil))))
+  //. Cons(1, Cons(3, Nil))
+  //.
+  //. > filter(x => x % 2 == 1, Nothing)
+  //. Nothing
+  //.
+  //. > filter(x => x % 2 == 1, Just(0))
+  //. Nothing
+  //.
+  //. > filter(x => x % 2 == 1, Just(1))
+  //. Just(1)
+  //. ```
+  function filter(pred, filterable) {
+    return Filterable.methods.filter(filterable)(pred);
+  }
+
+  //# reject :: Filterable f => (a -> Boolean, f a) -> f a
+  //.
+  //. Discards every element of the given structure which satisfies the
+  //. predicate.
+  //.
+  //. This function is derived from [`filter`](#filter).
+  //.
+  //. ```javascript
+  //. > reject(x => x % 2 == 1, [1, 2, 3])
+  //. [2]
+  //.
+  //. > reject(x => x % 2 == 1, {x: 1, y: 2, z: 3})
+  //. {y: 2}
+  //.
+  //. > reject(x => x % 2 == 1, Cons(1, Cons(2, Cons(3, Nil))))
+  //. Cons(2, Nil)
+  //.
+  //. > reject(x => x % 2 == 1, Nothing)
+  //. Nothing
+  //.
+  //. > reject(x => x % 2 == 1, Just(0))
+  //. Just(0)
+  //.
+  //. > reject(x => x % 2 == 1, Just(1))
+  //. Nothing
+  //. ```
+  function reject(pred, filterable) {
+    return filter(function(x) { return !pred(x); }, filterable);
+  }
+
   //# map :: Functor f => (a -> b, f a) -> f b
   //.
   //. Function wrapper for [`fantasy-land/map`][].
@@ -1758,62 +1848,6 @@
   //. ```
   function chainRec(typeRep, f, x) {
     return ChainRec.methods.chainRec(typeRep)(f, x);
-  }
-
-  //# filter :: (Applicative f, Foldable f, Monoid (f a)) => (a -> Boolean, f a) -> f a
-  //.
-  //. Filters its second argument in accordance with the given predicate.
-  //.
-  //. This function is derived from [`concat`](#concat), [`empty`](#empty),
-  //. [`of`](#of), and [`reduce`](#reduce).
-  //.
-  //. See also [`filterM`](#filterM).
-  //.
-  //. ```javascript
-  //. > filter(x => x % 2 == 1, [1, 2, 3])
-  //. [1, 3]
-  //.
-  //. > filter(x => x % 2 == 1, Cons(1, Cons(2, Cons(3, Nil))))
-  //. Cons(1, Cons(3, Nil))
-  //. ```
-  function filter(pred, m) {
-    //  Fast path for arrays.
-    if (Array.isArray(m)) return m.filter(function(x) { return pred(x); });
-    var M = m.constructor;
-    return reduce(function(m, x) { return pred(x) ? concat(m, of(M, x)) : m; },
-                  empty(M),
-                  m);
-  }
-
-  //# filterM :: (Alternative m, Monad m) => (a -> Boolean, m a) -> m a
-  //.
-  //. Filters its second argument in accordance with the given predicate.
-  //.
-  //. This function is derived from [`of`](#of), [`chain`](#chain), and
-  //. [`zero`](#zero).
-  //.
-  //. See also [`filter`](#filter).
-  //.
-  //. ```javascript
-  //. > filterM(x => x % 2 == 1, [1, 2, 3])
-  //. [1, 3]
-  //.
-  //. > filterM(x => x % 2 == 1, Cons(1, Cons(2, Cons(3, Nil))))
-  //. Cons(1, Cons(3, Nil))
-  //.
-  //. > filterM(x => x % 2 == 1, Nothing)
-  //. Nothing
-  //.
-  //. > filterM(x => x % 2 == 1, Just(0))
-  //. Nothing
-  //.
-  //. > filterM(x => x % 2 == 1, Just(1))
-  //. Just(1)
-  //. ```
-  function filterM(pred, m) {
-    var M = m.constructor;
-    var z = zero(M);
-    return chain(function(x) { return pred(x) ? of(M, x) : z; }, m);
   }
 
   //# alt :: Alt f => (f a, f a) -> f a
@@ -2196,6 +2230,7 @@
     Semigroup: Semigroup,
     Monoid: Monoid,
     Group: Group,
+    Filterable: Filterable,
     Functor: Functor,
     Bifunctor: Bifunctor,
     Profunctor: Profunctor,
@@ -2225,6 +2260,8 @@
     concat: concat,
     empty: empty,
     invert: invert,
+    filter: filter,
+    reject: reject,
     map: map,
     bimap: bimap,
     promap: promap,
@@ -2239,8 +2276,6 @@
     chain: chain,
     join: join,
     chainRec: chainRec,
-    filter: filter,
-    filterM: filterM,
     alt: alt,
     zero: zero,
     reduce: reduce,
@@ -2273,6 +2308,7 @@
 //. [Contravariant]:            https://github.com/fantasyland/fantasy-land#contravariant
 //. [Extend]:                   https://github.com/fantasyland/fantasy-land#extend
 //. [FL]:                       https://github.com/fantasyland/fantasy-land
+//. [Filterable]:               https://github.com/fantasyland/fantasy-land#filterable
 //. [Foldable]:                 https://github.com/fantasyland/fantasy-land#foldable
 //. [Functor]:                  https://github.com/fantasyland/fantasy-land#functor
 //. [Group]:                    https://github.com/fantasyland/fantasy-land#group
@@ -2297,6 +2333,7 @@
 //. [`fantasy-land/equals`]:    https://github.com/fantasyland/fantasy-land#equals-method
 //. [`fantasy-land/extend`]:    https://github.com/fantasyland/fantasy-land#extend-method
 //. [`fantasy-land/extract`]:   https://github.com/fantasyland/fantasy-land#extract-method
+//. [`fantasy-land/filter`]:    https://github.com/fantasyland/fantasy-land#filter-method
 //. [`fantasy-land/id`]:        https://github.com/fantasyland/fantasy-land#id-method
 //. [`fantasy-land/invert`]:    https://github.com/fantasyland/fantasy-land#invert-method
 //. [`fantasy-land/lte`]:       https://github.com/fantasyland/fantasy-land#lte-method
