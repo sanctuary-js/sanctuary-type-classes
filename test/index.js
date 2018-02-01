@@ -951,6 +951,13 @@ test('bimap', function() {
   eq(Z.bimap(toUpper, inc, Tuple('abc', 123)), Tuple('ABC', 124));
 });
 
+test('mapLeft', function() {
+  eq(Z.mapLeft.length, 2);
+  eq(Z.mapLeft.name, 'mapLeft');
+
+  eq(Z.mapLeft(toUpper, Tuple('abc', 'def')), Tuple('ABC', 'def'));
+});
+
 test('promap', function() {
   eq(Z.promap.length, 3);
   eq(Z.promap.name, 'promap');
