@@ -1578,7 +1578,8 @@
   //. Nothing
   //. ```
   function reject(pred, filterable) {
-    return filter(function(x) { return !pred(x); }, filterable);
+    var filter = Filterable.methods.filter;
+    return filter(filterable)(function(x) { return !pred(x); });
   }
 
   //# takeWhile :: Filterable f => (a -> Boolean, f a) -> f a
@@ -1602,7 +1603,8 @@
   //. ```
   function takeWhile(pred, filterable) {
     var take = true;
-    return filter(function(x) { return take = take && pred(x); }, filterable);
+    var filter = Filterable.methods.filter;
+    return filter(filterable)(function(x) { return take = take && pred(x); });
   }
 
   //# dropWhile :: Filterable f => (a -> Boolean, f a) -> f a
@@ -1626,7 +1628,8 @@
   //. ```
   function dropWhile(pred, filterable) {
     var take = false;
-    return filter(function(x) { return take = take || !pred(x); }, filterable);
+    var filter = Filterable.methods.filter;
+    return filter(filterable)(function(x) { return take = take || !pred(x); });
   }
 
   //# map :: Functor f => (a -> b, f a) -> f b
@@ -1730,7 +1733,7 @@
   //. Identity(1000)
   //. ```
   function lift2(f, x, y) {
-    return ap(map(f, x), y);
+    return Apply.methods.ap(y)(Functor.methods.map(x)(f));
   }
 
   //# lift3 :: Apply f => (a -> b -> c -> d, f a, f b, f c) -> f d
@@ -1750,7 +1753,7 @@
   //. Identity('<baz>')
   //. ```
   function lift3(f, x, y, z) {
-    return ap(ap(map(f, x), y), z);
+    return Apply.methods.ap(z)(Apply.methods.ap(y)(Functor.methods.map(x)(f)));
   }
 
   //# apFirst :: Apply f => (f a, f b) -> f a
@@ -1770,7 +1773,7 @@
   //. Identity(1)
   //. ```
   function apFirst(x, y) {
-    return lift2(constant, x, y);
+    return Apply.methods.ap(y)(Functor.methods.map(x)(constant));
   }
 
   //# apSecond :: Apply f => (f a, f b) -> f b
@@ -1790,7 +1793,7 @@
   //. Identity(2)
   //. ```
   function apSecond(x, y) {
-    return lift2(constant(identity), x, y);
+    return Apply.methods.ap(y)(Functor.methods.map(x)(constant(identity)));
   }
 
   //# of :: Applicative f => (TypeRep f, a) -> f a
@@ -1830,7 +1833,8 @@
   //. Cons(1, Cons(2, Cons(3, Nil)))
   //. ```
   function append(x, xs) {
-    return concat(xs, of(xs.constructor, x));
+    var concat = Semigroup.methods.concat;
+    return concat(xs)(Applicative.methods.of(xs.constructor)(x));
   }
 
   //# prepend :: (Applicative f, Semigroup (f a)) => (a, f a) -> f a
@@ -1849,7 +1853,8 @@
   //. Cons(1, Cons(2, Cons(3, Nil)))
   //. ```
   function prepend(x, xs) {
-    return concat(of(xs.constructor, x), xs);
+    var of = Applicative.methods.of(xs.constructor);
+    return Semigroup.methods.concat(of(x))(xs);
   }
 
   //# chain :: Chain m => (a -> m b, m a) -> m b
@@ -1890,7 +1895,7 @@
   //. Identity(1)
   //. ```
   function join(chain_) {
-    return chain(identity, chain_);
+    return Chain.methods.chain(chain_)(identity);
   }
 
   //# chainRec :: ChainRec m => (TypeRep m, (a -> c, b -> c, a) -> m c, a) -> m b
@@ -1998,7 +2003,8 @@
   function size(foldable) {
     //  Fast path for arrays.
     if (Array.isArray(foldable)) return foldable.length;
-    return reduce(function(n, _) { return n + 1; }, 0, foldable);
+    var reduce = Foldable.methods.reduce;
+    return reduce(foldable)(function(n, _) { return n + 1; }, 0);
   }
 
   //# elem :: (Setoid a, Foldable f) => (a, f a) -> Boolean
@@ -2032,9 +2038,9 @@
   //. false
   //. ```
   function elem(x, foldable) {
-    return reduce(function(b, y) { return b || equals(x, y); },
-                  false,
-                  foldable);
+    var reduce = Foldable.methods.reduce;
+    return reduce(foldable)(function(b, y) { return b || equals(x, y); },
+                            false);
   }
 
   //# reverse :: (Applicative f, Foldable f, Monoid (f a)) => f a -> f a
@@ -2055,9 +2061,12 @@
     //  Fast path for arrays.
     if (Array.isArray(foldable)) return foldable.slice().reverse();
     var F = foldable.constructor;
-    return reduce(function(xs, x) { return concat(of(F, x), xs); },
-                  empty(F),
-                  foldable);
+    var of = Applicative.methods.of(F);
+    var empty = Monoid.methods.empty(F);
+    var reduce = Foldable.methods.reduce;
+    var concat = Semigroup.methods.concat;
+    return reduce(foldable)(function(xs, x) { return concat(of(x))(xs); },
+                            empty());
   }
 
   //# sort :: (Ord a, Applicative f, Foldable f, Monoid (f a)) => f a -> f a
@@ -2109,7 +2118,7 @@
   //. Cons('red', Cons('blue', Cons('green', Nil)))
   //. ```
   function sortBy(f, foldable) {
-    var rs = reduce(function(xs, x) {
+    var rs = Foldable.methods.reduce(foldable)(function(xs, x) {
       var fx = f(x);
       var lower = 0;
       var upper = xs.length;
@@ -2119,12 +2128,13 @@
       }
       xs.splice(lower, 0, {x: x, fx: fx});
       return xs;
-    }, [], foldable);
+    }, []);
 
     var F = foldable.constructor;
-    var result = empty(F);
+    var result = Monoid.methods.empty(F)();
     for (var idx = 0; idx < rs.length; idx += 1) {
-      result = concat(result, of(F, rs[idx].x));
+      var concat = Semigroup.methods.concat;
+      result = concat(result)(Applicative.methods.of(F)(rs[idx].x));
     }
     return result;
   }
@@ -2163,7 +2173,7 @@
   //. Identity([1, 2, 3])
   //. ```
   function sequence(typeRep, traversable) {
-    return traverse(typeRep, identity, traversable);
+    return Traversable.methods.traverse(traversable)(typeRep, identity);
   }
 
   //# extend :: Extend w => (w a -> b, w a) -> w b
@@ -2204,7 +2214,7 @@
   //. [4, 3, 2, 1]
   //. ```
   function duplicate(extend_) {
-    return extend(identity, extend_);
+    return Extend.methods.extend(extend_)(identity);
   }
 
   //# extract :: Comonad w => w a -> a
