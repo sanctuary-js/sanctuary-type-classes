@@ -158,7 +158,7 @@ function toUpper(s) {
 }
 
 //  version :: String
-var version = '8.0.0';  // updated programmatically
+var version = '8.0.1';  // updated programmatically
 
 //  wrap :: String -> String -> String -> String
 function wrap(before) {
