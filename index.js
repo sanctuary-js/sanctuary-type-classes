@@ -85,6 +85,21 @@
 
   'use strict';
 
+  /* istanbul ignore if */
+  if (typeof __doctest !== 'undefined') {
+    /* global __doctest:false */
+    /* eslint-disable no-unused-vars */
+    var Identity = __doctest.require('./test/Identity');
+    var List = __doctest.require('./test/List');
+    var Maybe = __doctest.require('./test/Maybe');
+    var Sum = __doctest.require('./test/Sum');
+    var Tuple = __doctest.require('./test/Tuple');
+
+    var Nil = List.Nil, Cons = List.Cons;
+    var Nothing = Maybe.Nothing, Just = Maybe.Just;
+    /* eslint-enable no-unused-vars */
+  }
+
   //  concat_ :: Array a -> Array a -> Array a
   function concat_(xs) {
     return function(ys) {
@@ -2294,52 +2309,52 @@
 
 }));
 
-//. [Alt]:                      https://github.com/fantasyland/fantasy-land#alt
-//. [Alternative]:              https://github.com/fantasyland/fantasy-land#alternative
-//. [Applicative]:              https://github.com/fantasyland/fantasy-land#applicative
-//. [Apply]:                    https://github.com/fantasyland/fantasy-land#apply
-//. [Bifunctor]:                https://github.com/fantasyland/fantasy-land#bifunctor
-//. [Category]:                 https://github.com/fantasyland/fantasy-land#category
-//. [Chain]:                    https://github.com/fantasyland/fantasy-land#chain
-//. [ChainRec]:                 https://github.com/fantasyland/fantasy-land#chainrec
-//. [Comonad]:                  https://github.com/fantasyland/fantasy-land#comonad
-//. [Contravariant]:            https://github.com/fantasyland/fantasy-land#contravariant
-//. [Extend]:                   https://github.com/fantasyland/fantasy-land#extend
-//. [FL]:                       https://github.com/fantasyland/fantasy-land
-//. [Filterable]:               https://github.com/fantasyland/fantasy-land#filterable
-//. [Foldable]:                 https://github.com/fantasyland/fantasy-land#foldable
-//. [Functor]:                  https://github.com/fantasyland/fantasy-land#functor
-//. [Group]:                    https://github.com/fantasyland/fantasy-land#group
-//. [Monad]:                    https://github.com/fantasyland/fantasy-land#monad
-//. [Monoid]:                   https://github.com/fantasyland/fantasy-land#monoid
-//. [Ord]:                      https://github.com/fantasyland/fantasy-land#ord
-//. [Plus]:                     https://github.com/fantasyland/fantasy-land#plus
-//. [Profunctor]:               https://github.com/fantasyland/fantasy-land#profunctor
-//. [Semigroup]:                https://github.com/fantasyland/fantasy-land#semigroup
-//. [Semigroupoid]:             https://github.com/fantasyland/fantasy-land#semigroupoid
-//. [Setoid]:                   https://github.com/fantasyland/fantasy-land#setoid
-//. [Traversable]:              https://github.com/fantasyland/fantasy-land#traversable
-//. [`fantasy-land/alt`]:       https://github.com/fantasyland/fantasy-land#alt-method
-//. [`fantasy-land/ap`]:        https://github.com/fantasyland/fantasy-land#ap-method
-//. [`fantasy-land/bimap`]:     https://github.com/fantasyland/fantasy-land#bimap-method
-//. [`fantasy-land/chain`]:     https://github.com/fantasyland/fantasy-land#chain-method
-//. [`fantasy-land/chainRec`]:  https://github.com/fantasyland/fantasy-land#chainrec-method
-//. [`fantasy-land/compose`]:   https://github.com/fantasyland/fantasy-land#compose-method
-//. [`fantasy-land/concat`]:    https://github.com/fantasyland/fantasy-land#concat-method
-//. [`fantasy-land/contramap`]: https://github.com/fantasyland/fantasy-land#contramap-method
-//. [`fantasy-land/empty`]:     https://github.com/fantasyland/fantasy-land#empty-method
-//. [`fantasy-land/equals`]:    https://github.com/fantasyland/fantasy-land#equals-method
-//. [`fantasy-land/extend`]:    https://github.com/fantasyland/fantasy-land#extend-method
-//. [`fantasy-land/extract`]:   https://github.com/fantasyland/fantasy-land#extract-method
-//. [`fantasy-land/filter`]:    https://github.com/fantasyland/fantasy-land#filter-method
-//. [`fantasy-land/id`]:        https://github.com/fantasyland/fantasy-land#id-method
-//. [`fantasy-land/invert`]:    https://github.com/fantasyland/fantasy-land#invert-method
-//. [`fantasy-land/lte`]:       https://github.com/fantasyland/fantasy-land#lte-method
-//. [`fantasy-land/map`]:       https://github.com/fantasyland/fantasy-land#map-method
-//. [`fantasy-land/of`]:        https://github.com/fantasyland/fantasy-land#of-method
-//. [`fantasy-land/promap`]:    https://github.com/fantasyland/fantasy-land#promap-method
-//. [`fantasy-land/reduce`]:    https://github.com/fantasyland/fantasy-land#reduce-method
-//. [`fantasy-land/traverse`]:  https://github.com/fantasyland/fantasy-land#traverse-method
-//. [`fantasy-land/zero`]:      https://github.com/fantasyland/fantasy-land#zero-method
+//. [Alt]:                      v:fantasyland/fantasy-land#alt
+//. [Alternative]:              v:fantasyland/fantasy-land#alternative
+//. [Applicative]:              v:fantasyland/fantasy-land#applicative
+//. [Apply]:                    v:fantasyland/fantasy-land#apply
+//. [Bifunctor]:                v:fantasyland/fantasy-land#bifunctor
+//. [Category]:                 v:fantasyland/fantasy-land#category
+//. [Chain]:                    v:fantasyland/fantasy-land#chain
+//. [ChainRec]:                 v:fantasyland/fantasy-land#chainrec
+//. [Comonad]:                  v:fantasyland/fantasy-land#comonad
+//. [Contravariant]:            v:fantasyland/fantasy-land#contravariant
+//. [Extend]:                   v:fantasyland/fantasy-land#extend
+//. [FL]:                       v:fantasyland/fantasy-land
+//. [Filterable]:               v:fantasyland/fantasy-land#filterable
+//. [Foldable]:                 v:fantasyland/fantasy-land#foldable
+//. [Functor]:                  v:fantasyland/fantasy-land#functor
+//. [Group]:                    v:fantasyland/fantasy-land#group
+//. [Monad]:                    v:fantasyland/fantasy-land#monad
+//. [Monoid]:                   v:fantasyland/fantasy-land#monoid
+//. [Ord]:                      v:fantasyland/fantasy-land#ord
+//. [Plus]:                     v:fantasyland/fantasy-land#plus
+//. [Profunctor]:               v:fantasyland/fantasy-land#profunctor
+//. [Semigroup]:                v:fantasyland/fantasy-land#semigroup
+//. [Semigroupoid]:             v:fantasyland/fantasy-land#semigroupoid
+//. [Setoid]:                   v:fantasyland/fantasy-land#setoid
+//. [Traversable]:              v:fantasyland/fantasy-land#traversable
+//. [`fantasy-land/alt`]:       v:fantasyland/fantasy-land#alt-method
+//. [`fantasy-land/ap`]:        v:fantasyland/fantasy-land#ap-method
+//. [`fantasy-land/bimap`]:     v:fantasyland/fantasy-land#bimap-method
+//. [`fantasy-land/chain`]:     v:fantasyland/fantasy-land#chain-method
+//. [`fantasy-land/chainRec`]:  v:fantasyland/fantasy-land#chainrec-method
+//. [`fantasy-land/compose`]:   v:fantasyland/fantasy-land#compose-method
+//. [`fantasy-land/concat`]:    v:fantasyland/fantasy-land#concat-method
+//. [`fantasy-land/contramap`]: v:fantasyland/fantasy-land#contramap-method
+//. [`fantasy-land/empty`]:     v:fantasyland/fantasy-land#empty-method
+//. [`fantasy-land/equals`]:    v:fantasyland/fantasy-land#equals-method
+//. [`fantasy-land/extend`]:    v:fantasyland/fantasy-land#extend-method
+//. [`fantasy-land/extract`]:   v:fantasyland/fantasy-land#extract-method
+//. [`fantasy-land/filter`]:    v:fantasyland/fantasy-land#filter-method
+//. [`fantasy-land/id`]:        v:fantasyland/fantasy-land#id-method
+//. [`fantasy-land/invert`]:    v:fantasyland/fantasy-land#invert-method
+//. [`fantasy-land/lte`]:       v:fantasyland/fantasy-land#lte-method
+//. [`fantasy-land/map`]:       v:fantasyland/fantasy-land#map-method
+//. [`fantasy-land/of`]:        v:fantasyland/fantasy-land#of-method
+//. [`fantasy-land/promap`]:    v:fantasyland/fantasy-land#promap-method
+//. [`fantasy-land/reduce`]:    v:fantasyland/fantasy-land#reduce-method
+//. [`fantasy-land/traverse`]:  v:fantasyland/fantasy-land#traverse-method
+//. [`fantasy-land/zero`]:      v:fantasyland/fantasy-land#zero-method
 //. [stable sort]:              https://en.wikipedia.org/wiki/Sorting_algorithm#Stability
 //. [type-classes]:             https://github.com/sanctuary-js/sanctuary-def#type-classes
