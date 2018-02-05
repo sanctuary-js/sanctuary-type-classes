@@ -1521,7 +1521,7 @@
   //# filter :: Filterable f => (a -> Boolean, f a) -> f a
   //.
   //. Function wrapper for [`fantasy-land/filter`][]. Discards every element
-  //. of the given structure which does not satisfy the predicate.
+  //. which does not satisfy the predicate.
   //.
   //. `fantasy-land/filter` implementations are provided for the following
   //. built-in types: Array and Object.
@@ -1553,8 +1553,7 @@
 
   //# reject :: Filterable f => (a -> Boolean, f a) -> f a
   //.
-  //. Discards every element of the given structure which satisfies the
-  //. predicate.
+  //. Discards every element which satisfies the predicate.
   //.
   //. This function is derived from [`filter`](#filter).
   //.
@@ -1583,8 +1582,8 @@
 
   //# takeWhile :: Filterable f => (a -> Boolean, f a) -> f a
   //.
-  //. Discards the first inner value which does not satisfy the predicate, and
-  //. all subsequent inner values.
+  //. Discards the first element which does not satisfy the predicate, and all
+  //. subsequent elements.
   //.
   //. This function is derived from [`filter`](#filter).
   //.
@@ -1607,8 +1606,8 @@
 
   //# dropWhile :: Filterable f => (a -> Boolean, f a) -> f a
   //.
-  //. Retains the first inner value which does not satisfy the predicate, and
-  //. all subsequent inner values.
+  //. Retains the first element which does not satisfy the predicate, and all
+  //. subsequent elements.
   //.
   //. This function is derived from [`filter`](#filter).
   //.
