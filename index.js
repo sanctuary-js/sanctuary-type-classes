@@ -1671,6 +1671,18 @@
     return Bifunctor.methods.bimap(bifunctor)(f, g);
   }
 
+  //# mapLeft :: Bifunctor f => (a -> b, f a c) -> f b c
+  //.
+  //. Maps the given function over the left side of a Bifunctor.
+  //.
+  //. ```javascript
+  //. > mapLeft(Math.sqrt, Tuple(64, 9))
+  //. Tuple(8, 9)
+  //. ```
+  function mapLeft(f, bifunctor) {
+    return bimap(f, identity, bifunctor);
+  }
+
   //# promap :: Profunctor p => (a -> b, c -> d, p b c) -> p a d
   //.
   //. Function wrapper for [`fantasy-land/promap`][].
@@ -2277,6 +2289,7 @@
     reject: reject,
     map: map,
     bimap: bimap,
+    mapLeft: mapLeft,
     promap: promap,
     ap: ap,
     lift2: lift2,
