@@ -1,5 +1,7 @@
 'use strict';
 
+var laws = require('fantasy-laws');
+var jsc = require('jsverify');
 var type = require('sanctuary-type-identifiers');
 
 var Z = require('..');
@@ -28,6 +30,20 @@ function Lazy$of(x) {
   return Z.of(Lazy, x);
 }
 
+//  ListArb :: Arbitrary a -> Arbitrary (List a)
+function ListArb(arb) {
+  return jsc.array(arb).smap(function(xs) {
+    var list = Nil;
+    for (var idx = 0; idx < xs.length; idx += 1) list = Cons(xs[idx], list);
+    return list;
+  });
+}
+
+//  MaybeArb :: Arbitrary a -> Arbitrary (Maybe a)
+function MaybeArb(arb) {
+  return jsc.oneof(jsc.constant(Maybe.Nothing), arb.smap(Maybe.Just));
+}
+
 //  Point :: () -> Point
 function Point() {
   eq(arguments.length, Point.length);
@@ -48,15 +64,54 @@ function add(x, y) {
   return x + y;
 }
 
+//  append :: a -> Array a -> Array a
+function append(x) {
+  eq(arguments.length, append.length);
+  return function append$1(xs) {
+    eq(arguments.length, append$1.length);
+    return xs.concat([x]);
+  };
+}
+
 //  args :: (Any...) -> Arguments
 function args() {
   return arguments;
+}
+
+//  compose :: (b -> c) -> (a -> b) -> a -> c
+function compose(f) {
+  eq(arguments.length, compose.length);
+  return function compose$1(g) {
+    eq(arguments.length, compose$1.length);
+    return function compose$2(x) {
+      eq(arguments.length, compose$2.length);
+      return f(g(x));
+    };
+  };
+}
+
+//  concat :: Array a -> Array a -> Array a
+function concat(xs) {
+  eq(arguments.length, concat.length);
+  return function concat$1(ys) {
+    eq(arguments.length, concat$1.length);
+    return xs.concat(ys);
+  };
 }
 
 //  double :: a -> Pair a a
 function double(x) {
   eq(arguments.length, double.length);
   return [x, x];
+}
+
+//  gt :: Number -> Number -> Boolean
+function gt(x) {
+  eq(arguments.length, gt.length);
+  return function gt$1(y) {
+    eq(arguments.length, gt$1.length);
+    return y > x;
+  };
 }
 
 //  identInc :: Number -> Identity Number
@@ -90,6 +145,23 @@ function joinWith(s) {
 function length(xs) {
   eq(arguments.length, length.length);
   return xs.length;
+}
+
+//  listToArray :: List a -> Array a
+function listToArray(xs) {
+  eq(arguments.length, listToArray.length);
+  var result = [];
+  for (var list = xs; list.isCons; list = list.tail) result.push(list.head);
+  return result;
+}
+
+//  lt :: Number -> Number -> Boolean
+function lt(x) {
+  eq(arguments.length, lt.length);
+  return function lt$1(y) {
+    eq(arguments.length, lt$1.length);
+    return y < x;
+  };
 }
 
 var node1 = {id: 1, rels: []};
@@ -128,6 +200,12 @@ function pow(base) {
   };
 }
 
+//  product :: Foldable f => f Number -> Number
+function product(xs) {
+  eq(arguments.length, product.length);
+  return Z.reduce(function(x, y) { return x * y; }, 1, xs);
+}
+
 //  range :: Integer -> Array Integer
 function range(n) {
   eq(arguments.length, range.length);
@@ -147,10 +225,25 @@ function repeat(n) {
   };
 }
 
+//  splitOn :: String -> String -> Array String
+function splitOn(sep) {
+  eq(arguments.length, splitOn.length);
+  return function splitOn$1(s) {
+    eq(arguments.length, splitOn$1.length);
+    return s.split(sep);
+  };
+}
+
 //  square :: Number -> Number
 function square(x) {
   eq(arguments.length, square.length);
   return x * x;
+}
+
+//  sum :: Foldable f => f Number -> Number
+function sum(xs) {
+  eq(arguments.length, sum.length);
+  return Z.reduce(add, 0, xs);
 }
 
 //  toUpper :: String -> String
@@ -972,7 +1065,6 @@ test('promap', function() {
   eq(Z.promap.name, 'promap');
 
   function lengths(xs) { return Z.map(length, xs); }
-  function sum(xs) { return Z.reduce(add, 0, xs); }
   eq(Z.promap(lengths, square, sum)(['foo', 'bar', 'baz', 'quux']), 169);
 });
 
@@ -1364,4 +1456,934 @@ test('contramap', function() {
   eq(Z.contramap.name, 'contramap');
 
   eq(Z.contramap(length, inc)('abc'), 4);
+});
+
+function testLaws(specs) {
+  Object.keys(specs).forEach(function(typeClassName) {
+    suite(typeClassName, function() {
+      var spec = specs[typeClassName];
+      Object.keys(spec.module).forEach(function(name) {
+        test(name.replace(/[A-Z]/g, function(c) { return ' ' + c.toLowerCase(); }),
+             spec.module[name].apply(spec.module, spec.laws[name]));
+      });
+    });
+  });
+}
+
+suite('laws', function() {
+
+  suite('Null', function() {
+    testLaws({
+      Setoid: {
+        module: laws.Setoid,
+        laws: {
+          reflexivity: [
+            jsc.constant(null)
+          ],
+          symmetry: [
+            jsc.constant(null),
+            jsc.constant(null)
+          ],
+          transitivity: [
+            jsc.constant(null),
+            jsc.constant(null),
+            jsc.constant(null)
+          ]
+        }
+      },
+      Ord: {
+        module: laws.Ord,
+        laws: {
+          totality: [
+            jsc.constant(null),
+            jsc.constant(null)
+          ],
+          antisymmetry: [
+            jsc.constant(null),
+            jsc.constant(null),
+            jsc.constant(null)
+          ],
+          transitivity: [
+            jsc.constant(null),
+            jsc.constant(null),
+            jsc.constant(null)
+          ]
+        }
+      }
+    });
+  });
+
+  suite('Undefined', function() {
+    testLaws({
+      Setoid: {
+        module: laws.Setoid,
+        laws: {
+          reflexivity: [
+            jsc.constant(undefined)
+          ],
+          symmetry: [
+            jsc.constant(undefined),
+            jsc.constant(undefined)
+          ],
+          transitivity: [
+            jsc.constant(undefined),
+            jsc.constant(undefined),
+            jsc.constant(undefined)
+          ]
+        }
+      },
+      Ord: {
+        module: laws.Ord,
+        laws: {
+          totality: [
+            jsc.constant(undefined),
+            jsc.constant(undefined)
+          ],
+          antisymmetry: [
+            jsc.constant(undefined),
+            jsc.constant(undefined),
+            jsc.constant(undefined)
+          ],
+          transitivity: [
+            jsc.constant(undefined),
+            jsc.constant(undefined),
+            jsc.constant(undefined)
+          ]
+        }
+      }
+    });
+  });
+
+  suite('Boolean', function() {
+    testLaws({
+      Setoid: {
+        module: laws.Setoid,
+        laws: {
+          reflexivity: [
+            jsc.bool
+          ],
+          symmetry: [
+            jsc.bool,
+            jsc.bool
+          ],
+          transitivity: [
+            jsc.bool,
+            jsc.bool,
+            jsc.bool
+          ]
+        }
+      },
+      Ord: {
+        module: laws.Ord,
+        laws: {
+          totality: [
+            jsc.bool,
+            jsc.bool
+          ],
+          antisymmetry: [
+            jsc.bool,
+            jsc.bool,
+            jsc.bool
+          ],
+          transitivity: [
+            jsc.bool,
+            jsc.bool,
+            jsc.bool
+          ]
+        }
+      }
+    });
+  });
+
+  suite('Number', function() {
+    var arb = jsc.oneof(jsc.number, jsc.number, jsc.number, jsc.constant(Infinity), jsc.constant(-Infinity), jsc.constant(NaN));
+    testLaws({
+      Setoid: {
+        module: laws.Setoid,
+        laws: {
+          reflexivity: [
+            arb
+          ],
+          symmetry: [
+            arb,
+            arb
+          ],
+          transitivity: [
+            arb,
+            arb,
+            arb
+          ]
+        }
+      },
+      Ord: {
+        module: laws.Ord,
+        laws: {
+          totality: [
+            arb,
+            arb
+          ],
+          antisymmetry: [
+            arb,
+            arb
+          ],
+          transitivity: [
+            arb,
+            arb,
+            arb
+          ]
+        }
+      }
+    });
+  });
+
+  suite('Date', function() {
+    var arb = jsc.oneof(jsc.datetime, jsc.datetime, jsc.constant(new Date(NaN)));
+    testLaws({
+      Setoid: {
+        module: laws.Setoid,
+        laws: {
+          reflexivity: [
+            arb
+          ],
+          symmetry: [
+            arb,
+            arb
+          ],
+          transitivity: [
+            arb,
+            arb,
+            arb
+          ]
+        }
+      },
+      Ord: {
+        module: laws.Ord,
+        laws: {
+          totality: [
+            arb,
+            arb
+          ],
+          antisymmetry: [
+            arb,
+            arb
+          ],
+          transitivity: [
+            arb,
+            arb,
+            arb
+          ]
+        }
+      }
+    });
+  });
+
+  suite('RegExp', function() {
+    var arb = jsc.string.smap(function(s) {
+      var validFlags = ['', 'g', 'i', 'm', 'gi', 'gm', 'im', 'gim'];
+      var flags = validFlags[Math.floor(Math.random() * validFlags.length)];
+      try {
+        return new RegExp(s, flags);
+      } catch (err) {
+        return /(?:)/;
+      }
+    });
+    testLaws({
+      Setoid: {
+        module: laws.Setoid,
+        laws: {
+          reflexivity: [
+            arb
+          ],
+          symmetry: [
+            arb,
+            arb
+          ],
+          transitivity: [
+            arb,
+            arb,
+            arb
+          ]
+        }
+      }
+    });
+  });
+
+  suite('String', function() {
+    testLaws({
+      Setoid: {
+        module: laws.Setoid,
+        laws: {
+          reflexivity: [
+            jsc.string
+          ],
+          symmetry: [
+            jsc.string,
+            jsc.string
+          ],
+          transitivity: [
+            jsc.string,
+            jsc.string,
+            jsc.string
+          ]
+        }
+      },
+      Ord: {
+        module: laws.Ord,
+        laws: {
+          totality: [
+            jsc.string,
+            jsc.string
+          ],
+          antisymmetry: [
+            jsc.string,
+            jsc.string
+          ],
+          transitivity: [
+            jsc.string,
+            jsc.string,
+            jsc.string
+          ]
+        }
+      },
+      Semigroup: {
+        module: laws.Semigroup(Z.equals),
+        laws: {
+          associativity: [
+            jsc.string,
+            jsc.string,
+            jsc.string
+          ]
+        }
+      },
+      Monoid: {
+        module: laws.Monoid(Z.equals, String),
+        laws: {
+          leftIdentity: [
+            jsc.string
+          ],
+          rightIdentity: [
+            jsc.string
+          ]
+        }
+      }
+    });
+  });
+
+  suite('Array', function() {
+    testLaws({
+      Setoid: {
+        module: laws.Setoid,
+        laws: {
+          reflexivity: [
+            jsc.array(jsc.number)
+          ],
+          symmetry: [
+            jsc.array(jsc.number),
+            jsc.array(jsc.number)
+          ],
+          transitivity: [
+            jsc.array(jsc.number),
+            jsc.array(jsc.number),
+            jsc.array(jsc.number)
+          ]
+        }
+      },
+      Ord: {
+        module: laws.Ord,
+        laws: {
+          totality: [
+            jsc.array(jsc.number),
+            jsc.array(jsc.number)
+          ],
+          antisymmetry: [
+            jsc.array(jsc.number),
+            jsc.array(jsc.number)
+          ],
+          transitivity: [
+            jsc.array(jsc.number),
+            jsc.array(jsc.number),
+            jsc.array(jsc.number)
+          ]
+        }
+      },
+      Semigroup: {
+        module: laws.Semigroup(Z.equals),
+        laws: {
+          associativity: [
+            jsc.array(jsc.number),
+            jsc.array(jsc.number),
+            jsc.array(jsc.number)
+          ]
+        }
+      },
+      Monoid: {
+        module: laws.Monoid(Z.equals, Array),
+        laws: {
+          leftIdentity: [
+            jsc.array(jsc.number)
+          ],
+          rightIdentity: [
+            jsc.array(jsc.number)
+          ]
+        }
+      },
+      Filterable: {
+        module: laws.Filterable(Z.equals),
+        laws: {
+          distributivity: [
+            jsc.array(jsc.number),
+            jsc.constant(gt(-10)),
+            jsc.constant(lt(10))
+          ],
+          identity: [
+            jsc.array(jsc.number)
+          ],
+          annihilation: [
+            jsc.array(jsc.number),
+            jsc.array(jsc.number)
+          ]
+        }
+      },
+      Functor: {
+        module: laws.Functor(Z.equals),
+        laws: {
+          identity: [
+            jsc.array(jsc.number)
+          ],
+          composition: [
+            jsc.array(jsc.number),
+            jsc.constant(Math.sqrt),
+            jsc.constant(Math.abs)
+          ]
+        }
+      },
+      Apply: {
+        module: laws.Apply(Z.equals),
+        laws: {
+          composition: [
+            jsc.constant([Math.sqrt, square]),
+            jsc.constant([Math.abs]),
+            jsc.array(jsc.number)
+          ]
+        }
+      },
+      Applicative: {
+        module: laws.Applicative(Z.equals, Array),
+        laws: {
+          identity: [
+            jsc.array(jsc.number)
+          ],
+          homomorphism: [
+            jsc.constant(square),
+            jsc.number
+          ],
+          interchange: [
+            jsc.constant([Math.abs, square]),
+            jsc.number
+          ]
+        }
+      },
+      Chain: {
+        module: laws.Chain(Z.equals),
+        laws: {
+          associativity: [
+            jsc.array(jsc.number),
+            jsc.constant(function(x) { return x > 0 ? [x] : []; }),
+            jsc.constant(function(x) { return [-x, x]; })
+          ]
+        }
+      },
+      ChainRec: {
+        module: laws.ChainRec(Z.equals, Array),
+        laws: {
+          equivalence: [
+            jsc.constant(function(s) { return s.length === 2; }),
+            jsc.constant(function(s) { return [s + 'o', s + 'n']; }),
+            jsc.constant(function(s) { return [s + '!', s + '?']; }),
+            jsc.constant('')
+          ]
+        }
+      },
+      Monad: {
+        module: laws.Monad(Z.equals, Array),
+        laws: {
+          leftIdentity: [
+            jsc.constant(double),
+            jsc.number
+          ],
+          rightIdentity: [
+            jsc.array(jsc.number)
+          ]
+        }
+      },
+      Alt: {
+        module: laws.Alt(Z.equals),
+        laws: {
+          associativity: [
+            jsc.array(jsc.number),
+            jsc.array(jsc.number),
+            jsc.array(jsc.number)
+          ],
+          distributivity: [
+            jsc.array(jsc.number),
+            jsc.array(jsc.number),
+            jsc.constant(square)
+          ]
+        }
+      },
+      Plus: {
+        module: laws.Plus(Z.equals, Array),
+        laws: {
+          leftIdentity: [
+            jsc.array(jsc.number)
+          ],
+          rightIdentity: [
+            jsc.array(jsc.number)
+          ],
+          annihilation: [
+            jsc.constant(square)
+          ]
+        }
+      },
+      Alternative: {
+        module: laws.Alternative(Z.equals, Array),
+        laws: {
+          distributivity: [
+            jsc.array(jsc.number),
+            jsc.constant([Math.abs, Math.sqrt]),
+            jsc.constant([square])
+          ],
+          annihilation: [
+            jsc.array(jsc.number)
+          ]
+        }
+      },
+      Foldable: {
+        module: laws.Foldable(Z.equals),
+        laws: {
+          associativity: [
+            jsc.constant(function(x, y) { return x - y; }),
+            jsc.number,
+            jsc.array(jsc.number)
+          ]
+        }
+      },
+      Traversable: {
+        module: laws.Traversable(Z.equals),
+        laws: {
+          naturality: [
+            jsc.constant(List),
+            jsc.constant(Array),
+            jsc.constant(listToArray),
+            jsc.array(ListArb(jsc.number))
+          ],
+          identity: [
+            jsc.constant(Identity),
+            jsc.array(jsc.number)
+          ],
+          composition: [
+            jsc.constant(Maybe),
+            jsc.constant(List),
+            jsc.array(MaybeArb(ListArb(jsc.number)))
+          ]
+        }
+      },
+      Extend: {
+        module: laws.Extend(Z.equals),
+        laws: {
+          associativity: [
+            jsc.array(jsc.number),
+            jsc.constant(product),
+            jsc.constant(sum)
+          ]
+        }
+      }
+    });
+  });
+
+  suite('Arguments', function() {
+    var arb = jsc.array(jsc.oneof(jsc.number, jsc.string)).smap(Function.prototype.apply.bind(args));
+    testLaws({
+      Setoid: {
+        module: laws.Setoid,
+        laws: {
+          reflexivity: [
+            arb
+          ],
+          symmetry: [
+            arb,
+            arb
+          ],
+          transitivity: [
+            arb,
+            arb,
+            arb
+          ]
+        }
+      },
+      Ord: {
+        module: laws.Ord,
+        laws: {
+          totality: [
+            arb,
+            arb
+          ],
+          antisymmetry: [
+            arb,
+            arb
+          ],
+          transitivity: [
+            arb,
+            arb,
+            arb
+          ]
+        }
+      }
+    });
+  });
+
+  suite('Error', function() {
+    var arb = jsc.string.smap(function(s) { return new Error(s); });
+    testLaws({
+      Setoid: {
+        module: laws.Setoid,
+        laws: {
+          reflexivity: [
+            arb
+          ],
+          symmetry: [
+            arb,
+            arb
+          ],
+          transitivity: [
+            arb,
+            arb,
+            arb
+          ]
+        }
+      }
+    });
+  });
+
+  suite('Object', function() {
+    testLaws({
+      Setoid: {
+        module: laws.Setoid,
+        laws: {
+          reflexivity: [
+            jsc.dict(jsc.array(jsc.number))
+          ],
+          symmetry: [
+            jsc.dict(jsc.array(jsc.number)),
+            jsc.dict(jsc.array(jsc.number))
+          ],
+          transitivity: [
+            jsc.dict(jsc.array(jsc.number)),
+            jsc.dict(jsc.array(jsc.number)),
+            jsc.dict(jsc.array(jsc.number))
+          ]
+        }
+      },
+      Ord: {
+        module: laws.Ord,
+        laws: {
+          totality: [
+            jsc.dict(jsc.array(jsc.number)),
+            jsc.dict(jsc.array(jsc.number))
+          ],
+          antisymmetry: [
+            jsc.dict(jsc.array(jsc.number)),
+            jsc.dict(jsc.array(jsc.number))
+          ],
+          transitivity: [
+            jsc.dict(jsc.array(jsc.number)),
+            jsc.dict(jsc.array(jsc.number)),
+            jsc.dict(jsc.array(jsc.number))
+          ]
+        }
+      },
+      Semigroup: {
+        module: laws.Semigroup(Z.equals),
+        laws: {
+          associativity: [
+            jsc.dict(jsc.array(jsc.number)),
+            jsc.dict(jsc.array(jsc.number)),
+            jsc.dict(jsc.array(jsc.number))
+          ]
+        }
+      },
+      Monoid: {
+        module: laws.Monoid(Z.equals, Object),
+        laws: {
+          leftIdentity: [
+            jsc.dict(jsc.array(jsc.number))
+          ],
+          rightIdentity: [
+            jsc.dict(jsc.array(jsc.number))
+          ]
+        }
+      },
+      Filterable: {
+        module: laws.Filterable(Z.equals),
+        laws: {
+          distributivity: [
+            jsc.dict(jsc.array(jsc.number)),
+            jsc.constant(function(xs) { return xs.length % 2 === 0; }),
+            jsc.constant(compose(gt(0))(sum))
+          ],
+          identity: [
+            jsc.dict(jsc.array(jsc.number))
+          ],
+          annihilation: [
+            jsc.dict(jsc.array(jsc.number)),
+            jsc.dict(jsc.array(jsc.number))
+          ]
+        }
+      },
+      Functor: {
+        module: laws.Functor(Z.equals),
+        laws: {
+          identity: [
+            jsc.dict(jsc.array(jsc.number))
+          ],
+          composition: [
+            jsc.dict(jsc.array(jsc.number)),
+            jsc.constant(Math.round),
+            jsc.constant(sum)
+          ]
+        }
+      },
+      Apply: {
+        module: laws.Apply(Z.equals),
+        laws: {
+          composition: [
+            jsc.dict(jsc.constant(Math.round)),
+            jsc.dict(jsc.constant(sum)),
+            jsc.dict(jsc.array(jsc.number))
+          ]
+        }
+      },
+      Alt: {
+        module: laws.Alt(Z.equals),
+        laws: {
+          associativity: [
+            jsc.dict(jsc.array(jsc.number)),
+            jsc.dict(jsc.array(jsc.number)),
+            jsc.dict(jsc.array(jsc.number))
+          ],
+          distributivity: [
+            jsc.dict(jsc.array(jsc.number)),
+            jsc.dict(jsc.array(jsc.number)),
+            jsc.constant(sum)
+          ]
+        }
+      },
+      Plus: {
+        module: laws.Plus(Z.equals, Object),
+        laws: {
+          leftIdentity: [
+            jsc.dict(jsc.array(jsc.number))
+          ],
+          rightIdentity: [
+            jsc.dict(jsc.array(jsc.number))
+          ],
+          annihilation: [
+            jsc.constant(sum)
+          ]
+        }
+      },
+      Foldable: {
+        module: laws.Foldable(Z.equals),
+        laws: {
+          associativity: [
+            jsc.constant(Z.concat),
+            jsc.array(jsc.number),
+            jsc.dict(jsc.array(jsc.number))
+          ]
+        }
+      },
+      Traversable: {
+        module: laws.Traversable(Z.equals),
+        laws: {
+          naturality: [
+            jsc.constant(List),
+            jsc.constant(Array),
+            jsc.constant(listToArray),
+            jsc.dict(ListArb(jsc.number))
+          ],
+          identity: [
+            jsc.constant(Identity),
+            jsc.dict(jsc.array(jsc.number))
+          ],
+          composition: [
+            jsc.constant(Maybe),
+            jsc.constant(List),
+            jsc.dict(MaybeArb(ListArb(jsc.number)))
+          ]
+        }
+      }
+    });
+  });
+
+  suite('Function', function() {
+    function resultsEqual(x) {
+      return function(f, g) {
+        return Z.equals(f(x), g(x));
+      };
+    }
+    var arb = jsc.oneof(jsc.constant(abs), jsc.constant(square));
+    testLaws({
+      Setoid: {
+        module: laws.Setoid,
+        laws: {
+          reflexivity: [
+            arb
+          ],
+          symmetry: [
+            arb,
+            arb
+          ],
+          transitivity: [
+            arb,
+            arb,
+            arb
+          ]
+        }
+      },
+      Semigroupoid: {
+        module: laws.Semigroupoid(resultsEqual(['foo', 'bar', 'baz'])),
+        laws: {
+          associativity: [
+            jsc.constant(square),
+            jsc.constant(length),
+            jsc.constant(joinWith(''))
+          ]
+        }
+      },
+      Category: {
+        module: laws.Category(resultsEqual(['foo', 'bar', 'baz'])),
+        laws: {
+          leftIdentity: [
+            jsc.constant(Function),
+            jsc.constant(joinWith(''))
+          ],
+          rightIdentity: [
+            jsc.constant(Function),
+            jsc.constant(joinWith(''))
+          ]
+        }
+      },
+      Functor: {
+        module: laws.Functor(resultsEqual(['foo', 'bar', 'baz'])),
+        laws: {
+          identity: [
+            jsc.constant(Z.reverse)
+          ],
+          composition: [
+            jsc.constant(Z.reverse),
+            jsc.constant(splitOn('a')),
+            jsc.constant(joinWith('-'))
+          ]
+        }
+      },
+      Profunctor: {
+        module: laws.Profunctor(resultsEqual(['foo', 'bar', 'baz'])),
+        laws: {
+          identity: [
+            jsc.constant(append('3'))
+          ],
+          composition: [
+            jsc.constant(append('3')),
+            jsc.constant(append('2')),
+            jsc.constant(append('1')),
+            jsc.constant(append('5')),
+            jsc.constant(append('4'))
+          ]
+        }
+      },
+      Apply: {
+        module: laws.Apply(resultsEqual(['foo', 'bar', 'baz'])),
+        laws: {
+          composition: [
+            jsc.constant(function(xs) { return function(x) { return [x].concat(xs); }; }),
+            jsc.constant(function(xs) { return function(n) { return xs[n - 1]; }; }),
+            jsc.constant(length)
+          ]
+        }
+      },
+      Applicative: {
+        module: laws.Applicative(resultsEqual(['foo', 'bar', 'baz']), Function),
+        laws: {
+          identity: [
+            jsc.constant(length)
+          ],
+          homomorphism: [
+            jsc.constant(joinWith('')),
+            jsc.array(jsc.string)
+          ],
+          interchange: [
+            jsc.constant(concat),
+            jsc.array(jsc.string)
+          ]
+        }
+      },
+      Chain: {
+        module: laws.Chain(resultsEqual(['foo', 'bar', 'baz'])),
+        laws: {
+          associativity: [
+            jsc.constant(length),
+            jsc.constant(function(n) { return function(xs) { return xs[n - 1]; }; }),
+            jsc.constant(function(x) { return function(xs) { return [x].concat(xs); }; })
+          ]
+        }
+      },
+      ChainRec: {
+        module: laws.ChainRec(resultsEqual({step: 2, inc: 100}), Function),
+        laws: {
+          equivalence: [
+            jsc.constant(function p(n) { return n === 3000; }),
+            jsc.constant(function n(n) { return function(env) { return n + env.step; }; }),
+            jsc.constant(function d(n) { return function(env) { return n + env.inc; }; }),
+            jsc.constant(0)
+          ]
+        }
+      },
+      Monad: {
+        module: laws.Monad(resultsEqual(['foo', 'bar', 'baz']), Function),
+        laws: {
+          leftIdentity: [
+            jsc.constant(compose(joinWith('-'))),
+            jsc.constant(Z.reverse)
+          ],
+          rightIdentity: [
+            jsc.constant(Z.reverse)
+          ]
+        }
+      },
+      Extend: {
+        module: laws.Extend(resultsEqual(['foo', 'bar', 'baz'])),
+        laws: {
+          associativity: [
+            jsc.constant(Z.reverse),
+            jsc.constant(function(f) { return f(['(w b) -> c']); }),
+            jsc.constant(function(f) { return f(['(w a) -> b']); })
+          ]
+        }
+      },
+      Contravariant: {
+        module: laws.Contravariant(resultsEqual(['foo', 'bar', 'baz'])),
+        laws: {
+          identity: [
+            jsc.constant(Z.reverse)
+          ],
+          composition: [
+            jsc.constant(Z.reverse),
+            jsc.constant(splitOn('a')),
+            jsc.constant(joinWith('-'))
+          ]
+        }
+      }
+    });
+  });
+
 });

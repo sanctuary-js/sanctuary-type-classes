@@ -13,8 +13,9 @@ var List = {prototype: _List.prototype};
 List.prototype.constructor = List;
 
 function _List(tag, head, tail) {
-  this.tag = tag;
-  if (tag === 'Cons') {
+  this.isNil = tag === 'Nil';
+  this.isCons = tag === 'Cons';
+  if (this.isCons) {
     this.head = head;
     this.tail = tail;
   }
@@ -38,21 +39,21 @@ List[FL.of] = function(x) { return Cons(x, Nil); };
 List[FL.zero] = List[FL.empty];
 
 List.prototype[FL.equals] = function(other) {
-  return this.tag === 'Nil' ?
-    other.tag === 'Nil' :
-    other.tag === 'Cons' &&
+  return this.isNil ?
+    other.isNil :
+    other.isCons &&
       Z.equals(other.head, this.head) &&
       Z.equals(other.tail, this.tail);
 };
 
 List.prototype[FL.concat] = function(other) {
-  return this.tag === 'Nil' ?
+  return this.isNil ?
     other :
     Cons(this.head, Z.concat(this.tail, other));
 };
 
 List.prototype[FL.filter] = function(pred) {
-  return this.tag === 'Nil' ?
+  return this.isNil ?
     Nil :
     pred(this.head) ?
       Cons(this.head, Z.filter(pred, this.tail)) :
@@ -60,19 +61,19 @@ List.prototype[FL.filter] = function(pred) {
 };
 
 List.prototype[FL.map] = function(f) {
-  return this.tag === 'Nil' ?
+  return this.isNil ?
     Nil :
     Cons(f(this.head), Z.map(f, this.tail));
 };
 
 List.prototype[FL.ap] = function(other) {
-  return this.tag === 'Nil' || other.tag === 'Nil' ?
+  return this.isNil || other.isNil ?
     Nil :
     Z.concat(Z.map(other.head, this), Z.ap(other.tail, this));
 };
 
 List.prototype[FL.chain] = function(f) {
-  return this.tag === 'Nil' ?
+  return this.isNil ?
     Nil :
     Z.concat(f(this.head), Z.chain(f, this.tail));
 };
@@ -80,20 +81,20 @@ List.prototype[FL.chain] = function(f) {
 List.prototype[FL.alt] = List.prototype[FL.concat];
 
 List.prototype[FL.reduce] = function(f, x) {
-  return this.tag === 'Nil' ?
+  return this.isNil ?
     x :
     Z.reduce(f, f(x, this.head), this.tail);
 };
 
 List.prototype[FL.traverse] = function(typeRep, f) {
-  return this.tag === 'Nil' ?
+  return this.isNil ?
     Z.of(typeRep, Nil) :
     Z.ap(Z.map(curry2(Cons), f(this.head)), Z.traverse(typeRep, f, this.tail));
 };
 
 List.prototype.inspect =
 List.prototype.toString = function() {
-  return this.tag === 'Nil' ?
+  return this.isNil ?
     'Nil' :
     'Cons(' + Z.toString(this.head) + ', ' + Z.toString(this.tail) + ')';
 };

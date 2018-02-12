@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euf -o pipefail
+
+trap 'rm node_modules/fantasy-laws/node_modules/sanctuary-type-classes' EXIT
+
+# Force fantasy-laws to use the current version of sanctuary-type-classes.
+# <https://github.com/sanctuary-js/sanctuary-type-classes/pull/89#discussion_r171182845>
+mkdir -p node_modules/fantasy-laws/node_modules
+ln -s ../../.. node_modules/fantasy-laws/node_modules/sanctuary-type-classes
+
+node_modules/.bin/sanctuary-test "$@"
