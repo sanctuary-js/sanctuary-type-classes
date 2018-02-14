@@ -1,4 +1,14 @@
 {
   "root": true,
-  "extends": ["./node_modules/sanctuary-style/eslint-es3.json"]
+  "extends": ["./node_modules/sanctuary-style/eslint-es3.json"],
+  "overrides": [
+    {
+      "files": ["bench/**/*.js"],
+      "env": {"node": true},
+      "rules": {
+        "key-spacing": ["off"],
+        "max-len": ["off"]
+      }
+    }
+  ]
 }
