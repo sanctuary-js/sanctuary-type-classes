@@ -668,7 +668,7 @@
   function Number$prototype$lte(other) {
     return typeof this === 'object' ?
       lte(this.valueOf(), other.valueOf()) :
-      isNaN(this) && isNaN(other) || this <= other;
+      isNaN(this) || this <= other;
   }
 
   //  Date$prototype$toString :: Date ~> () -> String
