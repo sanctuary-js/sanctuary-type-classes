@@ -683,7 +683,7 @@ test('lte', function() {
   eq(Z.lte(Infinity, -Infinity), false);
   eq(Z.lte(-Infinity, Infinity), true);
   eq(Z.lte(-Infinity, -Infinity), true);
-  eq(Z.lte(NaN, Math.PI), false);
+  eq(Z.lte(NaN, Math.PI), true);
   eq(Z.lte(Math.PI, NaN), false);
   eq(Z.lte(new Number(0), new Number(0)), true);
   eq(Z.lte(new Number(0), new Number(-0)), true);
@@ -694,7 +694,7 @@ test('lte', function() {
   eq(Z.lte(new Number(Infinity), new Number(-Infinity)), false);
   eq(Z.lte(new Number(-Infinity), new Number(Infinity)), true);
   eq(Z.lte(new Number(-Infinity), new Number(-Infinity)), true);
-  eq(Z.lte(new Number(NaN), new Number(Math.PI)), false);
+  eq(Z.lte(new Number(NaN), new Number(Math.PI)), true);
   eq(Z.lte(new Number(Math.PI), new Number(NaN)), false);
   eq(Z.lte(42, new Number(42)), false);
   eq(Z.lte(new Number(42), 42), false);
