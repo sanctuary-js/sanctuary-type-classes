@@ -20,7 +20,7 @@
   "devDependencies": {
     "fantasy-land": "3.5.0",
     "sanctuary-benchmark": "1.0.x",
-    "sanctuary-scripts": "1.0.x"
+    "sanctuary-scripts": "1.1.x"
   },
   "files": [
     "/LICENSE",

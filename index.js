@@ -1052,49 +1052,49 @@
   /* eslint-disable key-spacing */
   var implementations = {
     Null: {
-      prototype: {
-        toString:                   Null$prototype$toString,
+      'prototype': {
+        'toString':                 Null$prototype$toString,
         'fantasy-land/equals':      Null$prototype$equals,
         'fantasy-land/lte':         Null$prototype$lte
       }
     },
     Undefined: {
-      prototype: {
-        toString:                   Undefined$prototype$toString,
+      'prototype': {
+        'toString':                 Undefined$prototype$toString,
         'fantasy-land/equals':      Undefined$prototype$equals,
         'fantasy-land/lte':         Undefined$prototype$lte
       }
     },
     Boolean: {
-      prototype: {
-        toString:                   Boolean$prototype$toString,
+      'prototype': {
+        'toString':                 Boolean$prototype$toString,
         'fantasy-land/equals':      Boolean$prototype$equals,
         'fantasy-land/lte':         Boolean$prototype$lte
       }
     },
     Number: {
-      prototype: {
-        toString:                   Number$prototype$toString,
+      'prototype': {
+        'toString':                 Number$prototype$toString,
         'fantasy-land/equals':      Number$prototype$equals,
         'fantasy-land/lte':         Number$prototype$lte
       }
     },
     Date: {
-      prototype: {
-        toString:                   Date$prototype$toString,
+      'prototype': {
+        'toString':                 Date$prototype$toString,
         'fantasy-land/equals':      Date$prototype$equals,
         'fantasy-land/lte':         Date$prototype$lte
       }
     },
     RegExp: {
-      prototype: {
+      'prototype': {
         'fantasy-land/equals':      RegExp$prototype$equals
       }
     },
     String: {
       'fantasy-land/empty':         String$empty,
-      prototype: {
-        toString:                   String$prototype$toString,
+      'prototype': {
+        'toString':                 String$prototype$toString,
         'fantasy-land/equals':      String$prototype$equals,
         'fantasy-land/lte':         String$prototype$lte,
         'fantasy-land/concat':      String$prototype$concat
@@ -1105,8 +1105,8 @@
       'fantasy-land/of':            Array$of,
       'fantasy-land/chainRec':      Array$chainRec,
       'fantasy-land/zero':          Array$zero,
-      prototype: {
-        toString:                   Array$prototype$toString,
+      'prototype': {
+        'toString':                 Array$prototype$toString,
         'fantasy-land/equals':      Array$prototype$equals,
         'fantasy-land/lte':         Array$prototype$lte,
         'fantasy-land/concat':      Array$prototype$concat,
@@ -1121,23 +1121,23 @@
       }
     },
     Arguments: {
-      prototype: {
-        toString:                   Arguments$prototype$toString,
+      'prototype': {
+        'toString':                 Arguments$prototype$toString,
         'fantasy-land/equals':      Arguments$prototype$equals,
         'fantasy-land/lte':         Arguments$prototype$lte
       }
     },
     Error: {
-      prototype: {
-        toString:                   Error$prototype$toString,
+      'prototype': {
+        'toString':                 Error$prototype$toString,
         'fantasy-land/equals':      Error$prototype$equals
       }
     },
     Object: {
       'fantasy-land/empty':         Object$empty,
       'fantasy-land/zero':          Object$zero,
-      prototype: {
-        toString:                   Object$prototype$toString,
+      'prototype': {
+        'toString':                 Object$prototype$toString,
         'fantasy-land/equals':      Object$prototype$equals,
         'fantasy-land/lte':         Object$prototype$lte,
         'fantasy-land/concat':      Object$prototype$concat,
@@ -1153,7 +1153,7 @@
       'fantasy-land/id':            Function$id,
       'fantasy-land/of':            Function$of,
       'fantasy-land/chainRec':      Function$chainRec,
-      prototype: {
+      'prototype': {
         'fantasy-land/equals':      Function$prototype$equals,
         'fantasy-land/compose':     Function$prototype$compose,
         'fantasy-land/map':         Function$prototype$map,
