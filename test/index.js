@@ -1233,6 +1233,8 @@ test('sort', function() {
     eq(Z.sort(Cons('foo', Nil)), Cons('foo', Nil));
     eq(Z.sort(Cons('foo', Cons('bar', Nil))), Cons('bar', Cons('foo', Nil)));
     eq(Z.sort(Cons('foo', Cons('bar', Cons('baz', Nil)))), Cons('bar', Cons('baz', Cons('foo', Nil))));
+    eq(Z.sort([NaN, 3, NaN, 1, NaN, 2, NaN]), [NaN, NaN, NaN, NaN, 1, 2, 3]);
+    eq(Z.sort([Just(3), Just(1), Just(2)]), [Just(1), Just(2), Just(3)]);
   }
 
   runAssertions();
