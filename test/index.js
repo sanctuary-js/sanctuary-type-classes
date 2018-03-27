@@ -11,6 +11,7 @@ var Maybe = require('./Maybe');
 var Sum = require('./Sum');
 var Tuple = require('./Tuple');
 var eq = require('./eq');
+var withUnstableArraySort = require('./quicksort').withUnstableArraySort;
 
 
 var Nil = List.Nil;
@@ -1215,14 +1216,19 @@ test('sort', function() {
   eq(Z.sort.length, 1);
   eq(Z.sort.name, 'sort');
 
-  eq(Z.sort([]), []);
-  eq(Z.sort(['foo']), ['foo']);
-  eq(Z.sort(['foo', 'bar']), ['bar', 'foo']);
-  eq(Z.sort(['foo', 'bar', 'baz']), ['bar', 'baz', 'foo']);
-  eq(Z.sort(Nil), Nil);
-  eq(Z.sort(Cons('foo', Nil)), Cons('foo', Nil));
-  eq(Z.sort(Cons('foo', Cons('bar', Nil))), Cons('bar', Cons('foo', Nil)));
-  eq(Z.sort(Cons('foo', Cons('bar', Cons('baz', Nil)))), Cons('bar', Cons('baz', Cons('foo', Nil))));
+  function runAssertions() {
+    eq(Z.sort([]), []);
+    eq(Z.sort(['foo']), ['foo']);
+    eq(Z.sort(['foo', 'bar']), ['bar', 'foo']);
+    eq(Z.sort(['foo', 'bar', 'baz']), ['bar', 'baz', 'foo']);
+    eq(Z.sort(Nil), Nil);
+    eq(Z.sort(Cons('foo', Nil)), Cons('foo', Nil));
+    eq(Z.sort(Cons('foo', Cons('bar', Nil))), Cons('bar', Cons('foo', Nil)));
+    eq(Z.sort(Cons('foo', Cons('bar', Cons('baz', Nil)))), Cons('bar', Cons('baz', Cons('foo', Nil))));
+  }
+
+  runAssertions();
+  withUnstableArraySort(runAssertions);
 });
 
 test('sortBy', function() {
@@ -1235,10 +1241,16 @@ test('sortBy', function() {
   var _5h = {rank: 5, suit: 'h'};
   var _2h = {rank: 2, suit: 'h'};
   var _5s = {rank: 5, suit: 's'};
-  eq(Z.sortBy(rank, [_7s, _5h, _2h, _5s]), [_2h, _5h, _5s, _7s]);
-  eq(Z.sortBy(rank, [_7s, _5s, _2h, _5h]), [_2h, _5s, _5h, _7s]);
-  eq(Z.sortBy(suit, [_7s, _5h, _2h, _5s]), [_5h, _2h, _7s, _5s]);
-  eq(Z.sortBy(suit, [_5s, _2h, _5h, _7s]), [_2h, _5h, _5s, _7s]);
+
+  function runAssertions() {
+    eq(Z.sortBy(rank, [_7s, _5h, _2h, _5s]), [_2h, _5h, _5s, _7s]);
+    eq(Z.sortBy(rank, [_7s, _5s, _2h, _5h]), [_2h, _5s, _5h, _7s]);
+    eq(Z.sortBy(suit, [_7s, _5h, _2h, _5s]), [_5h, _2h, _7s, _5s]);
+    eq(Z.sortBy(suit, [_5s, _2h, _5h, _7s]), [_2h, _5h, _5s, _7s]);
+  }
+
+  runAssertions();
+  withUnstableArraySort(runAssertions);
 });
 
 test('traverse', function() {
