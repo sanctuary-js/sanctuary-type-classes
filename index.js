@@ -139,6 +139,13 @@
     return typeof x === typeof y && type(x) === type(y);
   }
 
+  //  thrush :: a -> (a -> b) -> b
+  function thrush(x) {
+    return function(f) {
+      return f(x);
+    };
+  }
+
   //  type Iteration a = { value :: a, done :: Boolean }
 
   //  iterationNext :: a -> Iteration a
@@ -1658,6 +1665,29 @@
     return Functor.methods.map(functor)(f);
   }
 
+  //# flip :: Functor f => f (a -> b) -> a -> f b
+  //.
+  //. Maps over the given functions, applying each to the given value.
+  //.
+  //. This function is derived from [`map`](#map).
+  //.
+  //. ```javascript
+  //. > flip(x => y => x + y, '!')('foo')
+  //. 'foo!'
+  //.
+  //. > flip([Math.floor, Math.ceil], 1.5)
+  //. [1, 2]
+  //.
+  //. > flip({floor: Math.floor, ceil: Math.ceil}, 1.5)
+  //. {floor: 1, ceil: 2}
+  //.
+  //. > flip(Cons(Math.floor, Cons(Math.ceil, Nil)), 1.5)
+  //. Cons(1, Cons(2, Nil))
+  //. ```
+  function flip(functor, x) {
+    return Functor.methods.map(functor)(thrush(x));
+  }
+
   //# bimap :: Bifunctor f => (a -> b, c -> d, f a c) -> f b d
   //.
   //. Function wrapper for [`fantasy-land/bimap`][].
@@ -2287,6 +2317,7 @@
     filter: filter,
     reject: reject,
     map: map,
+    flip: flip,
     bimap: bimap,
     mapLeft: mapLeft,
     promap: promap,
