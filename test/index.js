@@ -3,6 +3,7 @@
 var type = require('sanctuary-type-identifiers');
 
 var Z = require('..');
+var version = require('../package.json').version;
 
 var Identity = require('./Identity');
 var Lazy = require('./Lazy');
@@ -157,9 +158,6 @@ function toUpper(s) {
   eq(arguments.length, toUpper.length);
   return s.toUpperCase();
 }
-
-//  version :: String
-var version = '8.1.1';  // updated programmatically
 
 //  wrap :: String -> String -> String -> String
 function wrap(before) {
