@@ -943,6 +943,16 @@ test('map', function() {
   eq(Z.map(inc, Cons(1, Cons(2, Cons(3, Nil)))), Cons(2, Cons(3, Cons(4, Nil))));
 });
 
+test('flip', function() {
+  eq(Z.flip.length, 2);
+  eq(Z.flip.name, 'flip');
+
+  eq(Z.flip(pow, 2)(10), 100);
+  eq(Z.flip([Math.floor, Math.ceil], 1.5), [1, 2]);
+  eq(Z.flip({floor: Math.floor, ceil: Math.ceil}, 1.5), {floor: 1, ceil: 2});
+  eq(Z.flip(Cons(Math.floor, Cons(Math.ceil, Nil)), 1.5), Cons(1, Cons(2, Nil)));
+});
+
 test('bimap', function() {
   eq(Z.bimap.length, 3);
   eq(Z.bimap.name, 'bimap');
