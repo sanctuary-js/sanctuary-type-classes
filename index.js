@@ -2080,6 +2080,24 @@
                   foldable);
   }
 
+  //# foldMap :: (Monoid m, Foldable f) => (TypeRep m, a -> m, f a) -> m
+  //.
+  //. Deconstructs a foldable by mapping every element to a monoid and
+  //. concatenating the results.
+  //.
+  //. This function is derived from [`concat`](#concat), [`empty`](#empty),
+  //. and [`reduce`](#reduce).
+  //.
+  //. ```javascript
+  //. > foldMap(String, f => f.name, [Math.sin, Math.cos, Math.tan])
+  //. 'sincostan'
+  //. ```
+  function foldMap(typeRep, f, foldable) {
+    return reduce(function(monoid, x) { return concat(monoid, f(x)); },
+                  empty(typeRep),
+                  foldable);
+  }
+
   //# reverse :: (Applicative f, Foldable f, Monoid (f a)) => f a -> f a
   //.
   //. Reverses the elements of the given structure.
@@ -2349,6 +2367,7 @@
     reduce: reduce,
     size: size,
     elem: elem,
+    foldMap: foldMap,
     reverse: reverse,
     sort: sort,
     sortBy: sortBy,
