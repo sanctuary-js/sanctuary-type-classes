@@ -1665,7 +1665,7 @@
     return Functor.methods.map(functor)(f);
   }
 
-  //# flip :: Functor f => f (a -> b) -> a -> f b
+  //# flip :: Functor f => (f (a -> b), a) -> f b
   //.
   //. Maps over the given functions, applying each to the given value.
   //.
