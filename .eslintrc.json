@@ -3,6 +3,18 @@
   "extends": ["./node_modules/sanctuary-style/eslint-es3.json"],
   "overrides": [
     {
+      "files": ["*.md"],
+      "plugins": ["markdown"],
+      "env": {"es6": true},
+      "rules": {
+        "eqeqeq": ["off"],
+        "func-style": ["error", "declaration", {"allowArrowFunctions": true}],
+        "no-undef": ["off"],
+        "no-unused-vars": ["error", {"varsIgnorePattern": "^Bar$"}],
+        "strict": ["off"]
+      }
+    },
+    {
       "files": ["bench/**/*.js"],
       "env": {"node": true},
       "rules": {
