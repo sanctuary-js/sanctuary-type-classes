@@ -19,6 +19,7 @@
   },
   "devDependencies": {
     "fantasy-land": "3.5.0",
+    "list": "2.0.11",
     "sanctuary-benchmark": "1.0.x",
     "sanctuary-scripts": "1.5.x"
   },

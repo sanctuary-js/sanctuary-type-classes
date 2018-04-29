@@ -834,7 +834,9 @@
 
   //  Array$prototype$reduce :: Array a ~> ((b, a) -> b, b) -> b
   function Array$prototype$reduce(f, initial) {
-    return this.reduce(function(acc, x) { return f(acc, x); }, initial);
+    var acc = initial;
+    for (var idx = 0; idx < this.length; idx += 1) acc = f(acc, this[idx]);
+    return acc;
   }
 
   //  Array$prototype$traverse :: Applicative f => Array a ~> (TypeRep f, a -> f b) -> f (Array b)
@@ -2150,21 +2152,31 @@
   //. Cons('red', Cons('blue', Cons('green', Nil)))
   //. ```
   function sortBy(f, foldable) {
-    var rs = reduce(function(xs, x) {
-      var fx = f(x);
-      var lower = 0;
-      var upper = xs.length;
-      while (lower < upper) {
-        var idx = Math.floor((lower + upper) / 2);
-        if (lte(xs[idx].fx, fx)) lower = idx + 1; else upper = idx;
-      }
-      xs.splice(lower, 0, {x: x, fx: fx});
-      return xs;
+    var rs = reduce(function(rs, x) {
+      rs.push({idx: rs.length, x: x, fx: f(x)});
+      return rs;
     }, [], foldable);
+
+    var lte_ = (function(r) {
+      switch (typeof (r && r.fx)) {
+        case 'number':  return function(x, y) { return x <= y || x !== x; };
+        case 'string':  return function(x, y) { return x <= y; };
+        default:        return lte;
+      }
+    }(rs[0]));
+
+    rs.sort(function(a, b) {
+      return lte_(a.fx, b.fx) ? lte_(b.fx, a.fx) ? a.idx - b.idx : -1 : 1;
+    });
+
+    if (Array.isArray(foldable)) {
+      for (var idx = 0; idx < rs.length; idx += 1) rs[idx] = rs[idx].x;
+      return rs;
+    }
 
     var F = foldable.constructor;
     var result = empty(F);
-    for (var idx = 0; idx < rs.length; idx += 1) {
+    for (idx = 0; idx < rs.length; idx += 1) {
       result = concat(result, of(F, rs[idx].x));
     }
     return result;
