@@ -1157,18 +1157,22 @@ test('zero', function() {
   eq(Z.zero(Maybe), Nothing);
 });
 
+function testReduce(reduce) {
+  eq(reduce(Z.concat, 'x', []), 'x');
+  eq(reduce(Z.concat, 'x', ['a', 'b', 'c']), 'xabc');
+  eq(reduce(add, 0, {}), 0);
+  eq(reduce(add, 0, {a: 1, b: 2, c: 3, d: 4, e: 5}), 15);
+  eq(reduce(function(xs, x) { return Z.concat(xs, [x]); }, [], {a: 1, b: 2, c: 3}), [1, 2, 3]);
+  eq(reduce(function(xs, x) { return Z.concat(xs, [x]); }, [], {c: 3, b: 2, a: 1}), [1, 2, 3]);
+  eq(reduce(Z.concat, 'x', Nil), 'x');
+  eq(reduce(Z.concat, 'x', Cons('a', Cons('b', Cons('c', Nil)))), 'xabc');
+}
+
 test('reduce', function() {
   eq(Z.reduce.length, 3);
   eq(Z.reduce.name, 'reduce');
 
-  eq(Z.reduce(Z.concat, 'x', []), 'x');
-  eq(Z.reduce(Z.concat, 'x', ['a', 'b', 'c']), 'xabc');
-  eq(Z.reduce(add, 0, {}), 0);
-  eq(Z.reduce(add, 0, {a: 1, b: 2, c: 3, d: 4, e: 5}), 15);
-  eq(Z.reduce(function(xs, x) { return Z.concat(xs, [x]); }, [], {a: 1, b: 2, c: 3}), [1, 2, 3]);
-  eq(Z.reduce(function(xs, x) { return Z.concat(xs, [x]); }, [], {c: 3, b: 2, a: 1}), [1, 2, 3]);
-  eq(Z.reduce(Z.concat, 'x', Nil), 'x');
-  eq(Z.reduce(Z.concat, 'x', Cons('a', Cons('b', Cons('c', Nil)))), 'xabc');
+  testReduce(Z.reduce);
 });
 
 test('size', function() {
@@ -1204,6 +1208,32 @@ test('elem', function() {
   eq(Z.elem(0, Just(0)), true);
   eq(Z.elem(0, Just(1)), false);
   eq(Z.elem(0, Nothing), false);
+});
+
+test('foldMap', function() {
+  eq(Z.foldMap.length, 3);
+  eq(Z.foldMap.name, 'foldMap');
+
+  // Monoid instance for functions of type a -> a corresponding
+  // to reverse function composition
+  function DualEndo(f) {
+    if (!(this instanceof DualEndo)) return new DualEndo(f);
+    this.runEndo = f;
+  }
+  DualEndo['fantasy-land/empty'] = function() { return DualEndo(identity); };
+  DualEndo.prototype['fantasy-land/concat'] = function(other) {
+    return DualEndo(a => other.runEndo(this.runEndo(a)));
+  };
+
+  // Derive reduce (foldl) from foldMap
+  function reduce(f, z, x) {
+    function mmap(a) { return DualEndo(function(b) { return f(b, a); }); }
+    var finalEndo = Z.foldMap(DualEndo, mmap, x);
+    return finalEndo.runEndo(z);
+  }
+
+  // Test derived reduce behaves identically to Z.reduce
+  testReduce(reduce);
 });
 
 test('reverse', function() {
