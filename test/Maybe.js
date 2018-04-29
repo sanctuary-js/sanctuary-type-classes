@@ -1,6 +1,7 @@
 'use strict';
 
 var FL = require('fantasy-land');
+var show = require('sanctuary-show');
 
 var Z = require('..');
 
@@ -79,8 +80,8 @@ Maybe.prototype[FL.reduce] = function(f, x) {
 };
 
 Maybe.prototype.inspect =
-Maybe.prototype.toString = function() {
-  return this.isJust ? 'Just(' + Z.toString(this.value) + ')' : 'Nothing';
+Maybe.prototype['@@show'] = function() {
+  return this.isJust ? 'Just (' + show(this.value) + ')' : 'Nothing';
 };
 
 module.exports = Maybe;

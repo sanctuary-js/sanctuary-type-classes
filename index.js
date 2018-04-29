@@ -606,11 +606,6 @@
   //. ```
   var Contravariant = $('Contravariant', [], {contramap: Value});
 
-  //  Null$prototype$toString :: Null ~> () -> String
-  function Null$prototype$toString() {
-    return 'null';
-  }
-
   //  Null$prototype$equals :: Null ~> Null -> Boolean
   function Null$prototype$equals(other) {
     return true;
@@ -621,11 +616,6 @@
     return true;
   }
 
-  //  Undefined$prototype$toString :: Undefined ~> () -> String
-  function Undefined$prototype$toString() {
-    return 'undefined';
-  }
-
   //  Undefined$prototype$equals :: Undefined ~> Undefined -> Boolean
   function Undefined$prototype$equals(other) {
     return true;
@@ -634,13 +624,6 @@
   //  Undefined$prototype$lte :: Undefined ~> Undefined -> Boolean
   function Undefined$prototype$lte(other) {
     return true;
-  }
-
-  //  Boolean$prototype$toString :: Boolean ~> () -> String
-  function Boolean$prototype$toString() {
-    return typeof this === 'object' ?
-      'new Boolean(' + toString(this.valueOf()) + ')' :
-      this.toString();
   }
 
   //  Boolean$prototype$equals :: Boolean ~> Boolean -> Boolean
@@ -657,13 +640,6 @@
       this === false || other === true;
   }
 
-  //  Number$prototype$toString :: Number ~> () -> String
-  function Number$prototype$toString() {
-    return typeof this === 'object' ?
-      'new Number(' + toString(this.valueOf()) + ')' :
-      1 / this === -Infinity ? '-0' : this.toString(10);
-  }
-
   //  Number$prototype$equals :: Number ~> Number -> Boolean
   function Number$prototype$equals(other) {
     return typeof this === 'object' ?
@@ -676,12 +652,6 @@
     return typeof this === 'object' ?
       lte(this.valueOf(), other.valueOf()) :
       isNaN(this) || this <= other;
-  }
-
-  //  Date$prototype$toString :: Date ~> () -> String
-  function Date$prototype$toString() {
-    var x = isNaN(this.valueOf()) ? NaN : this.toISOString();
-    return 'new Date(' + toString(x) + ')';
   }
 
   //  Date$prototype$equals :: Date ~> Date -> Boolean
@@ -707,13 +677,6 @@
   //  String$empty :: () -> String
   function String$empty() {
     return '';
-  }
-
-  //  String$prototype$toString :: String ~> () -> String
-  function String$prototype$toString() {
-    return typeof this === 'object' ?
-      'new String(' + toString(this.valueOf()) + ')' :
-      JSON.stringify(this);
   }
 
   //  String$prototype$equals :: String ~> String -> Boolean
@@ -773,19 +736,6 @@
   //  Array$zero :: () -> Array a
   function Array$zero() {
     return [];
-  }
-
-  //  Array$prototype$toString :: Array a ~> () -> String
-  function Array$prototype$toString() {
-    var reprs = this.map(toString);
-    var keys = Object.keys(this).sort();
-    for (var idx = 0; idx < keys.length; idx += 1) {
-      var k = keys[idx];
-      if (!/^\d+$/.test(k)) {
-        reprs.push(toString(k) + ': ' + toString(this[k]));
-      }
-    }
-    return '[' + reprs.join(', ') + ']';
   }
 
   //  Array$prototype$equals :: Array a ~> Array a -> Boolean
@@ -875,12 +825,6 @@
     return this.map(function(_, idx, xs) { return f(xs.slice(idx)); });
   }
 
-  //  Arguments$prototype$toString :: Arguments ~> String
-  function Arguments$prototype$toString() {
-    var args = Array.prototype.map.call(this, toString).join(', ');
-    return '(function () { return arguments; }(' + args + '))';
-  }
-
   //  Arguments$prototype$equals :: Arguments ~> Arguments -> Boolean
   function Arguments$prototype$equals(other) {
     return Array$prototype$equals.call(this, other);
@@ -889,11 +833,6 @@
   //  Arguments$prototype$lte :: Arguments ~> Arguments -> Boolean
   function Arguments$prototype$lte(other) {
     return Array$prototype$lte.call(this, other);
-  }
-
-  //  Error$prototype$toString :: Error ~> () -> String
-  function Error$prototype$toString() {
-    return 'new ' + this.name + '(' + toString(this.message) + ')';
   }
 
   //  Error$prototype$equals :: Error ~> Error -> Boolean
@@ -910,17 +849,6 @@
   //  Object$zero :: () -> StrMap a
   function Object$zero() {
     return {};
-  }
-
-  //  Object$prototype$toString :: StrMap a ~> () -> String
-  function Object$prototype$toString() {
-    var reprs = [];
-    var keys = Object.keys(this).sort();
-    for (var idx = 0; idx < keys.length; idx += 1) {
-      var k = keys[idx];
-      reprs.push(toString(k) + ': ' + toString(this[k]));
-    }
-    return '{' + reprs.join(', ') + '}';
   }
 
   //  Object$prototype$equals :: StrMap a ~> StrMap a -> Boolean
@@ -1076,35 +1004,30 @@
   var implementations = {
     Null: {
       'prototype': {
-        'toString':                 Null$prototype$toString,
         'fantasy-land/equals':      Null$prototype$equals,
         'fantasy-land/lte':         Null$prototype$lte
       }
     },
     Undefined: {
       'prototype': {
-        'toString':                 Undefined$prototype$toString,
         'fantasy-land/equals':      Undefined$prototype$equals,
         'fantasy-land/lte':         Undefined$prototype$lte
       }
     },
     Boolean: {
       'prototype': {
-        'toString':                 Boolean$prototype$toString,
         'fantasy-land/equals':      Boolean$prototype$equals,
         'fantasy-land/lte':         Boolean$prototype$lte
       }
     },
     Number: {
       'prototype': {
-        'toString':                 Number$prototype$toString,
         'fantasy-land/equals':      Number$prototype$equals,
         'fantasy-land/lte':         Number$prototype$lte
       }
     },
     Date: {
       'prototype': {
-        'toString':                 Date$prototype$toString,
         'fantasy-land/equals':      Date$prototype$equals,
         'fantasy-land/lte':         Date$prototype$lte
       }
@@ -1117,7 +1040,6 @@
     String: {
       'fantasy-land/empty':         String$empty,
       'prototype': {
-        'toString':                 String$prototype$toString,
         'fantasy-land/equals':      String$prototype$equals,
         'fantasy-land/lte':         String$prototype$lte,
         'fantasy-land/concat':      String$prototype$concat
@@ -1129,7 +1051,6 @@
       'fantasy-land/chainRec':      Array$chainRec,
       'fantasy-land/zero':          Array$zero,
       'prototype': {
-        'toString':                 Array$prototype$toString,
         'fantasy-land/equals':      Array$prototype$equals,
         'fantasy-land/lte':         Array$prototype$lte,
         'fantasy-land/concat':      Array$prototype$concat,
@@ -1145,14 +1066,12 @@
     },
     Arguments: {
       'prototype': {
-        'toString':                 Arguments$prototype$toString,
         'fantasy-land/equals':      Arguments$prototype$equals,
         'fantasy-land/lte':         Arguments$prototype$lte
       }
     },
     Error: {
       'prototype': {
-        'toString':                 Error$prototype$toString,
         'fantasy-land/equals':      Error$prototype$equals
       }
     },
@@ -1160,7 +1079,6 @@
       'fantasy-land/empty':         Object$empty,
       'fantasy-land/zero':          Object$zero,
       'prototype': {
-        'toString':                 Object$prototype$toString,
         'fantasy-land/equals':      Object$prototype$equals,
         'fantasy-land/lte':         Object$prototype$lte,
         'fantasy-land/concat':      Object$prototype$concat,
@@ -1189,54 +1107,6 @@
     }
   };
   /* eslint-enable key-spacing */
-
-  //# toString :: a -> String
-  //.
-  //. Returns a useful string representation of its argument.
-  //.
-  //. Dispatches to the argument's `toString` method if appropriate.
-  //.
-  //. Where practical, `equals(eval(toString(x)), x) = true`.
-  //.
-  //. `toString` implementations are provided for the following built-in types:
-  //. Null, Undefined, Boolean, Number, Date, String, Array, Arguments, Error,
-  //. and Object.
-  //.
-  //. ```javascript
-  //. > toString(-0)
-  //. '-0'
-  //.
-  //. > toString(['foo', 'bar', 'baz'])
-  //. '["foo", "bar", "baz"]'
-  //.
-  //. > toString({x: 1, y: 2, z: 3})
-  //. '{"x": 1, "y": 2, "z": 3}'
-  //.
-  //. > toString(Cons(1, Cons(2, Cons(3, Nil))))
-  //. 'Cons(1, Cons(2, Cons(3, Nil)))'
-  //. ```
-  var toString = (function() {
-    //  $seen :: Array Any
-    var $seen = [];
-
-    function call(method, x) {
-      $seen.push(x);
-      try { return method.call(x); } finally { $seen.pop(); }
-    }
-
-    return function toString(x) {
-      if ($seen.indexOf(x) >= 0) return '<Circular>';
-
-      var xType = type(x);
-      if (xType === 'Object') {
-        var result;
-        try { result = call(x.toString, x); } catch (err) {}
-        if (result != null && result !== '[object Object]') return result;
-      }
-
-      return call(implPath([xType, 'prototype', 'toString']) || x.toString, x);
-    };
-  }());
 
   //# equals :: (a, b) -> Boolean
   //.
@@ -2345,7 +2215,6 @@
     Extend: Extend,
     Comonad: Comonad,
     Contravariant: Contravariant,
-    toString: toString,
     equals: equals,
     lt: lt,
     lte: lte,

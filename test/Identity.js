@@ -1,6 +1,7 @@
 'use strict';
 
 var FL = require('fantasy-land');
+var show = require('sanctuary-show');
 
 var Z = require('..');
 
@@ -56,8 +57,8 @@ Identity.prototype[FL.extract] = function() {
 };
 
 Identity.prototype.inspect =
-Identity.prototype.toString = function() {
-  return 'Identity(' + Z.toString(this.value) + ')';
+Identity.prototype['@@show'] = function() {
+  return 'Identity (' + show(this.value) + ')';
 };
 
 module.exports = Identity;
