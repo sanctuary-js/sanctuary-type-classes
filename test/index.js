@@ -1177,6 +1177,7 @@ test('chain', function() {
   eq(Z.chain(repeat, abs)(-3), [-3, -3, -3]);
   eq(Z.chain(identInc, Identity(42)), Identity(43));
   eq(Z.chain(identity, Identity(Identity(0))), Identity(0));
+  eq(Z.chain(identity, [new Array(1e6).join('x').split('')]).length, 999999);
 });
 
 test('join', function() {
@@ -1217,6 +1218,8 @@ test('chainRec', function() {
   }
 
   eq(Z.chainRec(Function, stepper, 0)({step: 2, inc: 100}), 30100);
+
+  eq(Z.chainRec(Array, function(next, done, n) { return n === 0 ? [done(0)] : Z.map(next, repeat(n)(0)); }, 1e6).length, 1e6);
 });
 
 test('alt', function() {
