@@ -127,7 +127,7 @@
   //  identity :: a -> a
   function identity(x) { return x; }
 
-  //  pair :: a -> b -> Pair a b
+  //  pair :: a -> b -> Array2 a b
   function pair(x) {
     return function(y) {
       return [x, y];
@@ -1253,7 +1253,7 @@
   //. false
   //. ```
   var equals = (function() {
-    //  $pairs :: Array (Pair Any Any)
+    //  $pairs :: Array (Array2 Any Any)
     var $pairs = [];
 
     return function equals(x, y) {
@@ -1324,7 +1324,7 @@
   //. false
   //. ```
   var lte = (function() {
-    //  $pairs :: Array (Pair Any Any)
+    //  $pairs :: Array (Array2 Any Any)
     var $pairs = [];
 
     return function lte(x, y) {
