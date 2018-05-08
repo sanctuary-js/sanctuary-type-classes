@@ -99,7 +99,7 @@ function concat(xs) {
   };
 }
 
-//  double :: a -> Pair a a
+//  double :: a -> Array2 a a
 function double(x) {
   eq(arguments.length, double.length);
   return [x, x];
@@ -175,10 +175,10 @@ function odd(x) {
   return x % 2 === 1;
 }
 
-//  ones :: Pair Number (Pair Number (Pair Number ...))
+//  ones :: Array2 Number (Array2 Number (Array2 Number ...))
 var ones = [1]; ones.push(ones);
 
-//  ones_ :: Pair Number (Pair Number (Pair Number ...))
+//  ones_ :: Array2 Number (Array2 Number (Array2 Number ...))
 var ones_ = [1]; ones_.push([1, ones_]);
 
 //  parseInt_ :: Integer -> String -> Maybe Integer

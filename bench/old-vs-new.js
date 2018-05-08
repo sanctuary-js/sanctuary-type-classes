@@ -15,7 +15,7 @@ function inc(x) {
   return x + 1;
 }
 
-//  prep :: StrMap Function -> StrMap (Pair (StrMap a) Function)
+//  prep :: StrMap Function -> StrMap (Array2 (StrMap a) Function)
 function prep(specs) {
   return newZ.map(function(f) { return [{}, f]; }, specs);
 }
