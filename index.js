@@ -747,17 +747,27 @@
 
   //  Array$chainRec :: ((a -> c, b -> c, a) -> Array c, a) -> Array b
   function Array$chainRec(f, x) {
-    var $todo = [x];
-    var $done = [];
-    while ($todo.length > 0) {
-      var xs = f(iterationNext, iterationDone, $todo.shift());
-      var $more = [];
-      for (var idx = 0; idx < xs.length; idx += 1) {
-        (xs[idx].done ? $done : $more).push(xs[idx].value);
+    var result = [];
+    var nil = {};
+    var todo = {head: x, tail: nil};
+    while (todo !== nil) {
+      var more = nil;
+      var steps = f(iterationNext, iterationDone, todo.head);
+      for (var idx = 0; idx < steps.length; idx += 1) {
+        var step = steps[idx];
+        if (step.done) {
+          result.push(step.value);
+        } else {
+          more = {head: step.value, tail: more};
+        }
       }
-      Array.prototype.unshift.apply($todo, $more);
+      todo = todo.tail;
+      while (more !== nil) {
+        todo = {head: more.head, tail: todo};
+        more = more.tail;
+      }
     }
-    return $done;
+    return result;
   }
 
   //  Array$zero :: () -> Array a
@@ -825,7 +835,11 @@
   //  Array$prototype$chain :: Array a ~> (a -> Array b) -> Array b
   function Array$prototype$chain(f) {
     var result = [];
-    this.forEach(function(x) { Array.prototype.push.apply(result, f(x)); });
+    for (var idx = 0; idx < this.length; idx += 1) {
+      for (var idx2 = 0, xs = f(this[idx]); idx2 < xs.length; idx2 += 1) {
+        result.push(xs[idx2]);
+      }
+    }
     return result;
   }
 
