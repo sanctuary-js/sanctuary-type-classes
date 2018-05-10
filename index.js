@@ -825,7 +825,9 @@
   //  Array$prototype$chain :: Array a ~> (a -> Array b) -> Array b
   function Array$prototype$chain(f) {
     var result = [];
-    this.forEach(function(x) { Array.prototype.push.apply(result, f(x)); });
+    this.forEach(function(x) {
+        f(x).forEach(function(y) { result.push(y); });
+    });
     return result;
   }
 
