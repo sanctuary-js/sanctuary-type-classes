@@ -1,6 +1,7 @@
 'use strict';
 
 var FL = require('fantasy-land');
+var show = require('sanctuary-show');
 
 var Z = require('..');
 
@@ -93,10 +94,10 @@ List.prototype[FL.traverse] = function(typeRep, f) {
 };
 
 List.prototype.inspect =
-List.prototype.toString = function() {
+List.prototype['@@show'] = function() {
   return this.isNil ?
     'Nil' :
-    'Cons(' + Z.toString(this.head) + ', ' + Z.toString(this.tail) + ')';
+    'Cons (' + show(this.head) + ', ' + show(this.tail) + ')';
 };
 
 module.exports = List;

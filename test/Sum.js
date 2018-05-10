@@ -1,6 +1,7 @@
 'use strict';
 
 var FL = require('fantasy-land');
+var show = require('sanctuary-show');
 
 var Z = require('..');
 
@@ -28,8 +29,8 @@ Sum.prototype[FL.invert] = function() {
 };
 
 Sum.prototype.inspect =
-Sum.prototype.toString = function() {
-  return 'Sum(' + Z.toString(this.value) + ')';
+Sum.prototype['@@show'] = function() {
+  return 'Sum (' + show(this.value) + ')';
 };
 
 module.exports = Sum;

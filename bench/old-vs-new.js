@@ -49,9 +49,6 @@ module.exports = benchmark(oldZ, newZ, {leftHeader: 'old', rightHeader: 'new'}, 
   'methods.map.Identity':        function(Z) { Z.map(inc, Identity(1)); },
   'methods.sort.Array':          function(Z) { Z.sort(shuffledArray); },
   'methods.sort.List':           function(Z) { Z.sort(shuffledList); },
-  'methods.toString.Identity':   function(Z) { Z.toString(Identity(0)); },
-  'methods.toString.Object':     function(Z) { Z.toString({x: 0, y: 0}); },
-  'methods.toString.String':     function(Z) { Z.toString('hello'); },
   'test.Comonad.Identity':       function(Z) { Z.Comonad.test(Identity(0)); },
   'test.Contravariant.Function': function(Z) { Z.Contravariant.test(Math.abs); }
 }));

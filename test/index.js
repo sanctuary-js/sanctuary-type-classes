@@ -560,65 +560,6 @@ test('Contravariant', function() {
   eq(Z.Contravariant.test(Math.abs), true);
 });
 
-test('toString', function() {
-  eq(Z.toString.length, 1);
-  eq(Z.toString.name, 'toString');
-
-  eq(Z.toString(null), 'null');
-  eq(Z.toString(undefined), 'undefined');
-  eq(Z.toString(false), 'false');
-  eq(Z.toString(true), 'true');
-  eq(Z.toString(new Boolean(false)), 'new Boolean(false)');
-  eq(Z.toString(new Boolean(true)), 'new Boolean(true)');
-  eq(Z.toString(0), '0');
-  eq(Z.toString(-0), '-0');
-  eq(Z.toString(NaN), 'NaN');
-  eq(Z.toString(3.14), '3.14');
-  eq(Z.toString(Infinity), 'Infinity');
-  eq(Z.toString(-Infinity), '-Infinity');
-  eq(Z.toString(new Number(0)), 'new Number(0)');
-  eq(Z.toString(new Number(-0)), 'new Number(-0)');
-  eq(Z.toString(new Number(NaN)), 'new Number(NaN)');
-  eq(Z.toString(new Number(3.14)), 'new Number(3.14)');
-  eq(Z.toString(new Number(Infinity)), 'new Number(Infinity)');
-  eq(Z.toString(new Number(-Infinity)), 'new Number(-Infinity)');
-  eq(Z.toString(new Date(0)), 'new Date("1970-01-01T00:00:00.000Z")');
-  eq(Z.toString(new Date(42)), 'new Date("1970-01-01T00:00:00.042Z")');
-  eq(Z.toString(new Date(NaN)), 'new Date(NaN)');
-  eq(Z.toString(new Date('2001-02-03')), 'new Date("2001-02-03T00:00:00.000Z")');
-  eq(Z.toString(/def/g), '/def/g');
-  eq(Z.toString(''), '""');
-  eq(Z.toString('abc'), '"abc"');
-  eq(Z.toString('foo "bar" baz'), '"foo \\"bar\\" baz"');
-  eq(Z.toString(new String('')), 'new String("")');
-  eq(Z.toString(new String('abc')), 'new String("abc")');
-  eq(Z.toString(new String('foo "bar" baz')), 'new String("foo \\"bar\\" baz")');
-  eq(Z.toString([]), '[]');
-  eq(Z.toString(['foo']), '["foo"]');
-  eq(Z.toString(['foo', 'bar']), '["foo", "bar"]');
-  eq(Z.toString(/x/.exec('xyz')), '["x", "index": 0, "input": "xyz"]');
-  eq(Z.toString(function() { var xs = []; xs.z = true; xs.a = true; return xs; }()), '["a": true, "z": true]');
-  eq(Z.toString(ones), '[1, <Circular>]');
-  eq(Z.toString(ones_), '[1, [1, <Circular>]]');
-  eq(Z.toString(args()), '(function () { return arguments; }())');
-  eq(Z.toString(args('foo')), '(function () { return arguments; }("foo"))');
-  eq(Z.toString(args('foo', 'bar')), '(function () { return arguments; }("foo", "bar"))');
-  eq(Z.toString(new Error('a')), 'new Error("a")');
-  eq(Z.toString(new TypeError('b')), 'new TypeError("b")');
-  eq(Z.toString({}), '{}');
-  eq(Z.toString({x: 1}), '{"x": 1}');
-  eq(Z.toString({x: 1, y: 2}), '{"x": 1, "y": 2}');
-  eq(Z.toString({y: 1, x: 2}), '{"x": 2, "y": 1}');
-  eq(Z.toString(node1), '{"id": 1, "rels": [{"type": "child", "value": {"id": 2, "rels": [{"type": "parent", "value": <Circular>}]}}]}');
-  eq(Z.toString(node2), '{"id": 2, "rels": [{"type": "parent", "value": {"id": 1, "rels": [{"type": "child", "value": <Circular>}]}}]}');
-  eq(Z.toString(Object.create(null)), '{}');
-  function Foo() {}
-  Foo.prototype = {toString: function() { return '<b>foo</b>'; }};
-  eq(Z.toString(Foo.prototype), '<b>foo</b>');
-  eq(Z.toString(new Foo()), '<b>foo</b>');
-  eq(Z.toString(Math.sqrt), 'function sqrt() { [native code] }');
-});
-
 test('equals', function() {
   eq(Z.equals.length, 2);
   eq(Z.equals.name, 'equals');

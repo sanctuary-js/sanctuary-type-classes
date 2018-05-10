@@ -23,7 +23,8 @@
     "jsverify": "0.8.x",
     "list": "2.0.11",
     "sanctuary-benchmark": "1.0.x",
-    "sanctuary-scripts": "1.5.x"
+    "sanctuary-scripts": "1.5.x",
+    "sanctuary-show": "1.0.x"
   },
   "files": [
     "/LICENSE",

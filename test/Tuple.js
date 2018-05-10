@@ -1,6 +1,7 @@
 'use strict';
 
 var FL = require('fantasy-land');
+var show = require('sanctuary-show');
 
 var Z = require('..');
 
@@ -31,8 +32,8 @@ Tuple.prototype[FL.reduce] = function(f, x) {
 };
 
 Tuple.prototype.inspect =
-Tuple.prototype.toString = function() {
-  return 'Tuple(' + Z.toString(this._1) + ', ' + Z.toString(this._2) + ')';
+Tuple.prototype['@@show'] = function() {
+  return 'Tuple (' + show(this._1) + ', ' + show(this._2) + ')';
 };
 
 module.exports = Tuple;
