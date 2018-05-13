@@ -285,14 +285,15 @@
     };
   }
 
-  //  makeMethod :: String -> (a, b, c, d, e) -> f
+  //  makeMethod :: String -> (a, Any...) -> b
   function makeMethod(_name) {
     var name = prefix + _name;
-    return function(value, a, b, c, d) {
-      if (!isPrototype(value) && funcProp(name, value) != null) {
-        return value[name](a, b, c, d);
-      }
-      return methodImpl(type(value), name).call(value, a, b, c, d);
+    return function(value) {
+      return (
+        isPrototype(value) || funcProp(name, value) == null ?
+        methodImpl(type(value), name) :
+        value[name]
+      ).apply(value, Array.prototype.slice.call(arguments, 1));
     };
   }
 
