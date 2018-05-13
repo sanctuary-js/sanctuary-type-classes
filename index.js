@@ -101,13 +101,10 @@
   }
 
   //  clean :: Object -> Object
-  function clean(x) {
-    var o = Object.create(null);
-    for (var k in x) {
-      /* istanbul ignore else */
-      if (has(k, x)) o[k] = x[k];
-    }
-    return o;
+  function clean(src) {
+    var dst = Object.create(null);
+    Object.keys(src).forEach(function(k) { dst[k] = src[k]; });
+    return dst;
   }
 
   //  concat_ :: Array a -> Array a -> Array a
