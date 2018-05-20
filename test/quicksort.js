@@ -5,9 +5,9 @@
 //  quicksort :: (Array a, (a, a) -> Number, Integer, Integer) -> Undefined
 function quicksort(xs, cmp, lo, hi) {
   if (lo < hi) {
-    var idx = partition(xs, cmp, lo, hi);
-    quicksort(xs, cmp, lo, idx);
-    quicksort(xs, cmp, idx + 1, hi);
+    var idx = partition (xs, cmp, lo, hi);
+    quicksort (xs, cmp, lo, idx);
+    quicksort (xs, cmp, idx + 1, hi);
   }
 }
 
@@ -17,8 +17,8 @@ function partition(xs, cmp, lo, hi) {
   var i = lo - 1;
   var j = hi + 1;
   while (true) {
-    do i += 1; while (cmp(xs[i], pivot) < 0);
-    do j -= 1; while (cmp(xs[j], pivot) > 0);
+    do i += 1; while (cmp (xs[i], pivot) < 0);
+    do j -= 1; while (cmp (xs[j], pivot) > 0);
 
     if (i >= j) return j;
 
@@ -38,11 +38,11 @@ exports.withUnstableArraySort = function(thunk) {
   var Array$prototype$sort = Array.prototype.sort;
   Array.prototype.sort = function(_cmp) {
     var cmp = arguments.length < 1 ? defaultComparator : _cmp;
-    quicksort(this, cmp, 0, this.length - 1);
+    quicksort (this, cmp, 0, this.length - 1);
     return this;
   };
   try {
-    thunk();
+    thunk ();
   } finally {
     Array.prototype.sort = Array$prototype$sort;
   }
