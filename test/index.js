@@ -2,12 +2,12 @@
 
 var laws = require ('fantasy-laws');
 var jsc = require ('jsverify');
+var Identity = require ('sanctuary-identity');
 var type = require ('sanctuary-type-identifiers');
 
 var Z = require ('..');
 var version = (require ('../package.json')).version;
 
-var Identity = require ('./Identity');
 var Lazy = require ('./Lazy');
 var List = require ('./List');
 var Maybe = require ('./Maybe');
