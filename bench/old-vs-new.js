@@ -2,11 +2,11 @@
 
 var L = require ('list/fantasy-land');
 var benchmark = require ('sanctuary-benchmark');
+var Identity = require ('sanctuary-identity');
 
 var oldZ = require ('sanctuary-type-classes');
 var newZ = require ('..');
 
-var Identity = require ('../test/Identity');
 var shuffle = require ('../test/shuffle');
 
 

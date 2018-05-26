@@ -88,7 +88,7 @@
   /* istanbul ignore if */
   if (typeof __doctest !== 'undefined') {
     /* eslint-disable no-unused-vars */
-    var Identity = __doctest.require ('./test/Identity');
+    var Identity = __doctest.require ('sanctuary-identity');
     var List = __doctest.require ('./test/List');
     var Maybe = __doctest.require ('./test/Maybe');
     var Sum = __doctest.require ('./test/Sum');
