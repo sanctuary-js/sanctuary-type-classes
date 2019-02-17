@@ -834,6 +834,22 @@ test ('max', function() {
   eq (Z.max (['x', 'x'], ['x']), ['x', 'x']);
 });
 
+test ('clamp', function() {
+  eq (Z.clamp.length, 3);
+  eq (Z.clamp.name, 'clamp');
+
+  eq (Z.clamp (0, 100, -1), 0);
+  eq (Z.clamp (0, 100, 0), 0);
+  eq (Z.clamp (0, 100, 50), 50);
+  eq (Z.clamp (0, 100, 100), 100);
+  eq (Z.clamp (0, 100, 101), 100);
+  eq (Z.clamp ('A', 'Z', '0'), 'A');
+  eq (Z.clamp ('A', 'Z', 'A'), 'A');
+  eq (Z.clamp ('A', 'Z', 'X'), 'X');
+  eq (Z.clamp ('A', 'Z', 'Z'), 'Z');
+  eq (Z.clamp ('A', 'Z', '~'), 'Z');
+});
+
 test ('compose', function() {
   eq (Z.compose.length, 2);
   eq (Z.compose.name, 'compose');

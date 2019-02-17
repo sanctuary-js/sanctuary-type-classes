@@ -1332,6 +1332,27 @@
     return lte (x, y) ? y : x;
   }
 
+  //# clamp :: Ord a => (a, a, a) -> a
+  //.
+  //. Takes a lower bound, an upper bound, and a value of the same type.
+  //. Returns the value if it is within the bounds; the nearer bound otherwise.
+  //.
+  //. This function is derived from [`min`](#min) and [`max`](#max).
+  //.
+  //. ```javascript
+  //. > clamp (0, 100, 42)
+  //. 42
+  //.
+  //. > clamp (0, 100, -1)
+  //. 0
+  //.
+  //. > clamp ('A', 'Z', '~')
+  //. 'Z'
+  //. ```
+  function clamp(lower, upper, x) {
+    return max (lower, min (upper, x));
+  }
+
   //# compose :: Semigroupoid c => (c j k, c i j) -> c i k
   //.
   //. Function wrapper for [`fantasy-land/compose`][].
@@ -2247,6 +2268,7 @@
     gte: gte,
     min: min,
     max: max,
+    clamp: clamp,
     compose: compose,
     id: id,
     concat: concat,
