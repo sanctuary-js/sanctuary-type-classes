@@ -150,6 +150,13 @@
     };
   }
 
+  //  unary :: (a -> b) -> (a, Any...) -> b
+  function unary(f) {
+    return function(x) {
+      return f (x);
+    };
+  }
+
   //  type Iteration a = { value :: a, done :: Boolean }
 
   //  iterationNext :: a -> Iteration a
@@ -1974,6 +1981,77 @@
     return reduce (function(n, _) { return n + 1; }, 0, foldable);
   }
 
+  //# all :: Foldable f => (a -> Boolean, f a) -> Boolean
+  //.
+  //. Returns `true` if all the elements of the structure satisfy the
+  //. predicate; `false` otherwise.
+  //.
+  //. This function is derived from [`reduce`](#reduce).
+  //.
+  //. See also [`any`](#any) and [`none`](#none).
+  //.
+  //. ```javascript
+  //. > all (Number.isInteger, [])
+  //. true
+  //.
+  //. > all (Number.isInteger, [1, 2, 3])
+  //. true
+  //.
+  //. > all (Number.isInteger, [0, 0.25, 0.5, 0.75, 1])
+  //. false
+  //. ```
+  function all(pred, foldable) {
+    //  Fast path for arrays.
+    if (Array.isArray (foldable)) return foldable.every (unary (pred));
+    return reduce (function(b, x) { return b && pred (x); }, true, foldable);
+  }
+
+  //# any :: Foldable f => (a -> Boolean, f a) -> Boolean
+  //.
+  //. Returns `true` if any element of the structure satisfies the predicate;
+  //. `false` otherwise.
+  //.
+  //. This function is derived from [`reduce`](#reduce).
+  //.
+  //. See also [`all`](#all) and [`none`](#none).
+  //.
+  //. ```javascript
+  //. > any (Number.isInteger, [])
+  //. false
+  //.
+  //. > any (Number.isInteger, [1, 2, 3])
+  //. true
+  //.
+  //. > any (Number.isInteger, [0, 0.25, 0.5, 0.75, 1])
+  //. true
+  //. ```
+  function any(pred, foldable) {
+    //  Fast path for arrays.
+    if (Array.isArray (foldable)) return foldable.some (unary (pred));
+    return reduce (function(b, x) { return b || pred (x); }, false, foldable);
+  }
+
+  //# none :: Foldable f => (a -> Boolean, f a) -> Boolean
+  //.
+  //. Returns `true` if none of the elements of the structure satisfies the
+  //. predicate; `false` otherwise.
+  //.
+  //. This function is derived from [`any`](#any). `none (pred, foldable)` is
+  //. equivalent to `!(any (pred, foldable))`.
+  //.
+  //. See also [`all`](#all).
+  //.
+  //. ```javascript
+  //. > none (Number.isInteger, [])
+  //. true
+  //.
+  //. > none (Number.isInteger, [0, 0.25, 0.5, 0.75, 1])
+  //. false
+  //. ```
+  function none(pred, foldable) {
+    return !(any (pred, foldable));
+  }
+
   //# elem :: (Setoid a, Foldable f) => (a, f a) -> Boolean
   //.
   //. Takes a value and a structure and returns `true` if the
@@ -2005,9 +2083,7 @@
   //. false
   //. ```
   function elem(x, foldable) {
-    return reduce (function(b, y) { return b || equals (x, y); },
-                   false,
-                   foldable);
+    return any (function(y) { return equals (x, y); }, foldable);
   }
 
   //# foldMap :: (Monoid m, Foldable f) => (TypeRep m, a -> m, f a) -> m
@@ -2296,6 +2372,9 @@
     zero: zero,
     reduce: reduce,
     size: size,
+    all: all,
+    any: any,
+    none: none,
     elem: elem,
     foldMap: foldMap,
     reverse: reverse,

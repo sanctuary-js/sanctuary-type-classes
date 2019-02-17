@@ -1245,6 +1245,75 @@ test ('size', function() {
   eq (Z.size (Tuple ('abc', 123)), 1);
 });
 
+test ('all', function() {
+  eq (Z.all.length, 2);
+  eq (Z.all.name, 'all');
+
+  eq (Z.all (gt (0), []), true);
+  eq (Z.all (gt (0), [0]), false);
+  eq (Z.all (gt (0), [1]), true);
+  eq (Z.all (gt (0), [0, 0]), false);
+  eq (Z.all (gt (0), [0, 1]), false);
+  eq (Z.all (gt (0), [1, 0]), false);
+  eq (Z.all (gt (0), [1, 1]), true);
+  eq (Z.all (gt (0), Nil), true);
+  eq (Z.all (gt (0), Cons (0, Nil)), false);
+  eq (Z.all (gt (0), Cons (1, Nil)), true);
+  eq (Z.all (gt (0), Cons (0, Cons (0, Nil))), false);
+  eq (Z.all (gt (0), Cons (0, Cons (1, Nil))), false);
+  eq (Z.all (gt (0), Cons (1, Cons (0, Nil))), false);
+  eq (Z.all (gt (0), Cons (1, Cons (1, Nil))), true);
+  eq (Z.all (gt (0), Nothing), true);
+  eq (Z.all (gt (0), Just (0)), false);
+  eq (Z.all (gt (0), Just (1)), true);
+});
+
+test ('any', function() {
+  eq (Z.any.length, 2);
+  eq (Z.any.name, 'any');
+
+  eq (Z.any (gt (0), []), false);
+  eq (Z.any (gt (0), [0]), false);
+  eq (Z.any (gt (0), [1]), true);
+  eq (Z.any (gt (0), [0, 0]), false);
+  eq (Z.any (gt (0), [0, 1]), true);
+  eq (Z.any (gt (0), [1, 0]), true);
+  eq (Z.any (gt (0), [1, 1]), true);
+  eq (Z.any (gt (0), Nil), false);
+  eq (Z.any (gt (0), Cons (0, Nil)), false);
+  eq (Z.any (gt (0), Cons (1, Nil)), true);
+  eq (Z.any (gt (0), Cons (0, Cons (0, Nil))), false);
+  eq (Z.any (gt (0), Cons (0, Cons (1, Nil))), true);
+  eq (Z.any (gt (0), Cons (1, Cons (0, Nil))), true);
+  eq (Z.any (gt (0), Cons (1, Cons (1, Nil))), true);
+  eq (Z.any (gt (0), Nothing), false);
+  eq (Z.any (gt (0), Just (0)), false);
+  eq (Z.any (gt (0), Just (1)), true);
+});
+
+test ('none', function() {
+  eq (Z.none.length, 2);
+  eq (Z.none.name, 'none');
+
+  eq (Z.none (gt (0), []), true);
+  eq (Z.none (gt (0), [0]), true);
+  eq (Z.none (gt (0), [1]), false);
+  eq (Z.none (gt (0), [0, 0]), true);
+  eq (Z.none (gt (0), [0, 1]), false);
+  eq (Z.none (gt (0), [1, 0]), false);
+  eq (Z.none (gt (0), [1, 1]), false);
+  eq (Z.none (gt (0), Nil), true);
+  eq (Z.none (gt (0), Cons (0, Nil)), true);
+  eq (Z.none (gt (0), Cons (1, Nil)), false);
+  eq (Z.none (gt (0), Cons (0, Cons (0, Nil))), true);
+  eq (Z.none (gt (0), Cons (0, Cons (1, Nil))), false);
+  eq (Z.none (gt (0), Cons (1, Cons (0, Nil))), false);
+  eq (Z.none (gt (0), Cons (1, Cons (1, Nil))), false);
+  eq (Z.none (gt (0), Nothing), true);
+  eq (Z.none (gt (0), Just (0)), true);
+  eq (Z.none (gt (0), Just (1)), false);
+});
+
 test ('elem', function() {
   eq (Z.elem.length, 2);
   eq (Z.elem.name, 'elem');
