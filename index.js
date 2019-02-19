@@ -91,8 +91,8 @@
     var Identity = __doctest.require ('sanctuary-identity');
     var List = __doctest.require ('./test/List');
     var Maybe = __doctest.require ('sanctuary-maybe');
+    var Pair = __doctest.require ('sanctuary-pair');
     var Sum = __doctest.require ('./test/Sum');
-    var Tuple = __doctest.require ('./test/Tuple');
 
     var Nil = List.Nil, Cons = List.Cons;
     var Nothing = Maybe.Nothing, Just = Maybe.Just;
@@ -428,7 +428,7 @@
   //. `TypeClass` value for [Bifunctor][].
   //.
   //. ```javascript
-  //. > Bifunctor.test (Tuple ('foo', 64))
+  //. > Bifunctor.test (Pair ('foo') (64))
   //. true
   //.
   //. > Bifunctor.test ([])
@@ -1579,8 +1579,8 @@
   //. > map (Math.sqrt, s => s.length) ('Sanctuary')
   //. 3
   //.
-  //. > map (Math.sqrt, Tuple ('foo', 64))
-  //. Tuple ('foo', 8)
+  //. > map (Math.sqrt, Pair ('foo') (64))
+  //. Pair ('foo') (8)
   //.
   //. > map (Math.sqrt, Nil)
   //. Nil
@@ -1620,8 +1620,8 @@
   //. Function wrapper for [`fantasy-land/bimap`][].
   //.
   //. ```javascript
-  //. > bimap (s => s.toUpperCase (), Math.sqrt, Tuple ('foo', 64))
-  //. Tuple ('FOO', 8)
+  //. > bimap (s => s.toUpperCase (), Math.sqrt, Pair ('foo') (64))
+  //. Pair ('FOO') (8)
   //. ```
   function bimap(f, g, bifunctor) {
     return Bifunctor.methods.bimap (bifunctor) (f, g);
@@ -1632,8 +1632,8 @@
   //. Maps the given function over the left side of a Bifunctor.
   //.
   //. ```javascript
-  //. > mapLeft (Math.sqrt, Tuple (64, 9))
-  //. Tuple (8, 9)
+  //. > mapLeft (Math.sqrt, Pair (64) (9))
+  //. Pair (8) (9)
   //. ```
   function mapLeft(f, bifunctor) {
     return bimap (f, identity, bifunctor);
