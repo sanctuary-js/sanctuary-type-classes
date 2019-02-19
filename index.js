@@ -223,7 +223,7 @@
     };
   }
 
-  TypeClass['@@type'] = 'sanctuary-type-classes/TypeClass';
+  TypeClass['@@type'] = 'sanctuary-type-classes/TypeClass@1';
 
   //  data Location = Constructor | Value
 

@@ -19,7 +19,7 @@
     "types"
   ],
   "dependencies": {
-    "sanctuary-type-identifiers": "1.0.x"
+    "sanctuary-type-identifiers": "2.0.1"
   },
   "ignore": [
     "/.circleci/",
