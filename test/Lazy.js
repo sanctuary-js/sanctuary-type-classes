@@ -11,7 +11,7 @@ function Lazy(f) {
   this.run = f;
 }
 
-Lazy['@@type'] = 'sanctuary-type-classes/Lazy';
+Lazy['@@type'] = 'sanctuary-type-classes/Lazy@1';
 
 Lazy[FL.of] = function(a) {
   return Lazy (function() { return a; });

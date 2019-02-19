@@ -22,7 +22,7 @@ function _List(tag, head, tail) {
   }
 }
 
-List['@@type'] = 'sanctuary-type-classes/List';
+List['@@type'] = 'sanctuary-type-classes/List@1';
 
 //  Nil :: List a
 var Nil = List.Nil = new _List ('Nil');

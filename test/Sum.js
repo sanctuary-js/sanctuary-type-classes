@@ -12,7 +12,7 @@ function Sum(value) {
   this.value = value;
 }
 
-Sum['@@type'] = 'sanctuary-type-classes/Sum';
+Sum['@@type'] = 'sanctuary-type-classes/Sum@1';
 
 Sum[FL.empty] = function() { return Sum (0); };
 
