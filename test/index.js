@@ -4,6 +4,7 @@ var laws = require ('fantasy-laws');
 var jsc = require ('jsverify');
 var Identity = require ('sanctuary-identity');
 var Maybe = require ('sanctuary-maybe');
+var Pair = require ('sanctuary-pair');
 var type = require ('sanctuary-type-identifiers');
 
 var Z = require ('..');
@@ -12,7 +13,6 @@ var version = (require ('../package.json')).version;
 var Lazy = require ('./Lazy');
 var List = require ('./List');
 var Sum = require ('./Sum');
-var Tuple = require ('./Tuple');
 var eq = require ('./eq');
 var withUnstableArraySort = (require ('./quicksort')).withUnstableArraySort;
 
@@ -414,7 +414,7 @@ test ('Bifunctor', function() {
   eq (Z.Bifunctor.test (''), false);
   eq (Z.Bifunctor.test ([]), false);
   eq (Z.Bifunctor.test ({}), false);
-  eq (Z.Bifunctor.test (Tuple ('abc', 123)), true);
+  eq (Z.Bifunctor.test (Pair ('abc') (123)), true);
 });
 
 test ('Profunctor', function() {
@@ -1008,14 +1008,14 @@ test ('bimap', function() {
   eq (Z.bimap.length, 3);
   eq (Z.bimap.name, 'bimap');
 
-  eq (Z.bimap (toUpper, inc, Tuple ('abc', 123)), Tuple ('ABC', 124));
+  eq (Z.bimap (toUpper, inc, Pair ('abc') (123)), Pair ('ABC') (124));
 });
 
 test ('mapLeft', function() {
   eq (Z.mapLeft.length, 2);
   eq (Z.mapLeft.name, 'mapLeft');
 
-  eq (Z.mapLeft (toUpper, Tuple ('abc', 'def')), Tuple ('ABC', 'def'));
+  eq (Z.mapLeft (toUpper, Pair ('abc') ('def')), Pair ('ABC') ('def'));
 });
 
 test ('promap', function() {
@@ -1243,7 +1243,7 @@ test ('size', function() {
   eq (Z.size (Identity ('quux')), 1);
   eq (Z.size (Nothing), 0);
   eq (Z.size (Just (0)), 1);
-  eq (Z.size (Tuple ('abc', 123)), 1);
+  eq (Z.size (Pair ('abc') (123)), 1);
 });
 
 test ('all', function() {
