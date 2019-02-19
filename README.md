@@ -53,7 +53,7 @@ This project provides:
 
 ## API
 
-#### <a name="TypeClass" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L157">`TypeClass :: (String, String, Array TypeClass, a -⁠> Boolean) -⁠> TypeClass`</a>
+#### <a name="TypeClass" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L168">`TypeClass :: (String, String, Array TypeClass, a -⁠> Boolean) -⁠> TypeClass`</a>
 
 The arguments are:
 
@@ -71,19 +71,19 @@ Example:
 const hasMethod = name => x => x != null && typeof x[name] == 'function';
 
 //    Foo :: TypeClass
-const Foo = Z.TypeClass(
+const Foo = Z.TypeClass (
   'my-package/Foo',
   'http://example.com/my-package#Foo',
   [],
-  hasMethod('foo')
+  hasMethod ('foo')
 );
 
 //    Bar :: TypeClass
-const Bar = Z.TypeClass(
+const Bar = Z.TypeClass (
   'my-package/Bar',
   'http://example.com/my-package#Bar',
   [Foo],
-  hasMethod('bar')
+  hasMethod ('bar')
 );
 ```
 
@@ -100,292 +100,292 @@ dependencies; `false` otherwise.
 to define parametrically polymorphic functions which verify their
 type-class constraints at run time.
 
-#### <a name="Setoid" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L300">`Setoid :: TypeClass`</a>
+#### <a name="Setoid" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L312">`Setoid :: TypeClass`</a>
 
 `TypeClass` value for [Setoid][].
 
 ```javascript
-> Setoid.test(null)
+> Setoid.test (null)
 true
 ```
 
-#### <a name="Ord" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L310">`Ord :: TypeClass`</a>
+#### <a name="Ord" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L322">`Ord :: TypeClass`</a>
 
 `TypeClass` value for [Ord][].
 
 ```javascript
-> Ord.test(0)
+> Ord.test (0)
 true
 
-> Ord.test(Math.sqrt)
+> Ord.test (Math.sqrt)
 false
 ```
 
-#### <a name="Semigroupoid" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L323">`Semigroupoid :: TypeClass`</a>
+#### <a name="Semigroupoid" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L335">`Semigroupoid :: TypeClass`</a>
 
 `TypeClass` value for [Semigroupoid][].
 
 ```javascript
-> Semigroupoid.test(Math.sqrt)
+> Semigroupoid.test (Math.sqrt)
 true
 
-> Semigroupoid.test(0)
+> Semigroupoid.test (0)
 false
 ```
 
-#### <a name="Category" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L336">`Category :: TypeClass`</a>
+#### <a name="Category" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L348">`Category :: TypeClass`</a>
 
 `TypeClass` value for [Category][].
 
 ```javascript
-> Category.test(Math.sqrt)
+> Category.test (Math.sqrt)
 true
 
-> Category.test(0)
+> Category.test (0)
 false
 ```
 
-#### <a name="Semigroup" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L349">`Semigroup :: TypeClass`</a>
+#### <a name="Semigroup" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L361">`Semigroup :: TypeClass`</a>
 
 `TypeClass` value for [Semigroup][].
 
 ```javascript
-> Semigroup.test('')
+> Semigroup.test ('')
 true
 
-> Semigroup.test(0)
+> Semigroup.test (0)
 false
 ```
 
-#### <a name="Monoid" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L362">`Monoid :: TypeClass`</a>
+#### <a name="Monoid" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L374">`Monoid :: TypeClass`</a>
 
 `TypeClass` value for [Monoid][].
 
 ```javascript
-> Monoid.test('')
+> Monoid.test ('')
 true
 
-> Monoid.test(0)
+> Monoid.test (0)
 false
 ```
 
-#### <a name="Group" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L375">`Group :: TypeClass`</a>
+#### <a name="Group" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L387">`Group :: TypeClass`</a>
 
 `TypeClass` value for [Group][].
 
 ```javascript
-> Group.test(Sum(0))
+> Group.test (Sum (0))
 true
 
-> Group.test('')
+> Group.test ('')
 false
 ```
 
-#### <a name="Filterable" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L388">`Filterable :: TypeClass`</a>
+#### <a name="Filterable" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L400">`Filterable :: TypeClass`</a>
 
 `TypeClass` value for [Filterable][].
 
 ```javascript
-> Filterable.test({})
+> Filterable.test ({})
 true
 
-> Filterable.test('')
+> Filterable.test ('')
 false
 ```
 
-#### <a name="Functor" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L401">`Functor :: TypeClass`</a>
+#### <a name="Functor" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L413">`Functor :: TypeClass`</a>
 
 `TypeClass` value for [Functor][].
 
 ```javascript
-> Functor.test([])
+> Functor.test ([])
 true
 
-> Functor.test('')
+> Functor.test ('')
 false
 ```
 
-#### <a name="Bifunctor" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L414">`Bifunctor :: TypeClass`</a>
+#### <a name="Bifunctor" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L426">`Bifunctor :: TypeClass`</a>
 
 `TypeClass` value for [Bifunctor][].
 
 ```javascript
-> Bifunctor.test(Tuple('foo', 64))
+> Bifunctor.test (Pair ('foo') (64))
 true
 
-> Bifunctor.test([])
+> Bifunctor.test ([])
 false
 ```
 
-#### <a name="Profunctor" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L427">`Profunctor :: TypeClass`</a>
+#### <a name="Profunctor" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L439">`Profunctor :: TypeClass`</a>
 
 `TypeClass` value for [Profunctor][].
 
 ```javascript
-> Profunctor.test(Math.sqrt)
+> Profunctor.test (Math.sqrt)
 true
 
-> Profunctor.test([])
+> Profunctor.test ([])
 false
 ```
 
-#### <a name="Apply" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L440">`Apply :: TypeClass`</a>
+#### <a name="Apply" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L452">`Apply :: TypeClass`</a>
 
 `TypeClass` value for [Apply][].
 
 ```javascript
-> Apply.test([])
+> Apply.test ([])
 true
 
-> Apply.test('')
+> Apply.test ('')
 false
 ```
 
-#### <a name="Applicative" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L453">`Applicative :: TypeClass`</a>
+#### <a name="Applicative" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L465">`Applicative :: TypeClass`</a>
 
 `TypeClass` value for [Applicative][].
 
 ```javascript
-> Applicative.test([])
+> Applicative.test ([])
 true
 
-> Applicative.test({})
+> Applicative.test ({})
 false
 ```
 
-#### <a name="Chain" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L466">`Chain :: TypeClass`</a>
+#### <a name="Chain" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L478">`Chain :: TypeClass`</a>
 
 `TypeClass` value for [Chain][].
 
 ```javascript
-> Chain.test([])
+> Chain.test ([])
 true
 
-> Chain.test({})
+> Chain.test ({})
 false
 ```
 
-#### <a name="ChainRec" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L479">`ChainRec :: TypeClass`</a>
+#### <a name="ChainRec" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L491">`ChainRec :: TypeClass`</a>
 
 `TypeClass` value for [ChainRec][].
 
 ```javascript
-> ChainRec.test([])
+> ChainRec.test ([])
 true
 
-> ChainRec.test({})
+> ChainRec.test ({})
 false
 ```
 
-#### <a name="Monad" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L492">`Monad :: TypeClass`</a>
+#### <a name="Monad" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L504">`Monad :: TypeClass`</a>
 
 `TypeClass` value for [Monad][].
 
 ```javascript
-> Monad.test([])
+> Monad.test ([])
 true
 
-> Monad.test({})
+> Monad.test ({})
 false
 ```
 
-#### <a name="Alt" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L505">`Alt :: TypeClass`</a>
+#### <a name="Alt" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L517">`Alt :: TypeClass`</a>
 
 `TypeClass` value for [Alt][].
 
 ```javascript
-> Alt.test({})
+> Alt.test ({})
 true
 
-> Alt.test('')
+> Alt.test ('')
 false
 ```
 
-#### <a name="Plus" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L518">`Plus :: TypeClass`</a>
+#### <a name="Plus" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L530">`Plus :: TypeClass`</a>
 
 `TypeClass` value for [Plus][].
 
 ```javascript
-> Plus.test({})
+> Plus.test ({})
 true
 
-> Plus.test('')
+> Plus.test ('')
 false
 ```
 
-#### <a name="Alternative" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L531">`Alternative :: TypeClass`</a>
+#### <a name="Alternative" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L543">`Alternative :: TypeClass`</a>
 
 `TypeClass` value for [Alternative][].
 
 ```javascript
-> Alternative.test([])
+> Alternative.test ([])
 true
 
-> Alternative.test({})
+> Alternative.test ({})
 false
 ```
 
-#### <a name="Foldable" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L544">`Foldable :: TypeClass`</a>
+#### <a name="Foldable" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L556">`Foldable :: TypeClass`</a>
 
 `TypeClass` value for [Foldable][].
 
 ```javascript
-> Foldable.test({})
+> Foldable.test ({})
 true
 
-> Foldable.test('')
+> Foldable.test ('')
 false
 ```
 
-#### <a name="Traversable" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L557">`Traversable :: TypeClass`</a>
+#### <a name="Traversable" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L569">`Traversable :: TypeClass`</a>
 
 `TypeClass` value for [Traversable][].
 
 ```javascript
-> Traversable.test([])
+> Traversable.test ([])
 true
 
-> Traversable.test('')
+> Traversable.test ('')
 false
 ```
 
-#### <a name="Extend" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L570">`Extend :: TypeClass`</a>
+#### <a name="Extend" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L582">`Extend :: TypeClass`</a>
 
 `TypeClass` value for [Extend][].
 
 ```javascript
-> Extend.test([])
+> Extend.test ([])
 true
 
-> Extend.test({})
+> Extend.test ({})
 false
 ```
 
-#### <a name="Comonad" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L583">`Comonad :: TypeClass`</a>
+#### <a name="Comonad" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L595">`Comonad :: TypeClass`</a>
 
 `TypeClass` value for [Comonad][].
 
 ```javascript
-> Comonad.test(Identity(0))
+> Comonad.test (Identity (0))
 true
 
-> Comonad.test([])
+> Comonad.test ([])
 false
 ```
 
-#### <a name="Contravariant" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L596">`Contravariant :: TypeClass`</a>
+#### <a name="Contravariant" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L608">`Contravariant :: TypeClass`</a>
 
 `TypeClass` value for [Contravariant][].
 
 ```javascript
-> Contravariant.test(Math.sqrt)
+> Contravariant.test (Math.sqrt)
 true
 
-> Contravariant.test([])
+> Contravariant.test ([])
 false
 ```
 
-#### <a name="equals" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1111">`equals :: (a, b) -⁠> Boolean`</a>
+#### <a name="equals" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1127">`equals :: (a, b) -⁠> Boolean`</a>
 
 Returns `true` if its arguments are of the same type and equal according
 to the type's [`fantasy-land/equals`][] method; `false` otherwise.
@@ -401,20 +401,20 @@ are equal even if their internal structures differ. Two objects are equal
 if they have the same property paths and for each path have equal values.
 
 ```javascript
-> equals(0, -0)
+> equals (0, -0)
 true
 
-> equals(NaN, NaN)
+> equals (NaN, NaN)
 true
 
-> equals(Cons('foo', Cons('bar', Nil)), Cons('foo', Cons('bar', Nil)))
+> equals (Cons (1, Cons (2, Nil)), Cons (1, Cons (2, Nil)))
 true
 
-> equals(Cons('foo', Cons('bar', Nil)), Cons('bar', Cons('foo', Nil)))
+> equals (Cons (1, Cons (2, Nil)), Cons (2, Cons (1, Nil)))
 false
 ```
 
-#### <a name="lt" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1161">`lt :: (a, b) -⁠> Boolean`</a>
+#### <a name="lt" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1179">`lt :: (a, b) -⁠> Boolean`</a>
 
 Returns `true` if its arguments are of the same type and the first is
 less than the second according to the type's [`fantasy-land/lte`][]
@@ -425,17 +425,17 @@ This function is derived from [`lte`](#lte).
 See also [`gt`](#gt) and [`gte`](#gte).
 
 ```javascript
-> lt(0, 0)
+> lt (0, 0)
 false
 
-> lt(0, 1)
+> lt (0, 1)
 true
 
-> lt(1, 0)
+> lt (1, 0)
 false
 ```
 
-#### <a name="lte" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1185">`lte :: (a, b) -⁠> Boolean`</a>
+#### <a name="lte" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1203">`lte :: (a, b) -⁠> Boolean`</a>
 
 Returns `true` if its arguments are of the same type and the first
 is less than or equal to the second according to the type's
@@ -451,17 +451,17 @@ The algorithm supports circular data structures in the same manner as
 See also [`lt`](#lt), [`gt`](#gt), and [`gte`](#gte).
 
 ```javascript
-> lte(0, 0)
+> lte (0, 0)
 true
 
-> lte(0, 1)
+> lte (0, 1)
 true
 
-> lte(1, 0)
+> lte (1, 0)
 false
 ```
 
-#### <a name="gt" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1232">`gt :: (a, b) -⁠> Boolean`</a>
+#### <a name="gt" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1250">`gt :: (a, b) -⁠> Boolean`</a>
 
 Returns `true` if its arguments are of the same type and the first is
 greater than the second according to the type's [`fantasy-land/lte`][]
@@ -472,17 +472,17 @@ This function is derived from [`lte`](#lte).
 See also [`lt`](#lt) and [`gte`](#gte).
 
 ```javascript
-> gt(0, 0)
+> gt (0, 0)
 false
 
-> gt(0, 1)
+> gt (0, 1)
 false
 
-> gt(1, 0)
+> gt (1, 0)
 true
 ```
 
-#### <a name="gte" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1256">`gte :: (a, b) -⁠> Boolean`</a>
+#### <a name="gte" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1274">`gte :: (a, b) -⁠> Boolean`</a>
 
 Returns `true` if its arguments are of the same type and the first
 is greater than or equal to the second according to the type's
@@ -493,17 +493,17 @@ This function is derived from [`lte`](#lte).
 See also [`lt`](#lt) and [`gt`](#gt).
 
 ```javascript
-> gte(0, 0)
+> gte (0, 0)
 true
 
-> gte(0, 1)
+> gte (0, 1)
 false
 
-> gte(1, 0)
+> gte (1, 0)
 true
 ```
 
-#### <a name="min" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1280">`min :: Ord a => (a, a) -⁠> a`</a>
+#### <a name="min" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1298">`min :: Ord a => (a, a) -⁠> a`</a>
 
 Returns the smaller of its two arguments.
 
@@ -512,17 +512,17 @@ This function is derived from [`lte`](#lte).
 See also [`max`](#max).
 
 ```javascript
-> min(10, 2)
+> min (10, 2)
 2
 
-> min(new Date('1999-12-31'), new Date('2000-01-01'))
-new Date('1999-12-31')
+> min (new Date ('1999-12-31'), new Date ('2000-01-01'))
+new Date ('1999-12-31')
 
-> min('10', '2')
+> min ('10', '2')
 '10'
 ```
 
-#### <a name="max" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1302">`max :: Ord a => (a, a) -⁠> a`</a>
+#### <a name="max" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1320">`max :: Ord a => (a, a) -⁠> a`</a>
 
 Returns the larger of its two arguments.
 
@@ -531,17 +531,35 @@ This function is derived from [`lte`](#lte).
 See also [`min`](#min).
 
 ```javascript
-> max(10, 2)
+> max (10, 2)
 10
 
-> max(new Date('1999-12-31'), new Date('2000-01-01'))
-new Date('2000-01-01')
+> max (new Date ('1999-12-31'), new Date ('2000-01-01'))
+new Date ('2000-01-01')
 
-> max('10', '2')
+> max ('10', '2')
 '2'
 ```
 
-#### <a name="compose" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1324">`compose :: Semigroupoid c => (c j k, c i j) -⁠> c i k`</a>
+#### <a name="clamp" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1342">`clamp :: Ord a => (a, a, a) -⁠> a`</a>
+
+Takes a lower bound, an upper bound, and a value of the same type.
+Returns the value if it is within the bounds; the nearer bound otherwise.
+
+This function is derived from [`min`](#min) and [`max`](#max).
+
+```javascript
+> clamp (0, 100, 42)
+42
+
+> clamp (0, 100, -1)
+0
+
+> clamp ('A', 'Z', '~')
+'Z'
+```
+
+#### <a name="compose" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1363">`compose :: Semigroupoid c => (c j k, c i j) -⁠> c i k`</a>
 
 Function wrapper for [`fantasy-land/compose`][].
 
@@ -549,11 +567,11 @@ Function wrapper for [`fantasy-land/compose`][].
 built-in types: Function.
 
 ```javascript
-> compose(Math.sqrt, x => x + 1)(99)
+> compose (Math.sqrt, x => x + 1) (99)
 10
 ```
 
-#### <a name="id" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1339">`id :: Category c => TypeRep c -⁠> c`</a>
+#### <a name="id" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1378">`id :: Category c => TypeRep c -⁠> c`</a>
 
 Function wrapper for [`fantasy-land/id`][].
 
@@ -561,11 +579,11 @@ Function wrapper for [`fantasy-land/id`][].
 built-in types: Function.
 
 ```javascript
-> id(Function)('foo')
+> id (Function) ('foo')
 'foo'
 ```
 
-#### <a name="concat" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1354">`concat :: Semigroup a => (a, a) -⁠> a`</a>
+#### <a name="concat" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1393">`concat :: Semigroup a => (a, a) -⁠> a`</a>
 
 Function wrapper for [`fantasy-land/concat`][].
 
@@ -573,20 +591,20 @@ Function wrapper for [`fantasy-land/concat`][].
 built-in types: String, Array, and Object.
 
 ```javascript
-> concat('abc', 'def')
+> concat ('abc', 'def')
 'abcdef'
 
-> concat([1, 2, 3], [4, 5, 6])
+> concat ([1, 2, 3], [4, 5, 6])
 [1, 2, 3, 4, 5, 6]
 
-> concat({x: 1, y: 2}, {y: 3, z: 4})
+> concat ({x: 1, y: 2}, {y: 3, z: 4})
 {x: 1, y: 3, z: 4}
 
-> concat(Cons('foo', Cons('bar', Cons('baz', Nil))), Cons('quux', Nil))
-Cons('foo', Cons('bar', Cons('baz', Cons('quux', Nil))))
+> concat (Cons ('foo', Cons ('bar', Cons ('baz', Nil))), Cons ('quux', Nil))
+Cons ('foo', Cons ('bar', Cons ('baz', Cons ('quux', Nil))))
 ```
 
-#### <a name="empty" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1378">`empty :: Monoid m => TypeRep m -⁠> m`</a>
+#### <a name="empty" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1417">`empty :: Monoid m => TypeRep m -⁠> m`</a>
 
 Function wrapper for [`fantasy-land/empty`][].
 
@@ -594,29 +612,29 @@ Function wrapper for [`fantasy-land/empty`][].
 built-in types: String, Array, and Object.
 
 ```javascript
-> empty(String)
+> empty (String)
 ''
 
-> empty(Array)
+> empty (Array)
 []
 
-> empty(Object)
+> empty (Object)
 {}
 
-> empty(List)
+> empty (List)
 Nil
 ```
 
-#### <a name="invert" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1402">`invert :: Group g => g -⁠> g`</a>
+#### <a name="invert" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1441">`invert :: Group g => g -⁠> g`</a>
 
 Function wrapper for [`fantasy-land/invert`][].
 
 ```javascript
-> invert(Sum(5))
-Sum(-5)
+> invert (Sum (5))
+Sum (-5)
 ```
 
-#### <a name="filter" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1414">`filter :: Filterable f => (a -⁠> Boolean, f a) -⁠> f a`</a>
+#### <a name="filter" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1453">`filter :: Filterable f => (a -⁠> Boolean, f a) -⁠> f a`</a>
 
 Function wrapper for [`fantasy-land/filter`][]. Discards every element
 which does not satisfy the predicate.
@@ -627,52 +645,52 @@ built-in types: Array and Object.
 See also [`reject`](#reject).
 
 ```javascript
-> filter(x => x % 2 == 1, [1, 2, 3])
+> filter (x => x % 2 == 1, [1, 2, 3])
 [1, 3]
 
-> filter(x => x % 2 == 1, {x: 1, y: 2, z: 3})
+> filter (x => x % 2 == 1, {x: 1, y: 2, z: 3})
 {x: 1, z: 3}
 
-> filter(x => x % 2 == 1, Cons(1, Cons(2, Cons(3, Nil))))
-Cons(1, Cons(3, Nil))
+> filter (x => x % 2 == 1, Cons (1, Cons (2, Cons (3, Nil))))
+Cons (1, Cons (3, Nil))
 
-> filter(x => x % 2 == 1, Nothing)
+> filter (x => x % 2 == 1, Nothing)
 Nothing
 
-> filter(x => x % 2 == 1, Just(0))
+> filter (x => x % 2 == 1, Just (0))
 Nothing
 
-> filter(x => x % 2 == 1, Just(1))
-Just(1)
+> filter (x => x % 2 == 1, Just (1))
+Just (1)
 ```
 
-#### <a name="reject" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1447">`reject :: Filterable f => (a -⁠> Boolean, f a) -⁠> f a`</a>
+#### <a name="reject" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1486">`reject :: Filterable f => (a -⁠> Boolean, f a) -⁠> f a`</a>
 
 Discards every element which satisfies the predicate.
 
 This function is derived from [`filter`](#filter).
 
 ```javascript
-> reject(x => x % 2 == 1, [1, 2, 3])
+> reject (x => x % 2 == 1, [1, 2, 3])
 [2]
 
-> reject(x => x % 2 == 1, {x: 1, y: 2, z: 3})
+> reject (x => x % 2 == 1, {x: 1, y: 2, z: 3})
 {y: 2}
 
-> reject(x => x % 2 == 1, Cons(1, Cons(2, Cons(3, Nil))))
-Cons(2, Nil)
+> reject (x => x % 2 == 1, Cons (1, Cons (2, Cons (3, Nil))))
+Cons (2, Nil)
 
-> reject(x => x % 2 == 1, Nothing)
+> reject (x => x % 2 == 1, Nothing)
 Nothing
 
-> reject(x => x % 2 == 1, Just(0))
-Just(0)
+> reject (x => x % 2 == 1, Just (0))
+Just (0)
 
-> reject(x => x % 2 == 1, Just(1))
+> reject (x => x % 2 == 1, Just (1))
 Nothing
 ```
 
-#### <a name="takeWhile" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1476">`takeWhile :: Filterable f => (a -⁠> Boolean, f a) -⁠> f a`</a>
+#### <a name="takeWhile" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1515">`takeWhile :: Filterable f => (a -⁠> Boolean, f a) -⁠> f a`</a>
 
 Discards the first element which does not satisfy the predicate, and all
 subsequent elements.
@@ -682,17 +700,17 @@ This function is derived from [`filter`](#filter).
 See also [`dropWhile`](#dropWhile).
 
 ```javascript
-> takeWhile(s => /x/.test(s), ['xy', 'xz', 'yx', 'yz', 'zx', 'zy'])
+> takeWhile (s => /x/.test (s), ['xy', 'xz', 'yx', 'yz', 'zx', 'zy'])
 ['xy', 'xz', 'yx']
 
-> takeWhile(s => /y/.test(s), ['xy', 'xz', 'yx', 'yz', 'zx', 'zy'])
+> takeWhile (s => /y/.test (s), ['xy', 'xz', 'yx', 'yz', 'zx', 'zy'])
 ['xy']
 
-> takeWhile(s => /z/.test(s), ['xy', 'xz', 'yx', 'yz', 'zx', 'zy'])
+> takeWhile (s => /z/.test (s), ['xy', 'xz', 'yx', 'yz', 'zx', 'zy'])
 []
 ```
 
-#### <a name="dropWhile" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1500">`dropWhile :: Filterable f => (a -⁠> Boolean, f a) -⁠> f a`</a>
+#### <a name="dropWhile" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1540">`dropWhile :: Filterable f => (a -⁠> Boolean, f a) -⁠> f a`</a>
 
 Retains the first element which does not satisfy the predicate, and all
 subsequent elements.
@@ -702,17 +720,17 @@ This function is derived from [`filter`](#filter).
 See also [`takeWhile`](#takeWhile).
 
 ```javascript
-> dropWhile(s => /x/.test(s), ['xy', 'xz', 'yx', 'yz', 'zx', 'zy'])
+> dropWhile (s => /x/.test (s), ['xy', 'xz', 'yx', 'yz', 'zx', 'zy'])
 ['yz', 'zx', 'zy']
 
-> dropWhile(s => /y/.test(s), ['xy', 'xz', 'yx', 'yz', 'zx', 'zy'])
+> dropWhile (s => /y/.test (s), ['xy', 'xz', 'yx', 'yz', 'zx', 'zy'])
 ['xz', 'yx', 'yz', 'zx', 'zy']
 
-> dropWhile(s => /z/.test(s), ['xy', 'xz', 'yx', 'yz', 'zx', 'zy'])
+> dropWhile (s => /z/.test (s), ['xy', 'xz', 'yx', 'yz', 'zx', 'zy'])
 ['xy', 'xz', 'yx', 'yz', 'zx', 'zy']
 ```
 
-#### <a name="map" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1524">`map :: Functor f => (a -⁠> b, f a) -⁠> f b`</a>
+#### <a name="map" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1565">`map :: Functor f => (a -⁠> b, f a) -⁠> f b`</a>
 
 Function wrapper for [`fantasy-land/map`][].
 
@@ -720,64 +738,64 @@ Function wrapper for [`fantasy-land/map`][].
 built-in types: Array, Object, and Function.
 
 ```javascript
-> map(Math.sqrt, [1, 4, 9])
+> map (Math.sqrt, [1, 4, 9])
 [1, 2, 3]
 
-> map(Math.sqrt, {x: 1, y: 4, z: 9})
+> map (Math.sqrt, {x: 1, y: 4, z: 9})
 {x: 1, y: 2, z: 3}
 
-> map(Math.sqrt, s => s.length)('Sanctuary')
+> map (Math.sqrt, s => s.length) ('Sanctuary')
 3
 
-> map(Math.sqrt, Tuple('foo', 64))
-Tuple('foo', 8)
+> map (Math.sqrt, Pair ('foo') (64))
+Pair ('foo') (8)
 
-> map(Math.sqrt, Nil)
+> map (Math.sqrt, Nil)
 Nil
 
-> map(Math.sqrt, Cons(1, Cons(4, Cons(9, Nil))))
-Cons(1, Cons(2, Cons(3, Nil)))
+> map (Math.sqrt, Cons (1, Cons (4, Cons (9, Nil))))
+Cons (1, Cons (2, Cons (3, Nil)))
 ```
 
-#### <a name="flip" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1554">`flip :: Functor f => (f (a -⁠> b), a) -⁠> f b`</a>
+#### <a name="flip" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1595">`flip :: Functor f => (f (a -⁠> b), a) -⁠> f b`</a>
 
 Maps over the given functions, applying each to the given value.
 
 This function is derived from [`map`](#map).
 
 ```javascript
-> flip(x => y => x + y, '!')('foo')
+> flip (x => y => x + y, '!') ('foo')
 'foo!'
 
-> flip([Math.floor, Math.ceil], 1.5)
+> flip ([Math.floor, Math.ceil], 1.5)
 [1, 2]
 
-> flip({floor: Math.floor, ceil: Math.ceil}, 1.5)
+> flip ({floor: Math.floor, ceil: Math.ceil}, 1.5)
 {floor: 1, ceil: 2}
 
-> flip(Cons(Math.floor, Cons(Math.ceil, Nil)), 1.5)
-Cons(1, Cons(2, Nil))
+> flip (Cons (Math.floor, Cons (Math.ceil, Nil)), 1.5)
+Cons (1, Cons (2, Nil))
 ```
 
-#### <a name="bimap" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1577">`bimap :: Bifunctor f => (a -⁠> b, c -⁠> d, f a c) -⁠> f b d`</a>
+#### <a name="bimap" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1618">`bimap :: Bifunctor f => (a -⁠> b, c -⁠> d, f a c) -⁠> f b d`</a>
 
 Function wrapper for [`fantasy-land/bimap`][].
 
 ```javascript
-> bimap(s => s.toUpperCase(), Math.sqrt, Tuple('foo', 64))
-Tuple('FOO', 8)
+> bimap (s => s.toUpperCase (), Math.sqrt, Pair ('foo') (64))
+Pair ('FOO') (8)
 ```
 
-#### <a name="mapLeft" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1589">`mapLeft :: Bifunctor f => (a -⁠> b, f a c) -⁠> f b c`</a>
+#### <a name="mapLeft" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1630">`mapLeft :: Bifunctor f => (a -⁠> b, f a c) -⁠> f b c`</a>
 
 Maps the given function over the left side of a Bifunctor.
 
 ```javascript
-> mapLeft(Math.sqrt, Tuple(64, 9))
-Tuple(8, 9)
+> mapLeft (Math.sqrt, Pair (64) (9))
+Pair (8) (9)
 ```
 
-#### <a name="promap" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1601">`promap :: Profunctor p => (a -⁠> b, c -⁠> d, p b c) -⁠> p a d`</a>
+#### <a name="promap" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1642">`promap :: Profunctor p => (a -⁠> b, c -⁠> d, p b c) -⁠> p a d`</a>
 
 Function wrapper for [`fantasy-land/promap`][].
 
@@ -785,11 +803,11 @@ Function wrapper for [`fantasy-land/promap`][].
 built-in types: Function.
 
 ```javascript
-> promap(Math.abs, x => x + 1, Math.sqrt)(-100)
+> promap (Math.abs, x => x + 1, Math.sqrt) (-100)
 11
 ```
 
-#### <a name="ap" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1616">`ap :: Apply f => (f (a -⁠> b), f a) -⁠> f b`</a>
+#### <a name="ap" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1657">`ap :: Apply f => (f (a -⁠> b), f a) -⁠> f b`</a>
 
 Function wrapper for [`fantasy-land/ap`][].
 
@@ -797,23 +815,23 @@ Function wrapper for [`fantasy-land/ap`][].
 built-in types: Array, Object, and Function.
 
 ```javascript
-> ap([Math.sqrt, x => x * x], [1, 4, 9, 16, 25])
+> ap ([Math.sqrt, x => x * x], [1, 4, 9, 16, 25])
 [1, 2, 3, 4, 5, 1, 16, 81, 256, 625]
 
-> ap({a: Math.sqrt, b: x => x * x}, {a: 16, b: 10, c: 1})
+> ap ({a: Math.sqrt, b: x => x * x}, {a: 16, b: 10, c: 1})
 {a: 4, b: 100}
 
-> ap(s => n => s.slice(0, n), s => Math.ceil(s.length / 2))('Haskell')
+> ap (s => n => s.slice (0, n), s => Math.ceil (s.length / 2)) ('Haskell')
 'Hask'
 
-> ap(Identity(Math.sqrt), Identity(64))
-Identity(8)
+> ap (Identity (Math.sqrt), Identity (64))
+Identity (8)
 
-> ap(Cons(Math.sqrt, Cons(x => x * x, Nil)), Cons(16, Cons(100, Nil)))
-Cons(4, Cons(10, Cons(256, Cons(10000, Nil))))
+> ap (Cons (Math.sqrt, Cons (x => x * x, Nil)), Cons (16, Cons (100, Nil)))
+Cons (4, Cons (10, Cons (256, Cons (10000, Nil))))
 ```
 
-#### <a name="lift2" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1643">`lift2 :: Apply f => (a -⁠> b -⁠> c, f a, f b) -⁠> f c`</a>
+#### <a name="lift2" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1684">`lift2 :: Apply f => (a -⁠> b -⁠> c, f a, f b) -⁠> f c`</a>
 
 Lifts `a -> b -> c` to `Apply f => f a -> f b -> f c` and returns the
 result of applying this to the given arguments.
@@ -823,14 +841,14 @@ This function is derived from [`map`](#map) and [`ap`](#ap).
 See also [`lift3`](#lift3).
 
 ```javascript
-> lift2(x => y => Math.pow(x, y), [10], [1, 2, 3])
+> lift2 (x => y => Math.pow (x, y), [10], [1, 2, 3])
 [10, 100, 1000]
 
-> lift2(x => y => Math.pow(x, y), Identity(10), Identity(3))
-Identity(1000)
+> lift2 (x => y => Math.pow (x, y), Identity (10), Identity (3))
+Identity (1000)
 ```
 
-#### <a name="lift3" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1663">`lift3 :: Apply f => (a -⁠> b -⁠> c -⁠> d, f a, f b, f c) -⁠> f d`</a>
+#### <a name="lift3" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1704">`lift3 :: Apply f => (a -⁠> b -⁠> c -⁠> d, f a, f b, f c) -⁠> f d`</a>
 
 Lifts `a -> b -> c -> d` to `Apply f => f a -> f b -> f c -> f d` and
 returns the result of applying this to the given arguments.
@@ -840,14 +858,23 @@ This function is derived from [`map`](#map) and [`ap`](#ap).
 See also [`lift2`](#lift2).
 
 ```javascript
-> lift3(x => y => z => x + z + y, ['<'], ['>'], ['foo', 'bar', 'baz'])
-['<foo>', '<bar>', '<baz>']
+> lift3 (x => y => z => x + z + y,
+.        ['<', '['],
+.        ['>', ']'],
+.        ['foo', 'bar', 'baz'])
+[ '<foo>', '<bar>', '<baz>',
+. '<foo]', '<bar]', '<baz]',
+. '[foo>', '[bar>', '[baz>',
+. '[foo]', '[bar]', '[baz]' ]
 
-> lift3(x => y => z => x + z + y, Identity('<'), Identity('>'), Identity('baz'))
-Identity('<baz>')
+> lift3 (x => y => z => x + z + y,
+.        Identity ('<'),
+.        Identity ('>'),
+.        Identity ('baz'))
+Identity ('<baz>')
 ```
 
-#### <a name="apFirst" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1683">`apFirst :: Apply f => (f a, f b) -⁠> f a`</a>
+#### <a name="apFirst" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1733">`apFirst :: Apply f => (f a, f b) -⁠> f a`</a>
 
 Combines two effectful actions, keeping only the result of the first.
 Equivalent to Haskell's `(<*)` function.
@@ -857,14 +884,14 @@ This function is derived from [`lift2`](#lift2).
 See also [`apSecond`](#apSecond).
 
 ```javascript
-> apFirst([1, 2], [3, 4])
+> apFirst ([1, 2], [3, 4])
 [1, 1, 2, 2]
 
-> apFirst(Identity(1), Identity(2))
-Identity(1)
+> apFirst (Identity (1), Identity (2))
+Identity (1)
 ```
 
-#### <a name="apSecond" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1703">`apSecond :: Apply f => (f a, f b) -⁠> f b`</a>
+#### <a name="apSecond" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1753">`apSecond :: Apply f => (f a, f b) -⁠> f b`</a>
 
 Combines two effectful actions, keeping only the result of the second.
 Equivalent to Haskell's `(*>)` function.
@@ -874,14 +901,14 @@ This function is derived from [`lift2`](#lift2).
 See also [`apFirst`](#apFirst).
 
 ```javascript
-> apSecond([1, 2], [3, 4])
+> apSecond ([1, 2], [3, 4])
 [3, 4, 3, 4]
 
-> apSecond(Identity(1), Identity(2))
-Identity(2)
+> apSecond (Identity (1), Identity (2))
+Identity (2)
 ```
 
-#### <a name="of" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1723">`of :: Applicative f => (TypeRep f, a) -⁠> f a`</a>
+#### <a name="of" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1773">`of :: Applicative f => (TypeRep f, a) -⁠> f a`</a>
 
 Function wrapper for [`fantasy-land/of`][].
 
@@ -889,17 +916,17 @@ Function wrapper for [`fantasy-land/of`][].
 built-in types: Array and Function.
 
 ```javascript
-> of(Array, 42)
+> of (Array, 42)
 [42]
 
-> of(Function, 42)(null)
+> of (Function, 42) (null)
 42
 
-> of(List, 42)
-Cons(42, Nil)
+> of (List, 42)
+Cons (42, Nil)
 ```
 
-#### <a name="append" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1744">`append :: (Applicative f, Semigroup (f a)) => (a, f a) -⁠> f a`</a>
+#### <a name="append" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1794">`append :: (Applicative f, Semigroup (f a)) => (a, f a) -⁠> f a`</a>
 
 Returns the result of appending the first argument to the second.
 
@@ -908,14 +935,14 @@ This function is derived from [`concat`](#concat) and [`of`](#of).
 See also [`prepend`](#prepend).
 
 ```javascript
-> append(3, [1, 2])
+> append (3, [1, 2])
 [1, 2, 3]
 
-> append(3, Cons(1, Cons(2, Nil)))
-Cons(1, Cons(2, Cons(3, Nil)))
+> append (3, Cons (1, Cons (2, Nil)))
+Cons (1, Cons (2, Cons (3, Nil)))
 ```
 
-#### <a name="prepend" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1763">`prepend :: (Applicative f, Semigroup (f a)) => (a, f a) -⁠> f a`</a>
+#### <a name="prepend" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1813">`prepend :: (Applicative f, Semigroup (f a)) => (a, f a) -⁠> f a`</a>
 
 Returns the result of prepending the first argument to the second.
 
@@ -924,14 +951,14 @@ This function is derived from [`concat`](#concat) and [`of`](#of).
 See also [`append`](#append).
 
 ```javascript
-> prepend(1, [2, 3])
+> prepend (1, [2, 3])
 [1, 2, 3]
 
-> prepend(1, Cons(2, Cons(3, Nil)))
-Cons(1, Cons(2, Cons(3, Nil)))
+> prepend (1, Cons (2, Cons (3, Nil)))
+Cons (1, Cons (2, Cons (3, Nil)))
 ```
 
-#### <a name="chain" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1782">`chain :: Chain m => (a -⁠> m b, m a) -⁠> m b`</a>
+#### <a name="chain" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1832">`chain :: Chain m => (a -⁠> m b, m a) -⁠> m b`</a>
 
 Function wrapper for [`fantasy-land/chain`][].
 
@@ -939,34 +966,37 @@ Function wrapper for [`fantasy-land/chain`][].
 built-in types: Array and Function.
 
 ```javascript
-> chain(x => [x, x], [1, 2, 3])
+> chain (x => [x, x], [1, 2, 3])
 [1, 1, 2, 2, 3, 3]
 
-> chain(x => x % 2 == 1 ? of(List, x) : Nil, Cons(1, Cons(2, Cons(3, Nil))))
-Cons(1, Cons(3, Nil))
+> chain (x => x % 2 == 1 ? of (List, x) : Nil,
+.        Cons (1, Cons (2, Cons (3, Nil))))
+Cons (1, Cons (3, Nil))
 
-> chain(n => s => s.slice(0, n), s => Math.ceil(s.length / 2))('Haskell')
+> chain (n => s => s.slice (0, n),
+.        s => Math.ceil (s.length / 2))
+.       ('Haskell')
 'Hask'
 ```
 
-#### <a name="join" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1803">`join :: Chain m => m (m a) -⁠> m a`</a>
+#### <a name="join" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1856">`join :: Chain m => m (m a) -⁠> m a`</a>
 
 Removes one level of nesting from a nested monadic structure.
 
 This function is derived from [`chain`](#chain).
 
 ```javascript
-> join([[1], [2], [3]])
+> join ([[1], [2], [3]])
 [1, 2, 3]
 
-> join([[[1, 2, 3]]])
+> join ([[[1, 2, 3]]])
 [[1, 2, 3]]
 
-> join(Identity(Identity(1)))
-Identity(1)
+> join (Identity (Identity (1)))
+Identity (1)
 ```
 
-#### <a name="chainRec" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1823">`chainRec :: ChainRec m => (TypeRep m, (a -⁠> c, b -⁠> c, a) -⁠> m c, a) -⁠> m b`</a>
+#### <a name="chainRec" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1876">`chainRec :: ChainRec m => (TypeRep m, (a -⁠> c, b -⁠> c, a) -⁠> m c, a) -⁠> m b`</a>
 
 Function wrapper for [`fantasy-land/chainRec`][].
 
@@ -974,16 +1004,16 @@ Function wrapper for [`fantasy-land/chainRec`][].
 built-in types: Array.
 
 ```javascript
-> chainRec(
+> chainRec (
 .   Array,
-.   (next, done, s) => s.length == 2 ? [s + '!', s + '?'].map(done)
-.                                    : [s + 'o', s + 'n'].map(next),
+.   (next, done, s) => s.length == 2 ? [s + '!', s + '?'].map (done)
+.                                    : [s + 'o', s + 'n'].map (next),
 .   ''
 . )
 ['oo!', 'oo?', 'on!', 'on?', 'no!', 'no?', 'nn!', 'nn?']
 ```
 
-#### <a name="alt" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1843">`alt :: Alt f => (f a, f a) -⁠> f a`</a>
+#### <a name="alt" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1896">`alt :: Alt f => (f a, f a) -⁠> f a`</a>
 
 Function wrapper for [`fantasy-land/alt`][].
 
@@ -991,20 +1021,20 @@ Function wrapper for [`fantasy-land/alt`][].
 built-in types: Array and Object.
 
 ```javascript
-> alt([1, 2, 3], [4, 5, 6])
+> alt ([1, 2, 3], [4, 5, 6])
 [1, 2, 3, 4, 5, 6]
 
-> alt(Nothing, Nothing)
+> alt (Nothing, Nothing)
 Nothing
 
-> alt(Nothing, Just(1))
-Just(1)
+> alt (Nothing, Just (1))
+Just (1)
 
-> alt(Just(2), Just(3))
-Just(2)
+> alt (Just (2), Just (3))
+Just (2)
 ```
 
-#### <a name="zero" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1867">`zero :: Plus f => TypeRep f -⁠> f a`</a>
+#### <a name="zero" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1920">`zero :: Plus f => TypeRep f -⁠> f a`</a>
 
 Function wrapper for [`fantasy-land/zero`][].
 
@@ -1012,17 +1042,17 @@ Function wrapper for [`fantasy-land/zero`][].
 built-in types: Array and Object.
 
 ```javascript
-> zero(Array)
+> zero (Array)
 []
 
-> zero(Object)
+> zero (Object)
 {}
 
-> zero(Maybe)
+> zero (Maybe)
 Nothing
 ```
 
-#### <a name="reduce" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1888">`reduce :: Foldable f => ((b, a) -⁠> b, b, f a) -⁠> b`</a>
+#### <a name="reduce" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1941">`reduce :: Foldable f => ((b, a) -⁠> b, b, f a) -⁠> b`</a>
 
 Function wrapper for [`fantasy-land/reduce`][].
 
@@ -1030,34 +1060,92 @@ Function wrapper for [`fantasy-land/reduce`][].
 built-in types: Array and Object.
 
 ```javascript
-> reduce((xs, x) => [x].concat(xs), [], [1, 2, 3])
+> reduce ((xs, x) => [x].concat (xs), [], [1, 2, 3])
 [3, 2, 1]
 
-> reduce(concat, '', Cons('foo', Cons('bar', Cons('baz', Nil))))
+> reduce (concat, '', Cons ('foo', Cons ('bar', Cons ('baz', Nil))))
 'foobarbaz'
 ```
 
-#### <a name="size" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1906">`size :: Foldable f => f a -⁠> Integer`</a>
+#### <a name="size" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1959">`size :: Foldable f => f a -⁠> Integer`</a>
 
 Returns the number of elements of the given structure.
 
 This function is derived from [`reduce`](#reduce).
 
 ```javascript
-> size([])
+> size ([])
 0
 
-> size(['foo', 'bar', 'baz'])
+> size (['foo', 'bar', 'baz'])
 3
 
-> size(Nil)
+> size (Nil)
 0
 
-> size(Cons('foo', Cons('bar', Cons('baz', Nil))))
+> size (Cons ('foo', Cons ('bar', Cons ('baz', Nil))))
 3
 ```
 
-#### <a name="elem" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1931">`elem :: (Setoid a, Foldable f) => (a, f a) -⁠> Boolean`</a>
+#### <a name="all" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1984">`all :: Foldable f => (a -⁠> Boolean, f a) -⁠> Boolean`</a>
+
+Returns `true` if all the elements of the structure satisfy the
+predicate; `false` otherwise.
+
+This function is derived from [`reduce`](#reduce).
+
+See also [`any`](#any) and [`none`](#none).
+
+```javascript
+> all (Number.isInteger, [])
+true
+
+> all (Number.isInteger, [1, 2, 3])
+true
+
+> all (Number.isInteger, [0, 0.25, 0.5, 0.75, 1])
+false
+```
+
+#### <a name="any" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L2009">`any :: Foldable f => (a -⁠> Boolean, f a) -⁠> Boolean`</a>
+
+Returns `true` if any element of the structure satisfies the predicate;
+`false` otherwise.
+
+This function is derived from [`reduce`](#reduce).
+
+See also [`all`](#all) and [`none`](#none).
+
+```javascript
+> any (Number.isInteger, [])
+false
+
+> any (Number.isInteger, [1, 2, 3])
+true
+
+> any (Number.isInteger, [0, 0.25, 0.5, 0.75, 1])
+true
+```
+
+#### <a name="none" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L2034">`none :: Foldable f => (a -⁠> Boolean, f a) -⁠> Boolean`</a>
+
+Returns `true` if none of the elements of the structure satisfies the
+predicate; `false` otherwise.
+
+This function is derived from [`any`](#any). `none (pred, foldable)` is
+equivalent to `!(any (pred, foldable))`.
+
+See also [`all`](#all).
+
+```javascript
+> none (Number.isInteger, [])
+true
+
+> none (Number.isInteger, [0, 0.25, 0.5, 0.75, 1])
+false
+```
+
+#### <a name="elem" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L2055">`elem :: (Setoid a, Foldable f) => (a, f a) -⁠> Boolean`</a>
 
 Takes a value and a structure and returns `true` if the
 value is an element of the structure; `false` otherwise.
@@ -1066,29 +1154,29 @@ This function is derived from [`equals`](#equals) and
 [`reduce`](#reduce).
 
 ```javascript
-> elem('c', ['a', 'b', 'c'])
+> elem ('c', ['a', 'b', 'c'])
 true
 
-> elem('x', ['a', 'b', 'c'])
+> elem ('x', ['a', 'b', 'c'])
 false
 
-> elem(3, {x: 1, y: 2, z: 3})
+> elem (3, {x: 1, y: 2, z: 3})
 true
 
-> elem(8, {x: 1, y: 2, z: 3})
+> elem (8, {x: 1, y: 2, z: 3})
 false
 
-> elem(0, Just(0))
+> elem (0, Just (0))
 true
 
-> elem(0, Just(1))
+> elem (0, Just (1))
 false
 
-> elem(0, Nothing)
+> elem (0, Nothing)
 false
 ```
 
-#### <a name="foldMap" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1967">`foldMap :: (Monoid m, Foldable f) => (TypeRep m, a -⁠> m, f a) -⁠> m`</a>
+#### <a name="foldMap" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L2089">`foldMap :: (Monoid m, Foldable f) => (TypeRep m, a -⁠> m, f a) -⁠> m`</a>
 
 Deconstructs a foldable by mapping every element to a monoid and
 concatenating the results.
@@ -1097,11 +1185,11 @@ This function is derived from [`concat`](#concat), [`empty`](#empty),
 and [`reduce`](#reduce).
 
 ```javascript
-> foldMap(String, f => f.name, [Math.sin, Math.cos, Math.tan])
+> foldMap (String, f => f.name, [Math.sin, Math.cos, Math.tan])
 'sincostan'
 ```
 
-#### <a name="reverse" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L1985">`reverse :: (Applicative f, Foldable f, Monoid (f a)) => f a -⁠> f a`</a>
+#### <a name="reverse" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L2107">`reverse :: (Applicative f, Foldable f, Monoid (f a)) => f a -⁠> f a`</a>
 
 Reverses the elements of the given structure.
 
@@ -1109,14 +1197,14 @@ This function is derived from [`concat`](#concat), [`empty`](#empty),
 [`of`](#of), and [`reduce`](#reduce).
 
 ```javascript
-> reverse([1, 2, 3])
+> reverse ([1, 2, 3])
 [3, 2, 1]
 
-> reverse(Cons(1, Cons(2, Cons(3, Nil))))
-Cons(3, Cons(2, Cons(1, Nil)))
+> reverse (Cons (1, Cons (2, Cons (3, Nil))))
+Cons (3, Cons (2, Cons (1, Nil)))
 ```
 
-#### <a name="sort" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L2008">`sort :: (Ord a, Applicative f, Foldable f, Monoid (f a)) => f a -⁠> f a`</a>
+#### <a name="sort" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L2130">`sort :: (Ord a, Applicative f, Foldable f, Monoid (f a)) => f a -⁠> f a`</a>
 
 Performs a [stable sort][] of the elements of the given structure,
 using [`lte`](#lte) for comparisons.
@@ -1127,17 +1215,17 @@ This function is derived from [`lte`](#lte), [`concat`](#concat),
 See also [`sortBy`](#sortBy).
 
 ```javascript
-> sort(['foo', 'bar', 'baz'])
+> sort (['foo', 'bar', 'baz'])
 ['bar', 'baz', 'foo']
 
-> sort([Just(2), Nothing, Just(1)])
-[Nothing, Just(1), Just(2)]
+> sort ([Just (2), Nothing, Just (1)])
+[Nothing, Just (1), Just (2)]
 
-> sort(Cons('foo', Cons('bar', Cons('baz', Nil))))
-Cons('bar', Cons('baz', Cons('foo', Nil)))
+> sort (Cons ('foo', Cons ('bar', Cons ('baz', Nil))))
+Cons ('bar', Cons ('baz', Cons ('foo', Nil)))
 ```
 
-#### <a name="sortBy" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L2032">`sortBy :: (Ord b, Applicative f, Foldable f, Monoid (f a)) => (a -⁠> b, f a) -⁠> f a`</a>
+#### <a name="sortBy" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L2154">`sortBy :: (Ord b, Applicative f, Foldable f, Monoid (f a)) => (a -⁠> b, f a) -⁠> f a`</a>
 
 Performs a [stable sort][] of the elements of the given structure,
 using [`lte`](#lte) to compare the values produced by applying the
@@ -1149,20 +1237,20 @@ This function is derived from [`lte`](#lte), [`concat`](#concat),
 See also [`sort`](#sort).
 
 ```javascript
-> sortBy(s => s.length, ['red', 'green', 'blue'])
+> sortBy (s => s.length, ['red', 'green', 'blue'])
 ['red', 'blue', 'green']
 
-> sortBy(s => s.length, ['black', 'white'])
+> sortBy (s => s.length, ['black', 'white'])
 ['black', 'white']
 
-> sortBy(s => s.length, ['white', 'black'])
+> sortBy (s => s.length, ['white', 'black'])
 ['white', 'black']
 
-> sortBy(s => s.length, Cons('red', Cons('green', Cons('blue', Nil))))
-Cons('red', Cons('blue', Cons('green', Nil)))
+> sortBy (s => s.length, Cons ('red', Cons ('green', Cons ('blue', Nil))))
+Cons ('red', Cons ('blue', Cons ('green', Nil)))
 ```
 
-#### <a name="traverse" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L2087">`traverse :: (Applicative f, Traversable t) => (TypeRep f, a -⁠> f b, t a) -⁠> f (t b)`</a>
+#### <a name="traverse" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L2209">`traverse :: (Applicative f, Traversable t) => (TypeRep f, a -⁠> f b, t a) -⁠> f (t b)`</a>
 
 Function wrapper for [`fantasy-land/traverse`][].
 
@@ -1172,28 +1260,28 @@ built-in types: Array and Object.
 See also [`sequence`](#sequence).
 
 ```javascript
-> traverse(Array, x => x, [[1, 2, 3], [4, 5]])
+> traverse (Array, x => x, [[1, 2, 3], [4, 5]])
 [[1, 4], [1, 5], [2, 4], [2, 5], [3, 4], [3, 5]]
 
-> traverse(Identity, x => Identity(x + 1), [1, 2, 3])
-Identity([2, 3, 4])
+> traverse (Identity, x => Identity (x + 1), [1, 2, 3])
+Identity ([2, 3, 4])
 ```
 
-#### <a name="sequence" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L2107">`sequence :: (Applicative f, Traversable t) => (TypeRep f, t (f a)) -⁠> f (t a)`</a>
+#### <a name="sequence" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L2229">`sequence :: (Applicative f, Traversable t) => (TypeRep f, t (f a)) -⁠> f (t a)`</a>
 
 Inverts the given `t (f a)` to produce an `f (t a)`.
 
 This function is derived from [`traverse`](#traverse).
 
 ```javascript
-> sequence(Array, Identity([1, 2, 3]))
-[Identity(1), Identity(2), Identity(3)]
+> sequence (Array, Identity ([1, 2, 3]))
+[Identity (1), Identity (2), Identity (3)]
 
-> sequence(Identity, [Identity(1), Identity(2), Identity(3)])
-Identity([1, 2, 3])
+> sequence (Identity, [Identity (1), Identity (2), Identity (3)])
+Identity ([1, 2, 3])
 ```
 
-#### <a name="extend" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L2124">`extend :: Extend w => (w a -⁠> b, w a) -⁠> w b`</a>
+#### <a name="extend" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L2246">`extend :: Extend w => (w a -⁠> b, w a) -⁠> w b`</a>
 
 Function wrapper for [`fantasy-land/extend`][].
 
@@ -1201,43 +1289,43 @@ Function wrapper for [`fantasy-land/extend`][].
 built-in types: Array and Function.
 
 ```javascript
-> extend(ss => ss.join(''), ['x', 'y', 'z'])
+> extend (ss => ss.join (''), ['x', 'y', 'z'])
 ['xyz', 'yz', 'z']
 
-> extend(f => f([3, 4]), reverse)([1, 2])
+> extend (f => f ([3, 4]), reverse) ([1, 2])
 [4, 3, 2, 1]
 ```
 
-#### <a name="duplicate" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L2142">`duplicate :: Extend w => w a -⁠> w (w a)`</a>
+#### <a name="duplicate" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L2264">`duplicate :: Extend w => w a -⁠> w (w a)`</a>
 
 Adds one level of nesting to a comonadic structure.
 
 This function is derived from [`extend`](#extend).
 
 ```javascript
-> duplicate(Identity(1))
-Identity(Identity(1))
+> duplicate (Identity (1))
+Identity (Identity (1))
 
-> duplicate([1])
+> duplicate ([1])
 [[1]]
 
-> duplicate([1, 2, 3])
+> duplicate ([1, 2, 3])
 [[1, 2, 3], [2, 3], [3]]
 
-> duplicate(reverse)([1, 2])([3, 4])
+> duplicate (reverse) ([1, 2]) ([3, 4])
 [4, 3, 2, 1]
 ```
 
-#### <a name="extract" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L2165">`extract :: Comonad w => w a -⁠> a`</a>
+#### <a name="extract" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L2287">`extract :: Comonad w => w a -⁠> a`</a>
 
 Function wrapper for [`fantasy-land/extract`][].
 
 ```javascript
-> extract(Identity(42))
+> extract (Identity (42))
 42
 ```
 
-#### <a name="contramap" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v9.0.0/index.js#L2177">`contramap :: Contravariant f => (b -⁠> a, f a) -⁠> f b`</a>
+#### <a name="contramap" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L2299">`contramap :: Contravariant f => (b -⁠> a, f a) -⁠> f b`</a>
 
 Function wrapper for [`fantasy-land/contramap`][].
 
@@ -1245,7 +1333,7 @@ Function wrapper for [`fantasy-land/contramap`][].
 built-in types: Function.
 
 ```javascript
-> contramap(s => s.length, Math.sqrt)('Sanctuary')
+> contramap (s => s.length, Math.sqrt) ('Sanctuary')
 3
 ```
 
