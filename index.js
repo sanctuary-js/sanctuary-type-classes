@@ -90,7 +90,7 @@
     /* eslint-disable no-unused-vars */
     var Identity = __doctest.require ('sanctuary-identity');
     var List = __doctest.require ('./test/List');
-    var Maybe = __doctest.require ('./test/Maybe');
+    var Maybe = __doctest.require ('sanctuary-maybe');
     var Sum = __doctest.require ('./test/Sum');
     var Tuple = __doctest.require ('./test/Tuple');
 

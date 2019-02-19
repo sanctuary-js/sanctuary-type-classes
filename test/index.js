@@ -3,6 +3,7 @@
 var laws = require ('fantasy-laws');
 var jsc = require ('jsverify');
 var Identity = require ('sanctuary-identity');
+var Maybe = require ('sanctuary-maybe');
 var type = require ('sanctuary-type-identifiers');
 
 var Z = require ('..');
@@ -10,7 +11,6 @@ var version = (require ('../package.json')).version;
 
 var Lazy = require ('./Lazy');
 var List = require ('./List');
-var Maybe = require ('./Maybe');
 var Sum = require ('./Sum');
 var Tuple = require ('./Tuple');
 var eq = require ('./eq');
@@ -41,7 +41,7 @@ function ListArb(arb) {
 
 //  MaybeArb :: Arbitrary a -> Arbitrary (Maybe a)
 function MaybeArb(arb) {
-  return jsc.oneof (jsc.constant (Maybe.Nothing), arb.smap (Maybe.Just));
+  return jsc.oneof (jsc.constant (Nothing), arb.smap (Just));
 }
 
 //  Point :: () -> Point
@@ -669,6 +669,7 @@ test ('equals', function() {
   eq (Z.equals (Identity (Identity (Identity (0))), Identity (Identity (Identity (0)))), true);
   eq (Z.equals (Identity (Identity (Identity (0))), Identity (Identity (Identity (1)))), false);
   eq (Z.equals ({'@@type': 'my-package/Quux'}, {'@@type': 'my-package/Quux'}), true);
+  eq (Z.equals (Array.prototype, Array.prototype), true);
   eq (Z.equals (Nothing.constructor, Maybe), true);
   eq (Z.equals ((Just (0)).constructor, Maybe), true);
   eq (Z.equals (Lazy$of (0), Lazy$of (0)), false);
