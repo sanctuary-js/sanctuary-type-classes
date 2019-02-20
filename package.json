@@ -23,7 +23,7 @@
     "jsverify": "0.8.x",
     "list": "2.0.11",
     "sanctuary-benchmark": "1.0.x",
-    "sanctuary-identity": "1.0.x",
+    "sanctuary-identity": "1.1.x",
     "sanctuary-maybe": "1.0.x",
     "sanctuary-pair": "1.0.x",
     "sanctuary-scripts": "2.0.x",
