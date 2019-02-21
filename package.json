@@ -25,7 +25,7 @@
     "sanctuary-benchmark": "1.0.x",
     "sanctuary-identity": "1.1.x",
     "sanctuary-maybe": "1.1.x",
-    "sanctuary-pair": "1.0.x",
+    "sanctuary-pair": "1.1.x",
     "sanctuary-scripts": "2.0.x",
     "sanctuary-show": "1.0.x"
   },
