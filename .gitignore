@@ -1,3 +1,4 @@
+/.nyc_output/
 /bench/node_modules/
 /coverage/
 /node_modules/
