@@ -28,12 +28,12 @@ jobs:
             test_with_version() {
               source "$NVM_DIR/nvm.sh"
               nvm install $1
-              nvm exec $1 $2 install
-              nvm exec $1 $2 test
+              nvm exec $1 npm install
+              nvm exec $1 npm test
             }
             case $CIRCLE_NODE_INDEX in
               0) npm install && npm test ;;
-              1) test_with_version 4 /usr/local/bin/npm ;;
-              2) test_with_version 7 npm ;;
-              3) test_with_version 8 npm ;;
+              1) test_with_version 8 ;;
+              2) test_with_version 10 ;;
+              3) test_with_version 11 ;;
             esac
