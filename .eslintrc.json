@@ -4,15 +4,11 @@
   "overrides": [
     {
       "files": ["*.md"],
-      "plugins": ["markdown"],
-      "env": {"es6": true},
       "rules": {
         "array-element-newline": ["off"],
         "eqeqeq": ["off"],
-        "func-style": ["error", "declaration", {"allowArrowFunctions": true}],
         "no-undef": ["off"],
-        "no-unused-vars": ["error", {"varsIgnorePattern": "^Bar$"}],
-        "strict": ["off"]
+        "no-unused-vars": ["error", {"varsIgnorePattern": "^Bar$"}]
       }
     },
     {
