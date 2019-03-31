@@ -1512,6 +1512,74 @@
     return filter (function(x) { return !(pred (x)); }, filterable);
   }
 
+  //# takeWhile :: (Applicative f, Foldable f, Monoid (f a)) => (a -> Boolean, f a) -> f a
+  //.
+  //. Discards the first element which does not satisfy the predicate, and all
+  //. subsequent elements.
+  //.
+  //. This function is derived from [`concat`](#concat), [`empty`](#empty),
+  //. [`of`](#of), and [`reduce`](#reduce).
+  //.
+  //. See also [`dropWhile`](#dropWhile).
+  //.
+  //. ```javascript
+  //. > takeWhile (s => /x/.test (s), ['xy', 'xz', 'yx', 'yz', 'zx', 'zy'])
+  //. ['xy', 'xz', 'yx']
+  //.
+  //. > takeWhile (s => /y/.test (s), ['xy', 'xz', 'yx', 'yz', 'zx', 'zy'])
+  //. ['xy']
+  //.
+  //. > takeWhile (s => /z/.test (s), ['xy', 'xz', 'yx', 'yz', 'zx', 'zy'])
+  //. []
+  //. ```
+  function takeWhile(pred, foldable) {
+    //  Fast path for arrays.
+    if (Array.isArray (foldable)) {
+      var idx = 0;
+      while (idx < foldable.length && pred (foldable[idx])) idx += 1;
+      return foldable.slice (0, idx);
+    }
+    var F = foldable.constructor;
+    return (reduce (function(acc, x) {
+      var take = acc.take && pred (x);
+      return {take: take, xs: take ? concat (acc.xs, of (F, x)) : acc.xs};
+    }, {take: true, xs: empty (F)}, foldable)).xs;
+  }
+
+  //# dropWhile :: (Applicative f, Foldable f, Monoid (f a)) => (a -> Boolean, f a) -> f a
+  //.
+  //. Retains the first element which does not satisfy the predicate, and all
+  //. subsequent elements.
+  //.
+  //. This function is derived from [`concat`](#concat), [`empty`](#empty),
+  //. [`of`](#of), and [`reduce`](#reduce).
+  //.
+  //. See also [`takeWhile`](#takeWhile).
+  //.
+  //. ```javascript
+  //. > dropWhile (s => /x/.test (s), ['xy', 'xz', 'yx', 'yz', 'zx', 'zy'])
+  //. ['yz', 'zx', 'zy']
+  //.
+  //. > dropWhile (s => /y/.test (s), ['xy', 'xz', 'yx', 'yz', 'zx', 'zy'])
+  //. ['xz', 'yx', 'yz', 'zx', 'zy']
+  //.
+  //. > dropWhile (s => /z/.test (s), ['xy', 'xz', 'yx', 'yz', 'zx', 'zy'])
+  //. ['xy', 'xz', 'yx', 'yz', 'zx', 'zy']
+  //. ```
+  function dropWhile(pred, foldable) {
+    //  Fast path for arrays.
+    if (Array.isArray (foldable)) {
+      var idx = 0;
+      while (idx < foldable.length && pred (foldable[idx])) idx += 1;
+      return foldable.slice (idx);
+    }
+    var F = foldable.constructor;
+    return (reduce (function(acc, x) {
+      var drop = acc.drop && pred (x);
+      return {drop: drop, xs: drop ? acc.xs : concat (acc.xs, of (F, x))};
+    }, {drop: true, xs: empty (F)}, foldable)).xs;
+  }
+
   //# map :: Functor f => (a -> b, f a) -> f b
   //.
   //. Function wrapper for [`fantasy-land/map`][].
@@ -2302,6 +2370,8 @@
     invert: invert,
     filter: filter,
     reject: reject,
+    takeWhile: takeWhile,
+    dropWhile: dropWhile,
     map: map,
     flip: flip,
     bimap: bimap,
