@@ -1512,56 +1512,6 @@
     return filter (function(x) { return !(pred (x)); }, filterable);
   }
 
-  //# takeWhile :: Filterable f => (a -> Boolean, f a) -> f a
-  //.
-  //. Discards the first element which does not satisfy the predicate, and all
-  //. subsequent elements.
-  //.
-  //. This function is derived from [`filter`](#filter).
-  //.
-  //. See also [`dropWhile`](#dropWhile).
-  //.
-  //. ```javascript
-  //. > takeWhile (s => /x/.test (s), ['xy', 'xz', 'yx', 'yz', 'zx', 'zy'])
-  //. ['xy', 'xz', 'yx']
-  //.
-  //. > takeWhile (s => /y/.test (s), ['xy', 'xz', 'yx', 'yz', 'zx', 'zy'])
-  //. ['xy']
-  //.
-  //. > takeWhile (s => /z/.test (s), ['xy', 'xz', 'yx', 'yz', 'zx', 'zy'])
-  //. []
-  //. ```
-  function takeWhile(pred, filterable) {
-    var take = true;
-    return filter (function(x) { return take = take && pred (x); },
-                   filterable);
-  }
-
-  //# dropWhile :: Filterable f => (a -> Boolean, f a) -> f a
-  //.
-  //. Retains the first element which does not satisfy the predicate, and all
-  //. subsequent elements.
-  //.
-  //. This function is derived from [`filter`](#filter).
-  //.
-  //. See also [`takeWhile`](#takeWhile).
-  //.
-  //. ```javascript
-  //. > dropWhile (s => /x/.test (s), ['xy', 'xz', 'yx', 'yz', 'zx', 'zy'])
-  //. ['yz', 'zx', 'zy']
-  //.
-  //. > dropWhile (s => /y/.test (s), ['xy', 'xz', 'yx', 'yz', 'zx', 'zy'])
-  //. ['xz', 'yx', 'yz', 'zx', 'zy']
-  //.
-  //. > dropWhile (s => /z/.test (s), ['xy', 'xz', 'yx', 'yz', 'zx', 'zy'])
-  //. ['xy', 'xz', 'yx', 'yz', 'zx', 'zy']
-  //. ```
-  function dropWhile(pred, filterable) {
-    var take = false;
-    return filter (function(x) { return take = take || !(pred (x)); },
-                   filterable);
-  }
-
   //# map :: Functor f => (a -> b, f a) -> f b
   //.
   //. Function wrapper for [`fantasy-land/map`][].
@@ -2380,8 +2330,6 @@
     reverse: reverse,
     sort: sort,
     sortBy: sortBy,
-    takeWhile: takeWhile,
-    dropWhile: dropWhile,
     traverse: traverse,
     sequence: sequence,
     extend: extend,

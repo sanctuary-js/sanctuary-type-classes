@@ -943,42 +943,6 @@ test ('reject', function() {
   eq (Z.reject (odd, Just (1)), Nothing);
 });
 
-test ('takeWhile', function() {
-  eq (Z.takeWhile.length, 2);
-  eq (Z.takeWhile.name, 'takeWhile');
-
-  eq (Z.takeWhile (odd, []), []);
-  eq (Z.takeWhile (odd, [1]), [1]);
-  eq (Z.takeWhile (odd, [1, 3]), [1, 3]);
-  eq (Z.takeWhile (odd, [1, 3, 6]), [1, 3]);
-  eq (Z.takeWhile (odd, [1, 3, 6, 10]), [1, 3]);
-  eq (Z.takeWhile (odd, [1, 3, 6, 10, 15]), [1, 3]);
-  eq (Z.takeWhile (odd, Nil), Nil);
-  eq (Z.takeWhile (odd, Cons (1, Nil)), Cons (1, Nil));
-  eq (Z.takeWhile (odd, Cons (1, Cons (3, Nil))), Cons (1, Cons (3, Nil)));
-  eq (Z.takeWhile (odd, Cons (1, Cons (3, Cons (6, Nil)))), Cons (1, Cons (3, Nil)));
-  eq (Z.takeWhile (odd, Cons (1, Cons (3, Cons (6, Cons (10, Nil))))), Cons (1, Cons (3, Nil)));
-  eq (Z.takeWhile (odd, Cons (1, Cons (3, Cons (6, Cons (10, Cons (15, Nil)))))), Cons (1, Cons (3, Nil)));
-});
-
-test ('dropWhile', function() {
-  eq (Z.dropWhile.length, 2);
-  eq (Z.dropWhile.name, 'dropWhile');
-
-  eq (Z.dropWhile (odd, []), []);
-  eq (Z.dropWhile (odd, [1]), []);
-  eq (Z.dropWhile (odd, [1, 3]), []);
-  eq (Z.dropWhile (odd, [1, 3, 6]), [6]);
-  eq (Z.dropWhile (odd, [1, 3, 6, 10]), [6, 10]);
-  eq (Z.dropWhile (odd, [1, 3, 6, 10, 15]), [6, 10, 15]);
-  eq (Z.dropWhile (odd, Nil), Nil);
-  eq (Z.dropWhile (odd, Cons (1, Nil)), Nil);
-  eq (Z.dropWhile (odd, Cons (1, Cons (3, Nil))), Nil);
-  eq (Z.dropWhile (odd, Cons (1, Cons (3, Cons (6, Nil)))), Cons (6, Nil));
-  eq (Z.dropWhile (odd, Cons (1, Cons (3, Cons (6, Cons (10, Nil))))), Cons (6, Cons (10, Nil)));
-  eq (Z.dropWhile (odd, Cons (1, Cons (3, Cons (6, Cons (10, Cons (15, Nil)))))), Cons (6, Cons (10, Cons (15, Nil))));
-});
-
 test ('map', function() {
   eq (Z.map.length, 2);
   eq (Z.map.name, 'map');
