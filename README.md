@@ -53,7 +53,7 @@ This project provides:
 
 ## API
 
-#### <a name="TypeClass" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L168">`TypeClass :: (String, String, Array TypeClass, a -⁠> Boolean) -⁠> TypeClass`</a>
+#### <a name="TypeClass" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L168">`TypeClass :: (String, String, Array TypeClass, a -⁠> Boolean) -⁠> TypeClass`</a>
 
 The arguments are:
 
@@ -100,7 +100,7 @@ dependencies; `false` otherwise.
 to define parametrically polymorphic functions which verify their
 type-class constraints at run time.
 
-#### <a name="Setoid" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L312">`Setoid :: TypeClass`</a>
+#### <a name="Setoid" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L312">`Setoid :: TypeClass`</a>
 
 `TypeClass` value for [Setoid][].
 
@@ -109,7 +109,7 @@ type-class constraints at run time.
 true
 ```
 
-#### <a name="Ord" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L322">`Ord :: TypeClass`</a>
+#### <a name="Ord" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L322">`Ord :: TypeClass`</a>
 
 `TypeClass` value for [Ord][].
 
@@ -121,7 +121,7 @@ true
 false
 ```
 
-#### <a name="Semigroupoid" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L335">`Semigroupoid :: TypeClass`</a>
+#### <a name="Semigroupoid" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L335">`Semigroupoid :: TypeClass`</a>
 
 `TypeClass` value for [Semigroupoid][].
 
@@ -133,7 +133,7 @@ true
 false
 ```
 
-#### <a name="Category" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L348">`Category :: TypeClass`</a>
+#### <a name="Category" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L348">`Category :: TypeClass`</a>
 
 `TypeClass` value for [Category][].
 
@@ -145,7 +145,7 @@ true
 false
 ```
 
-#### <a name="Semigroup" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L361">`Semigroup :: TypeClass`</a>
+#### <a name="Semigroup" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L361">`Semigroup :: TypeClass`</a>
 
 `TypeClass` value for [Semigroup][].
 
@@ -157,7 +157,7 @@ true
 false
 ```
 
-#### <a name="Monoid" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L374">`Monoid :: TypeClass`</a>
+#### <a name="Monoid" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L374">`Monoid :: TypeClass`</a>
 
 `TypeClass` value for [Monoid][].
 
@@ -169,7 +169,7 @@ true
 false
 ```
 
-#### <a name="Group" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L387">`Group :: TypeClass`</a>
+#### <a name="Group" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L387">`Group :: TypeClass`</a>
 
 `TypeClass` value for [Group][].
 
@@ -181,7 +181,7 @@ true
 false
 ```
 
-#### <a name="Filterable" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L400">`Filterable :: TypeClass`</a>
+#### <a name="Filterable" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L400">`Filterable :: TypeClass`</a>
 
 `TypeClass` value for [Filterable][].
 
@@ -193,7 +193,7 @@ true
 false
 ```
 
-#### <a name="Functor" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L413">`Functor :: TypeClass`</a>
+#### <a name="Functor" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L413">`Functor :: TypeClass`</a>
 
 `TypeClass` value for [Functor][].
 
@@ -205,7 +205,7 @@ true
 false
 ```
 
-#### <a name="Bifunctor" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L426">`Bifunctor :: TypeClass`</a>
+#### <a name="Bifunctor" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L426">`Bifunctor :: TypeClass`</a>
 
 `TypeClass` value for [Bifunctor][].
 
@@ -217,7 +217,7 @@ true
 false
 ```
 
-#### <a name="Profunctor" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L439">`Profunctor :: TypeClass`</a>
+#### <a name="Profunctor" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L439">`Profunctor :: TypeClass`</a>
 
 `TypeClass` value for [Profunctor][].
 
@@ -229,7 +229,7 @@ true
 false
 ```
 
-#### <a name="Apply" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L452">`Apply :: TypeClass`</a>
+#### <a name="Apply" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L452">`Apply :: TypeClass`</a>
 
 `TypeClass` value for [Apply][].
 
@@ -241,7 +241,7 @@ true
 false
 ```
 
-#### <a name="Applicative" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L465">`Applicative :: TypeClass`</a>
+#### <a name="Applicative" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L465">`Applicative :: TypeClass`</a>
 
 `TypeClass` value for [Applicative][].
 
@@ -253,7 +253,7 @@ true
 false
 ```
 
-#### <a name="Chain" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L478">`Chain :: TypeClass`</a>
+#### <a name="Chain" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L478">`Chain :: TypeClass`</a>
 
 `TypeClass` value for [Chain][].
 
@@ -265,7 +265,7 @@ true
 false
 ```
 
-#### <a name="ChainRec" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L491">`ChainRec :: TypeClass`</a>
+#### <a name="ChainRec" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L491">`ChainRec :: TypeClass`</a>
 
 `TypeClass` value for [ChainRec][].
 
@@ -277,7 +277,7 @@ true
 false
 ```
 
-#### <a name="Monad" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L504">`Monad :: TypeClass`</a>
+#### <a name="Monad" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L504">`Monad :: TypeClass`</a>
 
 `TypeClass` value for [Monad][].
 
@@ -289,7 +289,7 @@ true
 false
 ```
 
-#### <a name="Alt" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L517">`Alt :: TypeClass`</a>
+#### <a name="Alt" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L517">`Alt :: TypeClass`</a>
 
 `TypeClass` value for [Alt][].
 
@@ -301,7 +301,7 @@ true
 false
 ```
 
-#### <a name="Plus" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L530">`Plus :: TypeClass`</a>
+#### <a name="Plus" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L530">`Plus :: TypeClass`</a>
 
 `TypeClass` value for [Plus][].
 
@@ -313,7 +313,7 @@ true
 false
 ```
 
-#### <a name="Alternative" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L543">`Alternative :: TypeClass`</a>
+#### <a name="Alternative" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L543">`Alternative :: TypeClass`</a>
 
 `TypeClass` value for [Alternative][].
 
@@ -325,7 +325,7 @@ true
 false
 ```
 
-#### <a name="Foldable" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L556">`Foldable :: TypeClass`</a>
+#### <a name="Foldable" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L556">`Foldable :: TypeClass`</a>
 
 `TypeClass` value for [Foldable][].
 
@@ -337,7 +337,7 @@ true
 false
 ```
 
-#### <a name="Traversable" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L569">`Traversable :: TypeClass`</a>
+#### <a name="Traversable" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L569">`Traversable :: TypeClass`</a>
 
 `TypeClass` value for [Traversable][].
 
@@ -349,7 +349,7 @@ true
 false
 ```
 
-#### <a name="Extend" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L582">`Extend :: TypeClass`</a>
+#### <a name="Extend" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L582">`Extend :: TypeClass`</a>
 
 `TypeClass` value for [Extend][].
 
@@ -361,7 +361,7 @@ true
 false
 ```
 
-#### <a name="Comonad" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L595">`Comonad :: TypeClass`</a>
+#### <a name="Comonad" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L595">`Comonad :: TypeClass`</a>
 
 `TypeClass` value for [Comonad][].
 
@@ -373,7 +373,7 @@ true
 false
 ```
 
-#### <a name="Contravariant" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L608">`Contravariant :: TypeClass`</a>
+#### <a name="Contravariant" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L608">`Contravariant :: TypeClass`</a>
 
 `TypeClass` value for [Contravariant][].
 
@@ -385,7 +385,7 @@ true
 false
 ```
 
-#### <a name="equals" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1127">`equals :: (a, b) -⁠> Boolean`</a>
+#### <a name="equals" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1127">`equals :: (a, b) -⁠> Boolean`</a>
 
 Returns `true` if its arguments are of the same type and equal according
 to the type's [`fantasy-land/equals`][] method; `false` otherwise.
@@ -414,7 +414,7 @@ true
 false
 ```
 
-#### <a name="lt" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1179">`lt :: (a, b) -⁠> Boolean`</a>
+#### <a name="lt" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1179">`lt :: (a, b) -⁠> Boolean`</a>
 
 Returns `true` if its arguments are of the same type and the first is
 less than the second according to the type's [`fantasy-land/lte`][]
@@ -435,7 +435,7 @@ true
 false
 ```
 
-#### <a name="lte" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1203">`lte :: (a, b) -⁠> Boolean`</a>
+#### <a name="lte" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1203">`lte :: (a, b) -⁠> Boolean`</a>
 
 Returns `true` if its arguments are of the same type and the first
 is less than or equal to the second according to the type's
@@ -461,7 +461,7 @@ true
 false
 ```
 
-#### <a name="gt" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1250">`gt :: (a, b) -⁠> Boolean`</a>
+#### <a name="gt" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1250">`gt :: (a, b) -⁠> Boolean`</a>
 
 Returns `true` if its arguments are of the same type and the first is
 greater than the second according to the type's [`fantasy-land/lte`][]
@@ -482,7 +482,7 @@ false
 true
 ```
 
-#### <a name="gte" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1274">`gte :: (a, b) -⁠> Boolean`</a>
+#### <a name="gte" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1274">`gte :: (a, b) -⁠> Boolean`</a>
 
 Returns `true` if its arguments are of the same type and the first
 is greater than or equal to the second according to the type's
@@ -503,7 +503,7 @@ false
 true
 ```
 
-#### <a name="min" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1298">`min :: Ord a => (a, a) -⁠> a`</a>
+#### <a name="min" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1298">`min :: Ord a => (a, a) -⁠> a`</a>
 
 Returns the smaller of its two arguments.
 
@@ -522,7 +522,7 @@ new Date ('1999-12-31')
 '10'
 ```
 
-#### <a name="max" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1320">`max :: Ord a => (a, a) -⁠> a`</a>
+#### <a name="max" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1320">`max :: Ord a => (a, a) -⁠> a`</a>
 
 Returns the larger of its two arguments.
 
@@ -541,7 +541,7 @@ new Date ('2000-01-01')
 '2'
 ```
 
-#### <a name="clamp" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1342">`clamp :: Ord a => (a, a, a) -⁠> a`</a>
+#### <a name="clamp" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1342">`clamp :: Ord a => (a, a, a) -⁠> a`</a>
 
 Takes a lower bound, an upper bound, and a value of the same type.
 Returns the value if it is within the bounds; the nearer bound otherwise.
@@ -559,7 +559,7 @@ This function is derived from [`min`](#min) and [`max`](#max).
 'Z'
 ```
 
-#### <a name="compose" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1363">`compose :: Semigroupoid c => (c j k, c i j) -⁠> c i k`</a>
+#### <a name="compose" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1363">`compose :: Semigroupoid c => (c j k, c i j) -⁠> c i k`</a>
 
 Function wrapper for [`fantasy-land/compose`][].
 
@@ -571,7 +571,7 @@ built-in types: Function.
 10
 ```
 
-#### <a name="id" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1378">`id :: Category c => TypeRep c -⁠> c`</a>
+#### <a name="id" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1378">`id :: Category c => TypeRep c -⁠> c`</a>
 
 Function wrapper for [`fantasy-land/id`][].
 
@@ -583,7 +583,7 @@ built-in types: Function.
 'foo'
 ```
 
-#### <a name="concat" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1393">`concat :: Semigroup a => (a, a) -⁠> a`</a>
+#### <a name="concat" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1393">`concat :: Semigroup a => (a, a) -⁠> a`</a>
 
 Function wrapper for [`fantasy-land/concat`][].
 
@@ -604,7 +604,7 @@ built-in types: String, Array, and Object.
 Cons ('foo', Cons ('bar', Cons ('baz', Cons ('quux', Nil))))
 ```
 
-#### <a name="empty" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1417">`empty :: Monoid m => TypeRep m -⁠> m`</a>
+#### <a name="empty" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1417">`empty :: Monoid m => TypeRep m -⁠> m`</a>
 
 Function wrapper for [`fantasy-land/empty`][].
 
@@ -625,7 +625,7 @@ built-in types: String, Array, and Object.
 Nil
 ```
 
-#### <a name="invert" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1441">`invert :: Group g => g -⁠> g`</a>
+#### <a name="invert" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1441">`invert :: Group g => g -⁠> g`</a>
 
 Function wrapper for [`fantasy-land/invert`][].
 
@@ -634,7 +634,7 @@ Function wrapper for [`fantasy-land/invert`][].
 Sum (-5)
 ```
 
-#### <a name="filter" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1453">`filter :: Filterable f => (a -⁠> Boolean, f a) -⁠> f a`</a>
+#### <a name="filter" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1453">`filter :: Filterable f => (a -⁠> Boolean, f a) -⁠> f a`</a>
 
 Function wrapper for [`fantasy-land/filter`][]. Discards every element
 which does not satisfy the predicate.
@@ -664,7 +664,7 @@ Nothing
 Just (1)
 ```
 
-#### <a name="reject" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1486">`reject :: Filterable f => (a -⁠> Boolean, f a) -⁠> f a`</a>
+#### <a name="reject" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1486">`reject :: Filterable f => (a -⁠> Boolean, f a) -⁠> f a`</a>
 
 Discards every element which satisfies the predicate.
 
@@ -690,47 +690,7 @@ Just (0)
 Nothing
 ```
 
-#### <a name="takeWhile" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1515">`takeWhile :: Filterable f => (a -⁠> Boolean, f a) -⁠> f a`</a>
-
-Discards the first element which does not satisfy the predicate, and all
-subsequent elements.
-
-This function is derived from [`filter`](#filter).
-
-See also [`dropWhile`](#dropWhile).
-
-```javascript
-> takeWhile (s => /x/.test (s), ['xy', 'xz', 'yx', 'yz', 'zx', 'zy'])
-['xy', 'xz', 'yx']
-
-> takeWhile (s => /y/.test (s), ['xy', 'xz', 'yx', 'yz', 'zx', 'zy'])
-['xy']
-
-> takeWhile (s => /z/.test (s), ['xy', 'xz', 'yx', 'yz', 'zx', 'zy'])
-[]
-```
-
-#### <a name="dropWhile" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1540">`dropWhile :: Filterable f => (a -⁠> Boolean, f a) -⁠> f a`</a>
-
-Retains the first element which does not satisfy the predicate, and all
-subsequent elements.
-
-This function is derived from [`filter`](#filter).
-
-See also [`takeWhile`](#takeWhile).
-
-```javascript
-> dropWhile (s => /x/.test (s), ['xy', 'xz', 'yx', 'yz', 'zx', 'zy'])
-['yz', 'zx', 'zy']
-
-> dropWhile (s => /y/.test (s), ['xy', 'xz', 'yx', 'yz', 'zx', 'zy'])
-['xz', 'yx', 'yz', 'zx', 'zy']
-
-> dropWhile (s => /z/.test (s), ['xy', 'xz', 'yx', 'yz', 'zx', 'zy'])
-['xy', 'xz', 'yx', 'yz', 'zx', 'zy']
-```
-
-#### <a name="map" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1565">`map :: Functor f => (a -⁠> b, f a) -⁠> f b`</a>
+#### <a name="map" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1515">`map :: Functor f => (a -⁠> b, f a) -⁠> f b`</a>
 
 Function wrapper for [`fantasy-land/map`][].
 
@@ -757,7 +717,7 @@ Nil
 Cons (1, Cons (2, Cons (3, Nil)))
 ```
 
-#### <a name="flip" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1595">`flip :: Functor f => (f (a -⁠> b), a) -⁠> f b`</a>
+#### <a name="flip" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1545">`flip :: Functor f => (f (a -⁠> b), a) -⁠> f b`</a>
 
 Maps over the given functions, applying each to the given value.
 
@@ -777,7 +737,7 @@ This function is derived from [`map`](#map).
 Cons (1, Cons (2, Nil))
 ```
 
-#### <a name="bimap" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1618">`bimap :: Bifunctor f => (a -⁠> b, c -⁠> d, f a c) -⁠> f b d`</a>
+#### <a name="bimap" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1568">`bimap :: Bifunctor f => (a -⁠> b, c -⁠> d, f a c) -⁠> f b d`</a>
 
 Function wrapper for [`fantasy-land/bimap`][].
 
@@ -786,7 +746,7 @@ Function wrapper for [`fantasy-land/bimap`][].
 Pair ('FOO') (8)
 ```
 
-#### <a name="mapLeft" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1630">`mapLeft :: Bifunctor f => (a -⁠> b, f a c) -⁠> f b c`</a>
+#### <a name="mapLeft" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1580">`mapLeft :: Bifunctor f => (a -⁠> b, f a c) -⁠> f b c`</a>
 
 Maps the given function over the left side of a Bifunctor.
 
@@ -795,7 +755,7 @@ Maps the given function over the left side of a Bifunctor.
 Pair (8) (9)
 ```
 
-#### <a name="promap" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1642">`promap :: Profunctor p => (a -⁠> b, c -⁠> d, p b c) -⁠> p a d`</a>
+#### <a name="promap" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1592">`promap :: Profunctor p => (a -⁠> b, c -⁠> d, p b c) -⁠> p a d`</a>
 
 Function wrapper for [`fantasy-land/promap`][].
 
@@ -807,7 +767,7 @@ built-in types: Function.
 11
 ```
 
-#### <a name="ap" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1657">`ap :: Apply f => (f (a -⁠> b), f a) -⁠> f b`</a>
+#### <a name="ap" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1607">`ap :: Apply f => (f (a -⁠> b), f a) -⁠> f b`</a>
 
 Function wrapper for [`fantasy-land/ap`][].
 
@@ -831,7 +791,7 @@ Identity (8)
 Cons (4, Cons (10, Cons (256, Cons (10000, Nil))))
 ```
 
-#### <a name="lift2" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1684">`lift2 :: Apply f => (a -⁠> b -⁠> c, f a, f b) -⁠> f c`</a>
+#### <a name="lift2" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1634">`lift2 :: Apply f => (a -⁠> b -⁠> c, f a, f b) -⁠> f c`</a>
 
 Lifts `a -> b -> c` to `Apply f => f a -> f b -> f c` and returns the
 result of applying this to the given arguments.
@@ -848,7 +808,7 @@ See also [`lift3`](#lift3).
 Identity (1000)
 ```
 
-#### <a name="lift3" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1704">`lift3 :: Apply f => (a -⁠> b -⁠> c -⁠> d, f a, f b, f c) -⁠> f d`</a>
+#### <a name="lift3" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1654">`lift3 :: Apply f => (a -⁠> b -⁠> c -⁠> d, f a, f b, f c) -⁠> f d`</a>
 
 Lifts `a -> b -> c -> d` to `Apply f => f a -> f b -> f c -> f d` and
 returns the result of applying this to the given arguments.
@@ -874,7 +834,7 @@ See also [`lift2`](#lift2).
 Identity ('<baz>')
 ```
 
-#### <a name="apFirst" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1733">`apFirst :: Apply f => (f a, f b) -⁠> f a`</a>
+#### <a name="apFirst" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1683">`apFirst :: Apply f => (f a, f b) -⁠> f a`</a>
 
 Combines two effectful actions, keeping only the result of the first.
 Equivalent to Haskell's `(<*)` function.
@@ -891,7 +851,7 @@ See also [`apSecond`](#apSecond).
 Identity (1)
 ```
 
-#### <a name="apSecond" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1753">`apSecond :: Apply f => (f a, f b) -⁠> f b`</a>
+#### <a name="apSecond" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1703">`apSecond :: Apply f => (f a, f b) -⁠> f b`</a>
 
 Combines two effectful actions, keeping only the result of the second.
 Equivalent to Haskell's `(*>)` function.
@@ -908,7 +868,7 @@ See also [`apFirst`](#apFirst).
 Identity (2)
 ```
 
-#### <a name="of" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1773">`of :: Applicative f => (TypeRep f, a) -⁠> f a`</a>
+#### <a name="of" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1723">`of :: Applicative f => (TypeRep f, a) -⁠> f a`</a>
 
 Function wrapper for [`fantasy-land/of`][].
 
@@ -926,7 +886,7 @@ built-in types: Array and Function.
 Cons (42, Nil)
 ```
 
-#### <a name="append" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1794">`append :: (Applicative f, Semigroup (f a)) => (a, f a) -⁠> f a`</a>
+#### <a name="append" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1744">`append :: (Applicative f, Semigroup (f a)) => (a, f a) -⁠> f a`</a>
 
 Returns the result of appending the first argument to the second.
 
@@ -942,7 +902,7 @@ See also [`prepend`](#prepend).
 Cons (1, Cons (2, Cons (3, Nil)))
 ```
 
-#### <a name="prepend" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1813">`prepend :: (Applicative f, Semigroup (f a)) => (a, f a) -⁠> f a`</a>
+#### <a name="prepend" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1763">`prepend :: (Applicative f, Semigroup (f a)) => (a, f a) -⁠> f a`</a>
 
 Returns the result of prepending the first argument to the second.
 
@@ -958,7 +918,7 @@ See also [`append`](#append).
 Cons (1, Cons (2, Cons (3, Nil)))
 ```
 
-#### <a name="chain" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1832">`chain :: Chain m => (a -⁠> m b, m a) -⁠> m b`</a>
+#### <a name="chain" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1782">`chain :: Chain m => (a -⁠> m b, m a) -⁠> m b`</a>
 
 Function wrapper for [`fantasy-land/chain`][].
 
@@ -979,7 +939,7 @@ Cons (1, Cons (3, Nil))
 'Hask'
 ```
 
-#### <a name="join" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1856">`join :: Chain m => m (m a) -⁠> m a`</a>
+#### <a name="join" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1806">`join :: Chain m => m (m a) -⁠> m a`</a>
 
 Removes one level of nesting from a nested monadic structure.
 
@@ -996,7 +956,7 @@ This function is derived from [`chain`](#chain).
 Identity (1)
 ```
 
-#### <a name="chainRec" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1876">`chainRec :: ChainRec m => (TypeRep m, (a -⁠> c, b -⁠> c, a) -⁠> m c, a) -⁠> m b`</a>
+#### <a name="chainRec" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1826">`chainRec :: ChainRec m => (TypeRep m, (a -⁠> c, b -⁠> c, a) -⁠> m c, a) -⁠> m b`</a>
 
 Function wrapper for [`fantasy-land/chainRec`][].
 
@@ -1013,7 +973,7 @@ built-in types: Array.
 ['oo!', 'oo?', 'on!', 'on?', 'no!', 'no?', 'nn!', 'nn?']
 ```
 
-#### <a name="alt" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1896">`alt :: Alt f => (f a, f a) -⁠> f a`</a>
+#### <a name="alt" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1846">`alt :: Alt f => (f a, f a) -⁠> f a`</a>
 
 Function wrapper for [`fantasy-land/alt`][].
 
@@ -1034,7 +994,7 @@ Just (1)
 Just (2)
 ```
 
-#### <a name="zero" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1920">`zero :: Plus f => TypeRep f -⁠> f a`</a>
+#### <a name="zero" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1870">`zero :: Plus f => TypeRep f -⁠> f a`</a>
 
 Function wrapper for [`fantasy-land/zero`][].
 
@@ -1052,7 +1012,7 @@ built-in types: Array and Object.
 Nothing
 ```
 
-#### <a name="reduce" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1941">`reduce :: Foldable f => ((b, a) -⁠> b, b, f a) -⁠> b`</a>
+#### <a name="reduce" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1891">`reduce :: Foldable f => ((b, a) -⁠> b, b, f a) -⁠> b`</a>
 
 Function wrapper for [`fantasy-land/reduce`][].
 
@@ -1067,7 +1027,7 @@ built-in types: Array and Object.
 'foobarbaz'
 ```
 
-#### <a name="size" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1959">`size :: Foldable f => f a -⁠> Integer`</a>
+#### <a name="size" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1909">`size :: Foldable f => f a -⁠> Integer`</a>
 
 Returns the number of elements of the given structure.
 
@@ -1087,7 +1047,7 @@ This function is derived from [`reduce`](#reduce).
 3
 ```
 
-#### <a name="all" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L1984">`all :: Foldable f => (a -⁠> Boolean, f a) -⁠> Boolean`</a>
+#### <a name="all" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1934">`all :: Foldable f => (a -⁠> Boolean, f a) -⁠> Boolean`</a>
 
 Returns `true` if all the elements of the structure satisfy the
 predicate; `false` otherwise.
@@ -1107,7 +1067,7 @@ true
 false
 ```
 
-#### <a name="any" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L2009">`any :: Foldable f => (a -⁠> Boolean, f a) -⁠> Boolean`</a>
+#### <a name="any" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1959">`any :: Foldable f => (a -⁠> Boolean, f a) -⁠> Boolean`</a>
 
 Returns `true` if any element of the structure satisfies the predicate;
 `false` otherwise.
@@ -1127,7 +1087,7 @@ true
 true
 ```
 
-#### <a name="none" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L2034">`none :: Foldable f => (a -⁠> Boolean, f a) -⁠> Boolean`</a>
+#### <a name="none" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L1984">`none :: Foldable f => (a -⁠> Boolean, f a) -⁠> Boolean`</a>
 
 Returns `true` if none of the elements of the structure satisfies the
 predicate; `false` otherwise.
@@ -1145,7 +1105,7 @@ true
 false
 ```
 
-#### <a name="elem" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L2055">`elem :: (Setoid a, Foldable f) => (a, f a) -⁠> Boolean`</a>
+#### <a name="elem" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L2005">`elem :: (Setoid a, Foldable f) => (a, f a) -⁠> Boolean`</a>
 
 Takes a value and a structure and returns `true` if the
 value is an element of the structure; `false` otherwise.
@@ -1176,7 +1136,7 @@ false
 false
 ```
 
-#### <a name="foldMap" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L2089">`foldMap :: (Monoid m, Foldable f) => (TypeRep m, a -⁠> m, f a) -⁠> m`</a>
+#### <a name="foldMap" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L2039">`foldMap :: (Monoid m, Foldable f) => (TypeRep m, a -⁠> m, f a) -⁠> m`</a>
 
 Deconstructs a foldable by mapping every element to a monoid and
 concatenating the results.
@@ -1189,7 +1149,7 @@ and [`reduce`](#reduce).
 'sincostan'
 ```
 
-#### <a name="reverse" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L2107">`reverse :: (Applicative f, Foldable f, Monoid (f a)) => f a -⁠> f a`</a>
+#### <a name="reverse" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L2057">`reverse :: (Applicative f, Foldable f, Monoid (f a)) => f a -⁠> f a`</a>
 
 Reverses the elements of the given structure.
 
@@ -1204,7 +1164,7 @@ This function is derived from [`concat`](#concat), [`empty`](#empty),
 Cons (3, Cons (2, Cons (1, Nil)))
 ```
 
-#### <a name="sort" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L2130">`sort :: (Ord a, Applicative f, Foldable f, Monoid (f a)) => f a -⁠> f a`</a>
+#### <a name="sort" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L2080">`sort :: (Ord a, Applicative f, Foldable f, Monoid (f a)) => f a -⁠> f a`</a>
 
 Performs a [stable sort][] of the elements of the given structure,
 using [`lte`](#lte) for comparisons.
@@ -1225,7 +1185,7 @@ See also [`sortBy`](#sortBy).
 Cons ('bar', Cons ('baz', Cons ('foo', Nil)))
 ```
 
-#### <a name="sortBy" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L2154">`sortBy :: (Ord b, Applicative f, Foldable f, Monoid (f a)) => (a -⁠> b, f a) -⁠> f a`</a>
+#### <a name="sortBy" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L2104">`sortBy :: (Ord b, Applicative f, Foldable f, Monoid (f a)) => (a -⁠> b, f a) -⁠> f a`</a>
 
 Performs a [stable sort][] of the elements of the given structure,
 using [`lte`](#lte) to compare the values produced by applying the
@@ -1250,7 +1210,7 @@ See also [`sort`](#sort).
 Cons ('red', Cons ('blue', Cons ('green', Nil)))
 ```
 
-#### <a name="traverse" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L2209">`traverse :: (Applicative f, Traversable t) => (TypeRep f, a -⁠> f b, t a) -⁠> f (t b)`</a>
+#### <a name="traverse" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L2159">`traverse :: (Applicative f, Traversable t) => (TypeRep f, a -⁠> f b, t a) -⁠> f (t b)`</a>
 
 Function wrapper for [`fantasy-land/traverse`][].
 
@@ -1267,7 +1227,7 @@ See also [`sequence`](#sequence).
 Identity ([2, 3, 4])
 ```
 
-#### <a name="sequence" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L2229">`sequence :: (Applicative f, Traversable t) => (TypeRep f, t (f a)) -⁠> f (t a)`</a>
+#### <a name="sequence" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L2179">`sequence :: (Applicative f, Traversable t) => (TypeRep f, t (f a)) -⁠> f (t a)`</a>
 
 Inverts the given `t (f a)` to produce an `f (t a)`.
 
@@ -1281,7 +1241,7 @@ This function is derived from [`traverse`](#traverse).
 Identity ([1, 2, 3])
 ```
 
-#### <a name="extend" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L2246">`extend :: Extend w => (w a -⁠> b, w a) -⁠> w b`</a>
+#### <a name="extend" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L2196">`extend :: Extend w => (w a -⁠> b, w a) -⁠> w b`</a>
 
 Function wrapper for [`fantasy-land/extend`][].
 
@@ -1296,7 +1256,7 @@ built-in types: Array and Function.
 [4, 3, 2, 1]
 ```
 
-#### <a name="duplicate" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L2264">`duplicate :: Extend w => w a -⁠> w (w a)`</a>
+#### <a name="duplicate" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L2214">`duplicate :: Extend w => w a -⁠> w (w a)`</a>
 
 Adds one level of nesting to a comonadic structure.
 
@@ -1316,7 +1276,7 @@ Identity (Identity (1))
 [4, 3, 2, 1]
 ```
 
-#### <a name="extract" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L2287">`extract :: Comonad w => w a -⁠> a`</a>
+#### <a name="extract" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L2237">`extract :: Comonad w => w a -⁠> a`</a>
 
 Function wrapper for [`fantasy-land/extract`][].
 
@@ -1325,7 +1285,7 @@ Function wrapper for [`fantasy-land/extract`][].
 42
 ```
 
-#### <a name="contramap" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v10.0.0/index.js#L2299">`contramap :: Contravariant f => (b -⁠> a, f a) -⁠> f b`</a>
+#### <a name="contramap" href="https://github.com/sanctuary-js/sanctuary-type-classes/blob/v11.0.0/index.js#L2249">`contramap :: Contravariant f => (b -⁠> a, f a) -⁠> f b`</a>
 
 Function wrapper for [`fantasy-land/contramap`][].
 
@@ -1337,52 +1297,52 @@ built-in types: Function.
 3
 ```
 
-[Alt]:                      https://github.com/fantasyland/fantasy-land/tree/v3.5.0#alt
-[Alternative]:              https://github.com/fantasyland/fantasy-land/tree/v3.5.0#alternative
-[Applicative]:              https://github.com/fantasyland/fantasy-land/tree/v3.5.0#applicative
-[Apply]:                    https://github.com/fantasyland/fantasy-land/tree/v3.5.0#apply
-[Bifunctor]:                https://github.com/fantasyland/fantasy-land/tree/v3.5.0#bifunctor
-[Category]:                 https://github.com/fantasyland/fantasy-land/tree/v3.5.0#category
-[Chain]:                    https://github.com/fantasyland/fantasy-land/tree/v3.5.0#chain
-[ChainRec]:                 https://github.com/fantasyland/fantasy-land/tree/v3.5.0#chainrec
-[Comonad]:                  https://github.com/fantasyland/fantasy-land/tree/v3.5.0#comonad
-[Contravariant]:            https://github.com/fantasyland/fantasy-land/tree/v3.5.0#contravariant
-[Extend]:                   https://github.com/fantasyland/fantasy-land/tree/v3.5.0#extend
-[FL]:                       https://github.com/fantasyland/fantasy-land/tree/v3.5.0
-[Filterable]:               https://github.com/fantasyland/fantasy-land/tree/v3.5.0#filterable
-[Foldable]:                 https://github.com/fantasyland/fantasy-land/tree/v3.5.0#foldable
-[Functor]:                  https://github.com/fantasyland/fantasy-land/tree/v3.5.0#functor
-[Group]:                    https://github.com/fantasyland/fantasy-land/tree/v3.5.0#group
-[Monad]:                    https://github.com/fantasyland/fantasy-land/tree/v3.5.0#monad
-[Monoid]:                   https://github.com/fantasyland/fantasy-land/tree/v3.5.0#monoid
-[Ord]:                      https://github.com/fantasyland/fantasy-land/tree/v3.5.0#ord
-[Plus]:                     https://github.com/fantasyland/fantasy-land/tree/v3.5.0#plus
-[Profunctor]:               https://github.com/fantasyland/fantasy-land/tree/v3.5.0#profunctor
-[Semigroup]:                https://github.com/fantasyland/fantasy-land/tree/v3.5.0#semigroup
-[Semigroupoid]:             https://github.com/fantasyland/fantasy-land/tree/v3.5.0#semigroupoid
-[Setoid]:                   https://github.com/fantasyland/fantasy-land/tree/v3.5.0#setoid
-[Traversable]:              https://github.com/fantasyland/fantasy-land/tree/v3.5.0#traversable
-[`fantasy-land/alt`]:       https://github.com/fantasyland/fantasy-land/tree/v3.5.0#alt-method
-[`fantasy-land/ap`]:        https://github.com/fantasyland/fantasy-land/tree/v3.5.0#ap-method
-[`fantasy-land/bimap`]:     https://github.com/fantasyland/fantasy-land/tree/v3.5.0#bimap-method
-[`fantasy-land/chain`]:     https://github.com/fantasyland/fantasy-land/tree/v3.5.0#chain-method
-[`fantasy-land/chainRec`]:  https://github.com/fantasyland/fantasy-land/tree/v3.5.0#chainrec-method
-[`fantasy-land/compose`]:   https://github.com/fantasyland/fantasy-land/tree/v3.5.0#compose-method
-[`fantasy-land/concat`]:    https://github.com/fantasyland/fantasy-land/tree/v3.5.0#concat-method
-[`fantasy-land/contramap`]: https://github.com/fantasyland/fantasy-land/tree/v3.5.0#contramap-method
-[`fantasy-land/empty`]:     https://github.com/fantasyland/fantasy-land/tree/v3.5.0#empty-method
-[`fantasy-land/equals`]:    https://github.com/fantasyland/fantasy-land/tree/v3.5.0#equals-method
-[`fantasy-land/extend`]:    https://github.com/fantasyland/fantasy-land/tree/v3.5.0#extend-method
-[`fantasy-land/extract`]:   https://github.com/fantasyland/fantasy-land/tree/v3.5.0#extract-method
-[`fantasy-land/filter`]:    https://github.com/fantasyland/fantasy-land/tree/v3.5.0#filter-method
-[`fantasy-land/id`]:        https://github.com/fantasyland/fantasy-land/tree/v3.5.0#id-method
-[`fantasy-land/invert`]:    https://github.com/fantasyland/fantasy-land/tree/v3.5.0#invert-method
-[`fantasy-land/lte`]:       https://github.com/fantasyland/fantasy-land/tree/v3.5.0#lte-method
-[`fantasy-land/map`]:       https://github.com/fantasyland/fantasy-land/tree/v3.5.0#map-method
-[`fantasy-land/of`]:        https://github.com/fantasyland/fantasy-land/tree/v3.5.0#of-method
-[`fantasy-land/promap`]:    https://github.com/fantasyland/fantasy-land/tree/v3.5.0#promap-method
-[`fantasy-land/reduce`]:    https://github.com/fantasyland/fantasy-land/tree/v3.5.0#reduce-method
-[`fantasy-land/traverse`]:  https://github.com/fantasyland/fantasy-land/tree/v3.5.0#traverse-method
-[`fantasy-land/zero`]:      https://github.com/fantasyland/fantasy-land/tree/v3.5.0#zero-method
+[Alt]:                      https://github.com/fantasyland/fantasy-land/tree/v4.0.1#alt
+[Alternative]:              https://github.com/fantasyland/fantasy-land/tree/v4.0.1#alternative
+[Applicative]:              https://github.com/fantasyland/fantasy-land/tree/v4.0.1#applicative
+[Apply]:                    https://github.com/fantasyland/fantasy-land/tree/v4.0.1#apply
+[Bifunctor]:                https://github.com/fantasyland/fantasy-land/tree/v4.0.1#bifunctor
+[Category]:                 https://github.com/fantasyland/fantasy-land/tree/v4.0.1#category
+[Chain]:                    https://github.com/fantasyland/fantasy-land/tree/v4.0.1#chain
+[ChainRec]:                 https://github.com/fantasyland/fantasy-land/tree/v4.0.1#chainrec
+[Comonad]:                  https://github.com/fantasyland/fantasy-land/tree/v4.0.1#comonad
+[Contravariant]:            https://github.com/fantasyland/fantasy-land/tree/v4.0.1#contravariant
+[Extend]:                   https://github.com/fantasyland/fantasy-land/tree/v4.0.1#extend
+[FL]:                       https://github.com/fantasyland/fantasy-land/tree/v4.0.1
+[Filterable]:               https://github.com/fantasyland/fantasy-land/tree/v4.0.1#filterable
+[Foldable]:                 https://github.com/fantasyland/fantasy-land/tree/v4.0.1#foldable
+[Functor]:                  https://github.com/fantasyland/fantasy-land/tree/v4.0.1#functor
+[Group]:                    https://github.com/fantasyland/fantasy-land/tree/v4.0.1#group
+[Monad]:                    https://github.com/fantasyland/fantasy-land/tree/v4.0.1#monad
+[Monoid]:                   https://github.com/fantasyland/fantasy-land/tree/v4.0.1#monoid
+[Ord]:                      https://github.com/fantasyland/fantasy-land/tree/v4.0.1#ord
+[Plus]:                     https://github.com/fantasyland/fantasy-land/tree/v4.0.1#plus
+[Profunctor]:               https://github.com/fantasyland/fantasy-land/tree/v4.0.1#profunctor
+[Semigroup]:                https://github.com/fantasyland/fantasy-land/tree/v4.0.1#semigroup
+[Semigroupoid]:             https://github.com/fantasyland/fantasy-land/tree/v4.0.1#semigroupoid
+[Setoid]:                   https://github.com/fantasyland/fantasy-land/tree/v4.0.1#setoid
+[Traversable]:              https://github.com/fantasyland/fantasy-land/tree/v4.0.1#traversable
+[`fantasy-land/alt`]:       https://github.com/fantasyland/fantasy-land/tree/v4.0.1#alt-method
+[`fantasy-land/ap`]:        https://github.com/fantasyland/fantasy-land/tree/v4.0.1#ap-method
+[`fantasy-land/bimap`]:     https://github.com/fantasyland/fantasy-land/tree/v4.0.1#bimap-method
+[`fantasy-land/chain`]:     https://github.com/fantasyland/fantasy-land/tree/v4.0.1#chain-method
+[`fantasy-land/chainRec`]:  https://github.com/fantasyland/fantasy-land/tree/v4.0.1#chainrec-method
+[`fantasy-land/compose`]:   https://github.com/fantasyland/fantasy-land/tree/v4.0.1#compose-method
+[`fantasy-land/concat`]:    https://github.com/fantasyland/fantasy-land/tree/v4.0.1#concat-method
+[`fantasy-land/contramap`]: https://github.com/fantasyland/fantasy-land/tree/v4.0.1#contramap-method
+[`fantasy-land/empty`]:     https://github.com/fantasyland/fantasy-land/tree/v4.0.1#empty-method
+[`fantasy-land/equals`]:    https://github.com/fantasyland/fantasy-land/tree/v4.0.1#equals-method
+[`fantasy-land/extend`]:    https://github.com/fantasyland/fantasy-land/tree/v4.0.1#extend-method
+[`fantasy-land/extract`]:   https://github.com/fantasyland/fantasy-land/tree/v4.0.1#extract-method
+[`fantasy-land/filter`]:    https://github.com/fantasyland/fantasy-land/tree/v4.0.1#filter-method
+[`fantasy-land/id`]:        https://github.com/fantasyland/fantasy-land/tree/v4.0.1#id-method
+[`fantasy-land/invert`]:    https://github.com/fantasyland/fantasy-land/tree/v4.0.1#invert-method
+[`fantasy-land/lte`]:       https://github.com/fantasyland/fantasy-land/tree/v4.0.1#lte-method
+[`fantasy-land/map`]:       https://github.com/fantasyland/fantasy-land/tree/v4.0.1#map-method
+[`fantasy-land/of`]:        https://github.com/fantasyland/fantasy-land/tree/v4.0.1#of-method
+[`fantasy-land/promap`]:    https://github.com/fantasyland/fantasy-land/tree/v4.0.1#promap-method
+[`fantasy-land/reduce`]:    https://github.com/fantasyland/fantasy-land/tree/v4.0.1#reduce-method
+[`fantasy-land/traverse`]:  https://github.com/fantasyland/fantasy-land/tree/v4.0.1#traverse-method
+[`fantasy-land/zero`]:      https://github.com/fantasyland/fantasy-land/tree/v4.0.1#zero-method
 [stable sort]:              https://en.wikipedia.org/wiki/Sorting_algorithm#Stability
 [type-classes]:             https://github.com/sanctuary-js/sanctuary-def#type-classes
