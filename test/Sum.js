@@ -12,9 +12,9 @@ function Sum(value) {
   this.value = value;
 }
 
-Sum['@@type'] = 'sanctuary-type-classes/Sum@1';
-
 Sum[FL.empty] = function() { return Sum (0); };
+
+Sum.prototype['@@type'] = 'sanctuary-type-classes/Sum@1';
 
 Sum.prototype[FL.equals] = function(other) {
   return Z.equals (this.value, other.value);
