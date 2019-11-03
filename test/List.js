@@ -22,8 +22,6 @@ function _List(tag, head, tail) {
   }
 }
 
-List['@@type'] = 'sanctuary-type-classes/List@1';
-
 //  Nil :: List a
 var Nil = List.Nil = new _List ('Nil');
 
@@ -38,6 +36,8 @@ List[FL.empty] = function() { return Nil; };
 List[FL.of] = function(x) { return Cons (x, Nil); };
 
 List[FL.zero] = List[FL.empty];
+
+List.prototype['@@type'] = 'sanctuary-type-classes/List@1';
 
 List.prototype[FL.equals] = function(other) {
   return this.isNil ?
