@@ -2036,6 +2036,47 @@
     return any (function(y) { return equals (x, y); }, foldable);
   }
 
+  //# intercalate :: (Monoid m, Foldable f) => (m, f m) -> m
+  //.
+  //. Concatenates the elements of the given structure, separating each pair
+  //. of adjacent elements with the given separator.
+  //.
+  //. This function is derived from [`concat`](#concat), [`empty`](#empty),
+  //. and [`reduce`](#reduce).
+  //.
+  //. ```javascript
+  //. > intercalate (', ', [])
+  //. ''
+  //.
+  //. > intercalate (', ', ['foo', 'bar', 'baz'])
+  //. 'foo, bar, baz'
+  //.
+  //. > intercalate (', ', Nil)
+  //. ''
+  //.
+  //. > intercalate (', ', Cons ('foo', Cons ('bar', Cons ('baz', Nil))))
+  //. 'foo, bar, baz'
+  //.
+  //. > intercalate ([0, 0, 0], [])
+  //. []
+  //.
+  //. > intercalate ([0, 0, 0], [[1], [2, 3], [4, 5, 6], [7, 8], [9]])
+  //. [1, 0, 0, 0, 2, 3, 0, 0, 0, 4, 5, 6, 0, 0, 0, 7, 8, 0, 0, 0, 9]
+  //. ```
+  function intercalate(separator, foldable) {
+    var result = reduce (
+      function(acc, x) {
+        return {
+          empty: false,
+          value: concat (acc.value, acc.empty ? x : concat (separator, x))
+        };
+      },
+      {empty: true, value: empty (separator.constructor)},
+      foldable
+    );
+    return result.value;
+  }
+
   //# foldMap :: (Monoid m, Foldable f) => (TypeRep m, a -> m, f a) -> m
   //.
   //. Deconstructs a foldable by mapping every element to a monoid and
@@ -2326,6 +2367,7 @@
     any: any,
     none: none,
     elem: elem,
+    intercalate: intercalate,
     foldMap: foldMap,
     reverse: reverse,
     sort: sort,
