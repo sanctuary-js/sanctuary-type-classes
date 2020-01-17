@@ -670,7 +670,6 @@ test ('equals', function() {
   eq (Z.equals (Identity (Identity (Identity (0))), Identity (Identity (Identity (1)))), false);
   eq (Z.equals ({'@@type': 'my-package/Quux@1'}, {'@@type': 'my-package/Quux@1'}), false);
   eq (Z.equals (Array.prototype, Array.prototype), true);
-  delete Maybe['@@type'];
   eq (Z.equals (Nothing.constructor, Maybe), true);
   eq (Z.equals ((Just (0)).constructor, Maybe), true);
   eq (Z.equals (Lazy$of (0), Lazy$of (0)), false);
