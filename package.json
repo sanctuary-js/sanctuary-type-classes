@@ -27,7 +27,7 @@
     "sanctuary-maybe": "2.0.x",
     "sanctuary-pair": "2.0.x",
     "sanctuary-scripts": "4.0.x",
-    "sanctuary-show": "1.0.x"
+    "sanctuary-show": "2.0.x"
   },
   "files": [
     "/LICENSE",
