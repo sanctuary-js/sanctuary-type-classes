@@ -1296,6 +1296,24 @@ test ('elem', function() {
   eq (Z.elem (0, Nothing), false);
 });
 
+test ('intercalate', function() {
+  eq (Z.intercalate.length, 2);
+  eq (Z.intercalate.name, 'intercalate');
+
+  eq (Z.intercalate (', ', []), '');
+  eq (Z.intercalate (', ', ['foo']), 'foo');
+  eq (Z.intercalate (', ', ['foo', 'bar']), 'foo, bar');
+  eq (Z.intercalate (', ', ['foo', 'bar', 'baz']), 'foo, bar, baz');
+  eq (Z.intercalate ([0, 0, 0], []), []);
+  eq (Z.intercalate ([0, 0, 0], [[1]]), [1]);
+  eq (Z.intercalate ([0, 0, 0], [[1], [2]]), [1, 0, 0, 0, 2]);
+  eq (Z.intercalate ([0, 0, 0], [[1], [2], [3]]), [1, 0, 0, 0, 2, 0, 0, 0, 3]);
+  eq (Z.intercalate ('.', Nil), '');
+  eq (Z.intercalate ('.', Cons ('x', Nil)), 'x');
+  eq (Z.intercalate ('.', Cons ('x', Cons ('y', Nil))), 'x.y');
+  eq (Z.intercalate ('.', Cons ('x', Cons ('y', Cons ('z', Nil)))), 'x.y.z');
+});
+
 test ('foldMap', function() {
   eq (Z.foldMap.length, 3);
   eq (Z.foldMap.name, 'foldMap');
