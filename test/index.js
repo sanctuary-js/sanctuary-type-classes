@@ -1,31 +1,27 @@
 'use strict';
 
-var assert = require ('assert');
+const assert = require ('assert');
 
-var laws = require ('fantasy-laws');
-var jsc = require ('jsverify');
-var Identity = require ('sanctuary-identity');
-var Maybe = require ('sanctuary-maybe');
-var Pair = require ('sanctuary-pair');
-var type = require ('sanctuary-type-identifiers');
-var Useless = require ('sanctuary-useless');
+const laws = require ('fantasy-laws');
+const jsc = require ('jsverify');
+const Identity = require ('sanctuary-identity');
+const Maybe = require ('sanctuary-maybe');
+const Pair = require ('sanctuary-pair');
+const type = require ('sanctuary-type-identifiers');
+const Useless = require ('sanctuary-useless');
 
-var Z = require ('..');
-var version = (require ('../package.json')).version;
+const Z = require ('..');
+const {version} = require ('../package.json');
 
-var Lazy = require ('./Lazy');
-var List = require ('./List');
-var Sum = require ('./Sum');
-var eq = require ('./eq');
-var withUnstableArraySort = (require ('./quicksort')).withUnstableArraySort;
+const Lazy = require ('./Lazy');
+const List = require ('./List');
+const Sum = require ('./Sum');
+const eq = require ('./eq');
+const {withUnstableArraySort} = require ('./quicksort');
 
 
-var Nil = List.Nil;
-var Cons = List.Cons;
-
-var Nothing = Maybe.Nothing;
-var Just = Maybe.Just;
-
+const {Nil, Cons} = List;
+const {Nothing, Just} = Maybe;
 
 //  Lazy$of :: a -> Lazy a
 function Lazy$of(x) {
@@ -34,18 +30,17 @@ function Lazy$of(x) {
 }
 
 //  ListArb :: Arbitrary a -> Arbitrary (List a)
-function ListArb(arb) {
-  return (jsc.array (arb)).smap (function(xs) {
-    var list = Nil;
-    for (var idx = 0; idx < xs.length; idx += 1) list = Cons (xs[idx], list);
+const ListArb = arb => (
+  jsc.array (arb)
+  .smap (xs => {
+    let list = Nil;
+    for (let idx = 0; idx < xs.length; idx += 1) list = Cons (xs[idx], list);
     return list;
-  });
-}
+  })
+);
 
 //  MaybeArb :: Arbitrary a -> Arbitrary (Maybe a)
-function MaybeArb(arb) {
-  return jsc.oneof (jsc.constant (Nothing), arb.smap (Just));
-}
+const MaybeArb = arb => jsc.oneof (jsc.constant (Nothing), arb.smap (Just));
 
 //  Point :: () -> Point
 function Point() {
@@ -78,6 +73,7 @@ function append(x) {
 
 //  args :: (Any...) -> Arguments
 function args() {
+  // eslint-disable-next-line prefer-rest-params
   return arguments;
 }
 
@@ -153,8 +149,8 @@ function length(xs) {
 //  listToArray :: List a -> Array a
 function listToArray(xs) {
   eq (arguments.length, listToArray.length);
-  var result = [];
-  for (var list = xs; list.isCons; list = list.tail) result.push (list.head);
+  const result = [];
+  for (let list = xs; list.isCons; list = list.tail) result.push (list.head);
   return result;
 }
 
@@ -167,8 +163,8 @@ function lt(x) {
   };
 }
 
-var node1 = {id: 1, rels: []};
-var node2 = {id: 2, rels: []};
+const node1 = {id: 1, rels: []};
+const node2 = {id: 2, rels: []};
 node1.rels.push ({type: 'child', value: node2});
 node2.rels.push ({type: 'parent', value: node1});
 
@@ -179,17 +175,17 @@ function odd(x) {
 }
 
 //  ones :: Array2 Number (Array2 Number (Array2 Number ...))
-var ones = [1]; ones.push (ones);
+const ones = [1]; ones.push (ones);
 
 //  ones_ :: Array2 Number (Array2 Number (Array2 Number ...))
-var ones_ = [1]; ones_.push ([1, ones_]);
+const ones_ = [1]; ones_.push ([1, ones_]);
 
 //  parseInt_ :: Integer -> String -> Maybe Integer
 function parseInt_(radix) {
   eq (arguments.length, parseInt_.length);
   return function parseInt$1(s) {
     eq (arguments.length, parseInt$1.length);
-    var n = parseInt (s, radix);
+    const n = parseInt (s, radix);
     return isNaN (n) ? Nothing : Just (n);
   };
 }
@@ -206,14 +202,14 @@ function pow(base) {
 //  product :: Foldable f => f Number -> Number
 function product(xs) {
   eq (arguments.length, product.length);
-  return Z.reduce (function(x, y) { return x * y; }, 1, xs);
+  return Z.reduce ((x, y) => x * y, 1, xs);
 }
 
 //  range :: Integer -> Array Integer
 function range(n) {
   eq (arguments.length, range.length);
-  var result = [];
-  for (var m = 0; m < n; m += 1) result.push (m);
+  const result = [];
+  for (let m = 0; m < n; m += 1) result.push (m);
   return result;
 }
 
@@ -222,8 +218,8 @@ function repeat(n) {
   eq (arguments.length, repeat.length);
   return function repeat$1(x) {
     eq (arguments.length, repeat$1.length);
-    var result = [];
-    for (var m = 0; m < n; m += 1) result.push (x);
+    const result = [];
+    for (let m = 0; m < n; m += 1) result.push (x);
     return result;
   };
 }
@@ -268,19 +264,15 @@ function wrap(before) {
 }
 
 
-test ('TypeClass', function() {
+test ('TypeClass', () => {
   eq (typeof Z.TypeClass, 'function');
   eq (Z.TypeClass.length, 4);
 
   //  hasMethod :: String -> a -> Boolean
-  function hasMethod(name) {
-    return function(x) {
-      return x != null && typeof x[name] === 'function';
-    };
-  }
+  const hasMethod = name => x => x != null && typeof x[name] === 'function';
 
   //  Foo :: TypeClass
-  var Foo = Z.TypeClass (
+  const Foo = Z.TypeClass (
     'my-package/Foo',
     'http://example.com/my-package#Foo',
     [],
@@ -288,7 +280,7 @@ test ('TypeClass', function() {
   );
 
   //  Bar :: TypeClass
-  var Bar = Z.TypeClass (
+  const Bar = Z.TypeClass (
     'my-package/Bar',
     'http://example.com/my-package#Bar',
     [Foo],
@@ -300,24 +292,24 @@ test ('TypeClass', function() {
   eq (Foo.url, 'http://example.com/my-package#Foo');
   eq (Foo.test (null), false);
   eq (Foo.test ({}), false);
-  eq (Foo.test ({foo: function() {}}), true);
-  eq (Foo.test ({bar: function() {}}), false);
-  eq (Foo.test ({foo: function() {}, bar: function() {}}), true);
+  eq (Foo.test ({foo: () => {}}), true);
+  eq (Foo.test ({bar: () => {}}), false);
+  eq (Foo.test ({foo: () => {}, bar: () => {}}), true);
 
   eq (type (Bar), 'sanctuary-type-classes/TypeClass@1');
   eq (Bar.name, 'my-package/Bar');
   eq (Bar.url, 'http://example.com/my-package#Bar');
   eq (Bar.test (null), false);
   eq (Bar.test ({}), false);
-  eq (Bar.test ({foo: function() {}}), false);
-  eq (Bar.test ({bar: function() {}}), false);
-  eq (Bar.test ({foo: function() {}, bar: function() {}}), true);
+  eq (Bar.test ({foo: () => {}}), false);
+  eq (Bar.test ({bar: () => {}}), false);
+  eq (Bar.test ({foo: () => {}, bar: () => {}}), true);
 });
 
-test ('Setoid', function() {
+test ('Setoid', () => {
   eq (type (Z.Setoid), 'sanctuary-type-classes/TypeClass@1');
   eq (Z.Setoid.name, 'sanctuary-type-classes/Setoid');
-  eq (Z.Setoid.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Setoid');
+  eq (Z.Setoid.url, `https://github.com/sanctuary-js/sanctuary-type-classes/tree/v${version}#Setoid`);
   eq (Z.Setoid.test (null), true);
   eq (Z.Setoid.test (''), true);
   eq (Z.Setoid.test ([]), true);
@@ -327,10 +319,10 @@ test ('Setoid', function() {
   eq (Z.Setoid.test ({foo: Useless}), false);
 });
 
-test ('Ord', function() {
+test ('Ord', () => {
   eq (type (Z.Ord), 'sanctuary-type-classes/TypeClass@1');
   eq (Z.Ord.name, 'sanctuary-type-classes/Ord');
-  eq (Z.Ord.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Ord');
+  eq (Z.Ord.url, `https://github.com/sanctuary-js/sanctuary-type-classes/tree/v${version}#Ord`);
   eq (Z.Ord.test (null), true);
   eq (Z.Ord.test (''), true);
   eq (Z.Ord.test ([]), true);
@@ -340,10 +332,10 @@ test ('Ord', function() {
   eq (Z.Ord.test ({foo: Math.abs}), false);
 });
 
-test ('Semigroupoid', function() {
+test ('Semigroupoid', () => {
   eq (type (Z.Semigroupoid), 'sanctuary-type-classes/TypeClass@1');
   eq (Z.Semigroupoid.name, 'sanctuary-type-classes/Semigroupoid');
-  eq (Z.Semigroupoid.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Semigroupoid');
+  eq (Z.Semigroupoid.url, `https://github.com/sanctuary-js/sanctuary-type-classes/tree/v${version}#Semigroupoid`);
   eq (Z.Semigroupoid.test (null), false);
   eq (Z.Semigroupoid.test (''), false);
   eq (Z.Semigroupoid.test ([]), false);
@@ -351,10 +343,10 @@ test ('Semigroupoid', function() {
   eq (Z.Semigroupoid.test (Math.abs), true);
 });
 
-test ('Category', function() {
+test ('Category', () => {
   eq (type (Z.Category), 'sanctuary-type-classes/TypeClass@1');
   eq (Z.Category.name, 'sanctuary-type-classes/Category');
-  eq (Z.Category.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Category');
+  eq (Z.Category.url, `https://github.com/sanctuary-js/sanctuary-type-classes/tree/v${version}#Category`);
   eq (Z.Category.test (null), false);
   eq (Z.Category.test (''), false);
   eq (Z.Category.test ([]), false);
@@ -362,30 +354,30 @@ test ('Category', function() {
   eq (Z.Category.test (Math.abs), true);
 });
 
-test ('Semigroup', function() {
+test ('Semigroup', () => {
   eq (type (Z.Semigroup), 'sanctuary-type-classes/TypeClass@1');
   eq (Z.Semigroup.name, 'sanctuary-type-classes/Semigroup');
-  eq (Z.Semigroup.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Semigroup');
+  eq (Z.Semigroup.url, `https://github.com/sanctuary-js/sanctuary-type-classes/tree/v${version}#Semigroup`);
   eq (Z.Semigroup.test (null), false);
   eq (Z.Semigroup.test (''), true);
   eq (Z.Semigroup.test ([]), true);
   eq (Z.Semigroup.test ({}), true);
 });
 
-test ('Monoid', function() {
+test ('Monoid', () => {
   eq (type (Z.Monoid), 'sanctuary-type-classes/TypeClass@1');
   eq (Z.Monoid.name, 'sanctuary-type-classes/Monoid');
-  eq (Z.Monoid.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Monoid');
+  eq (Z.Monoid.url, `https://github.com/sanctuary-js/sanctuary-type-classes/tree/v${version}#Monoid`);
   eq (Z.Monoid.test (null), false);
   eq (Z.Monoid.test (''), true);
   eq (Z.Monoid.test ([]), true);
   eq (Z.Monoid.test ({}), true);
 });
 
-test ('Group', function() {
+test ('Group', () => {
   eq (type (Z.Group), 'sanctuary-type-classes/TypeClass@1');
   eq (Z.Group.name, 'sanctuary-type-classes/Group');
-  eq (Z.Group.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Group');
+  eq (Z.Group.url, `https://github.com/sanctuary-js/sanctuary-type-classes/tree/v${version}#Group`);
   eq (Z.Group.test (null), false);
   eq (Z.Group.test (''), false);
   eq (Z.Group.test ([]), false);
@@ -393,30 +385,30 @@ test ('Group', function() {
   eq (Z.Group.test (Sum (0)), true);
 });
 
-test ('Filterable', function() {
+test ('Filterable', () => {
   eq (type (Z.Filterable), 'sanctuary-type-classes/TypeClass@1');
   eq (Z.Filterable.name, 'sanctuary-type-classes/Filterable');
-  eq (Z.Filterable.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Filterable');
+  eq (Z.Filterable.url, `https://github.com/sanctuary-js/sanctuary-type-classes/tree/v${version}#Filterable`);
   eq (Z.Filterable.test (null), false);
   eq (Z.Filterable.test (''), false);
   eq (Z.Filterable.test ([]), true);
   eq (Z.Filterable.test ({}), true);
 });
 
-test ('Functor', function() {
+test ('Functor', () => {
   eq (type (Z.Functor), 'sanctuary-type-classes/TypeClass@1');
   eq (Z.Functor.name, 'sanctuary-type-classes/Functor');
-  eq (Z.Functor.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Functor');
+  eq (Z.Functor.url, `https://github.com/sanctuary-js/sanctuary-type-classes/tree/v${version}#Functor`);
   eq (Z.Functor.test (null), false);
   eq (Z.Functor.test (''), false);
   eq (Z.Functor.test ([]), true);
   eq (Z.Functor.test ({}), true);
 });
 
-test ('Bifunctor', function() {
+test ('Bifunctor', () => {
   eq (type (Z.Bifunctor), 'sanctuary-type-classes/TypeClass@1');
   eq (Z.Bifunctor.name, 'sanctuary-type-classes/Bifunctor');
-  eq (Z.Bifunctor.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Bifunctor');
+  eq (Z.Bifunctor.url, `https://github.com/sanctuary-js/sanctuary-type-classes/tree/v${version}#Bifunctor`);
   eq (Z.Bifunctor.test (null), false);
   eq (Z.Bifunctor.test (''), false);
   eq (Z.Bifunctor.test ([]), false);
@@ -424,10 +416,10 @@ test ('Bifunctor', function() {
   eq (Z.Bifunctor.test (Pair ('abc') (123)), true);
 });
 
-test ('Profunctor', function() {
+test ('Profunctor', () => {
   eq (type (Z.Profunctor), 'sanctuary-type-classes/TypeClass@1');
   eq (Z.Profunctor.name, 'sanctuary-type-classes/Profunctor');
-  eq (Z.Profunctor.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Profunctor');
+  eq (Z.Profunctor.url, `https://github.com/sanctuary-js/sanctuary-type-classes/tree/v${version}#Profunctor`);
   eq (Z.Profunctor.test (null), false);
   eq (Z.Profunctor.test (''), false);
   eq (Z.Profunctor.test ([]), false);
@@ -435,120 +427,120 @@ test ('Profunctor', function() {
   eq (Z.Profunctor.test (Math.abs), true);
 });
 
-test ('Apply', function() {
+test ('Apply', () => {
   eq (type (Z.Apply), 'sanctuary-type-classes/TypeClass@1');
   eq (Z.Apply.name, 'sanctuary-type-classes/Apply');
-  eq (Z.Apply.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Apply');
+  eq (Z.Apply.url, `https://github.com/sanctuary-js/sanctuary-type-classes/tree/v${version}#Apply`);
   eq (Z.Apply.test (null), false);
   eq (Z.Apply.test (''), false);
   eq (Z.Apply.test ([]), true);
   eq (Z.Apply.test ({}), true);
 });
 
-test ('Applicative', function() {
+test ('Applicative', () => {
   eq (type (Z.Applicative), 'sanctuary-type-classes/TypeClass@1');
   eq (Z.Applicative.name, 'sanctuary-type-classes/Applicative');
-  eq (Z.Applicative.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Applicative');
+  eq (Z.Applicative.url, `https://github.com/sanctuary-js/sanctuary-type-classes/tree/v${version}#Applicative`);
   eq (Z.Applicative.test (null), false);
   eq (Z.Applicative.test (''), false);
   eq (Z.Applicative.test ([]), true);
   eq (Z.Applicative.test ({}), false);
 });
 
-test ('Chain', function() {
+test ('Chain', () => {
   eq (type (Z.Chain), 'sanctuary-type-classes/TypeClass@1');
   eq (Z.Chain.name, 'sanctuary-type-classes/Chain');
-  eq (Z.Chain.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Chain');
+  eq (Z.Chain.url, `https://github.com/sanctuary-js/sanctuary-type-classes/tree/v${version}#Chain`);
   eq (Z.Chain.test (null), false);
   eq (Z.Chain.test (''), false);
   eq (Z.Chain.test ([]), true);
   eq (Z.Chain.test ({}), false);
 });
 
-test ('ChainRec', function() {
+test ('ChainRec', () => {
   eq (type (Z.ChainRec), 'sanctuary-type-classes/TypeClass@1');
   eq (Z.ChainRec.name, 'sanctuary-type-classes/ChainRec');
-  eq (Z.ChainRec.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#ChainRec');
+  eq (Z.ChainRec.url, `https://github.com/sanctuary-js/sanctuary-type-classes/tree/v${version}#ChainRec`);
   eq (Z.ChainRec.test (null), false);
   eq (Z.ChainRec.test (''), false);
   eq (Z.ChainRec.test ([]), true);
   eq (Z.ChainRec.test ({}), false);
 });
 
-test ('Monad', function() {
+test ('Monad', () => {
   eq (type (Z.Monad), 'sanctuary-type-classes/TypeClass@1');
   eq (Z.Monad.name, 'sanctuary-type-classes/Monad');
-  eq (Z.Monad.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Monad');
+  eq (Z.Monad.url, `https://github.com/sanctuary-js/sanctuary-type-classes/tree/v${version}#Monad`);
   eq (Z.Monad.test (null), false);
   eq (Z.Monad.test (''), false);
   eq (Z.Monad.test ([]), true);
   eq (Z.Monad.test ({}), false);
 });
 
-test ('Alt', function() {
+test ('Alt', () => {
   eq (type (Z.Alt), 'sanctuary-type-classes/TypeClass@1');
   eq (Z.Alt.name, 'sanctuary-type-classes/Alt');
-  eq (Z.Alt.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Alt');
+  eq (Z.Alt.url, `https://github.com/sanctuary-js/sanctuary-type-classes/tree/v${version}#Alt`);
   eq (Z.Alt.test (null), false);
   eq (Z.Alt.test (''), false);
   eq (Z.Alt.test ([]), true);
   eq (Z.Alt.test ({}), true);
 });
 
-test ('Plus', function() {
+test ('Plus', () => {
   eq (type (Z.Plus), 'sanctuary-type-classes/TypeClass@1');
   eq (Z.Plus.name, 'sanctuary-type-classes/Plus');
-  eq (Z.Plus.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Plus');
+  eq (Z.Plus.url, `https://github.com/sanctuary-js/sanctuary-type-classes/tree/v${version}#Plus`);
   eq (Z.Plus.test (null), false);
   eq (Z.Plus.test (''), false);
   eq (Z.Plus.test ([]), true);
   eq (Z.Plus.test ({}), true);
 });
 
-test ('Alternative', function() {
+test ('Alternative', () => {
   eq (type (Z.Alternative), 'sanctuary-type-classes/TypeClass@1');
   eq (Z.Alternative.name, 'sanctuary-type-classes/Alternative');
-  eq (Z.Alternative.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Alternative');
+  eq (Z.Alternative.url, `https://github.com/sanctuary-js/sanctuary-type-classes/tree/v${version}#Alternative`);
   eq (Z.Alternative.test (null), false);
   eq (Z.Alternative.test (''), false);
   eq (Z.Alternative.test ([]), true);
   eq (Z.Alternative.test ({}), false);
 });
 
-test ('Foldable', function() {
+test ('Foldable', () => {
   eq (type (Z.Foldable), 'sanctuary-type-classes/TypeClass@1');
   eq (Z.Foldable.name, 'sanctuary-type-classes/Foldable');
-  eq (Z.Foldable.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Foldable');
+  eq (Z.Foldable.url, `https://github.com/sanctuary-js/sanctuary-type-classes/tree/v${version}#Foldable`);
   eq (Z.Foldable.test (null), false);
   eq (Z.Foldable.test (''), false);
   eq (Z.Foldable.test ([]), true);
   eq (Z.Foldable.test ({}), true);
 });
 
-test ('Traversable', function() {
+test ('Traversable', () => {
   eq (type (Z.Traversable), 'sanctuary-type-classes/TypeClass@1');
   eq (Z.Traversable.name, 'sanctuary-type-classes/Traversable');
-  eq (Z.Traversable.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Traversable');
+  eq (Z.Traversable.url, `https://github.com/sanctuary-js/sanctuary-type-classes/tree/v${version}#Traversable`);
   eq (Z.Traversable.test (null), false);
   eq (Z.Traversable.test (''), false);
   eq (Z.Traversable.test ([]), true);
   eq (Z.Traversable.test ({}), true);
 });
 
-test ('Extend', function() {
+test ('Extend', () => {
   eq (type (Z.Extend), 'sanctuary-type-classes/TypeClass@1');
   eq (Z.Extend.name, 'sanctuary-type-classes/Extend');
-  eq (Z.Extend.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Extend');
+  eq (Z.Extend.url, `https://github.com/sanctuary-js/sanctuary-type-classes/tree/v${version}#Extend`);
   eq (Z.Extend.test (null), false);
   eq (Z.Extend.test (''), false);
   eq (Z.Extend.test ([]), true);
   eq (Z.Extend.test ({}), false);
 });
 
-test ('Comonad', function() {
+test ('Comonad', () => {
   eq (type (Z.Comonad), 'sanctuary-type-classes/TypeClass@1');
   eq (Z.Comonad.name, 'sanctuary-type-classes/Comonad');
-  eq (Z.Comonad.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Comonad');
+  eq (Z.Comonad.url, `https://github.com/sanctuary-js/sanctuary-type-classes/tree/v${version}#Comonad`);
   eq (Z.Comonad.test (null), false);
   eq (Z.Comonad.test (''), false);
   eq (Z.Comonad.test ([]), false);
@@ -556,10 +548,10 @@ test ('Comonad', function() {
   eq (Z.Comonad.test (Identity (0)), true);
 });
 
-test ('Contravariant', function() {
+test ('Contravariant', () => {
   eq (type (Z.Contravariant), 'sanctuary-type-classes/TypeClass@1');
   eq (Z.Contravariant.name, 'sanctuary-type-classes/Contravariant');
-  eq (Z.Contravariant.url, 'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version + '#Contravariant');
+  eq (Z.Contravariant.url, `https://github.com/sanctuary-js/sanctuary-type-classes/tree/v${version}#Contravariant`);
   eq (Z.Contravariant.test (null), false);
   eq (Z.Contravariant.test (''), false);
   eq (Z.Contravariant.test ([]), false);
@@ -567,7 +559,7 @@ test ('Contravariant', function() {
   eq (Z.Contravariant.test (Math.abs), true);
 });
 
-test ('equals', function() {
+test ('equals', () => {
   eq (Z.equals.length, 2);
   eq (Z.equals.name, 'equals');
 
@@ -681,8 +673,8 @@ test ('equals', function() {
   eq (Z.equals ((Just (0)).constructor, Maybe), true);
   eq (Z.equals (Lazy$of (0), Lazy$of (0)), false);
 
-  var $0 = {z: 0};
-  var $1 = {z: 1};
+  const $0 = {z: 0};
+  const $1 = {z: 1};
   $0.a = $1;
   $1.a = $0;
   eq (Z.equals ($0, $0), true);
@@ -690,7 +682,7 @@ test ('equals', function() {
   eq (Z.equals ($1, $0), false);
 });
 
-test ('lt', function() {
+test ('lt', () => {
   eq (Z.lt.length, 2);
   eq (Z.lt.name, 'lt');
 
@@ -700,7 +692,7 @@ test ('lt', function() {
   eq (Z.lt ('abc', 123), false);
 });
 
-test ('lte', function() {
+test ('lte', () => {
   eq (Z.lte.length, 2);
   eq (Z.lte.name, 'lte');
 
@@ -805,8 +797,8 @@ test ('lte', function() {
   eq (Z.lte (Lazy$of (0), Lazy$of (0)), false);
   eq (Z.lte ('abc', 123), false);
 
-  var $0 = {z: 0};
-  var $1 = {z: 1};
+  const $0 = {z: 0};
+  const $1 = {z: 1};
   $0.a = $1;
   $1.a = $0;
   eq (Z.lte ($0, $0), true);
@@ -814,7 +806,7 @@ test ('lte', function() {
   eq (Z.lte ($1, $0), false);
 });
 
-test ('gt', function() {
+test ('gt', () => {
   eq (Z.gt.length, 2);
   eq (Z.gt.name, 'gt');
 
@@ -824,7 +816,7 @@ test ('gt', function() {
   eq (Z.gt ('abc', 123), false);
 });
 
-test ('gte', function() {
+test ('gte', () => {
   eq (Z.gte.length, 2);
   eq (Z.gte.name, 'gte');
 
@@ -834,7 +826,7 @@ test ('gte', function() {
   eq (Z.gte ('abc', 123), false);
 });
 
-test ('min', function() {
+test ('min', () => {
   eq (Z.min.length, 2);
   eq (Z.min.name, 'min');
 
@@ -842,7 +834,7 @@ test ('min', function() {
   eq (Z.min (['x', 'x'], ['x']), ['x']);
 });
 
-test ('max', function() {
+test ('max', () => {
   eq (Z.max.length, 2);
   eq (Z.max.name, 'max');
 
@@ -850,7 +842,7 @@ test ('max', function() {
   eq (Z.max (['x', 'x'], ['x']), ['x', 'x']);
 });
 
-test ('clamp', function() {
+test ('clamp', () => {
   eq (Z.clamp.length, 3);
   eq (Z.clamp.name, 'clamp');
 
@@ -866,21 +858,21 @@ test ('clamp', function() {
   eq (Z.clamp ('A', 'Z', '~'), 'Z');
 });
 
-test ('compose', function() {
+test ('compose', () => {
   eq (Z.compose.length, 2);
   eq (Z.compose.name, 'compose');
 
   eq (Z.compose (Math.sqrt, inc) (99), 10);
 });
 
-test ('id', function() {
+test ('id', () => {
   eq (Z.id.length, 1);
   eq (Z.id.name, 'id');
 
   eq (Z.id (Function) (42), 42);
 });
 
-test ('concat', function() {
+test ('concat', () => {
   eq (Z.concat.length, 2);
   eq (Z.concat.name, 'concat');
 
@@ -909,7 +901,7 @@ test ('concat', function() {
   eq (Z.concat (Cons (1, Cons (2, Cons (3, Nil))), Cons (4, Cons (5, Cons (6, Nil)))), Cons (1, Cons (2, Cons (3, Cons (4, Cons (5, Cons (6, Nil)))))));
 });
 
-test ('empty', function() {
+test ('empty', () => {
   eq (Z.empty.length, 1);
   eq (Z.empty.name, 'empty');
 
@@ -925,7 +917,7 @@ test ('empty', function() {
   );
 });
 
-test ('invert', function() {
+test ('invert', () => {
   eq (Z.invert.length, 1);
   eq (Z.invert.name, 'invert');
 
@@ -933,7 +925,7 @@ test ('invert', function() {
   eq (Z.invert (Sum (-5)), Sum (5));
 });
 
-test ('filter', function() {
+test ('filter', () => {
   eq (Z.filter.length, 2);
   eq (Z.filter.name, 'filter');
 
@@ -948,7 +940,7 @@ test ('filter', function() {
   eq (Z.filter (odd, Just (1)), Just (1));
 });
 
-test ('reject', function() {
+test ('reject', () => {
   eq (Z.reject.length, 2);
   eq (Z.reject.name, 'reject');
 
@@ -963,7 +955,7 @@ test ('reject', function() {
   eq (Z.reject (odd, Just (1)), Nothing);
 });
 
-test ('map', function() {
+test ('map', () => {
   eq (Z.map.length, 2);
   eq (Z.map.name, 'map');
 
@@ -978,7 +970,7 @@ test ('map', function() {
   eq (Z.map (inc, Cons (1, Cons (2, Cons (3, Nil)))), Cons (2, Cons (3, Cons (4, Nil))));
 });
 
-test ('flip', function() {
+test ('flip', () => {
   eq (Z.flip.length, 2);
   eq (Z.flip.name, 'flip');
 
@@ -988,29 +980,29 @@ test ('flip', function() {
   eq (Z.flip (Cons (Math.floor, Cons (Math.ceil, Nil)), 1.5), Cons (1, Cons (2, Nil)));
 });
 
-test ('bimap', function() {
+test ('bimap', () => {
   eq (Z.bimap.length, 3);
   eq (Z.bimap.name, 'bimap');
 
   eq (Z.bimap (toUpper, inc, Pair ('abc') (123)), Pair ('ABC') (124));
 });
 
-test ('mapLeft', function() {
+test ('mapLeft', () => {
   eq (Z.mapLeft.length, 2);
   eq (Z.mapLeft.name, 'mapLeft');
 
   eq (Z.mapLeft (toUpper, Pair ('abc') ('def')), Pair ('ABC') ('def'));
 });
 
-test ('promap', function() {
+test ('promap', () => {
   eq (Z.promap.length, 3);
   eq (Z.promap.name, 'promap');
 
-  function lengths(xs) { return Z.map (length, xs); }
+  const lengths = xs => Z.map (length, xs);
   eq (Z.promap (lengths, square, sum) (['foo', 'bar', 'baz', 'quux']), 169);
 });
 
-test ('ap', function() {
+test ('ap', () => {
   eq (Z.ap.length, 2);
   eq (Z.ap.name, 'ap');
 
@@ -1038,7 +1030,7 @@ test ('ap', function() {
   eq (Z.ap (Cons (inc, Cons (square, Nil)), Cons (1, Cons (2, Cons (3, Nil)))), Cons (2, Cons (3, Cons (4, Cons (1, Cons (4, Cons (9, Nil)))))));
 });
 
-test ('lift2', function() {
+test ('lift2', () => {
   eq (Z.lift2.length, 3);
   eq (Z.lift2.name, 'lift2');
 
@@ -1046,7 +1038,7 @@ test ('lift2', function() {
   eq (Z.lift2 (pow, Identity (10), Identity (3)), Identity (1000));
 });
 
-test ('lift3', function() {
+test ('lift3', () => {
   eq (Z.lift3.length, 4);
   eq (Z.lift3.name, 'lift3');
 
@@ -1054,7 +1046,7 @@ test ('lift3', function() {
   eq (Z.lift3 (wrap, Identity ('<'), Identity ('>'), Identity ('baz')), Identity ('<baz>'));
 });
 
-test ('apFirst', function() {
+test ('apFirst', () => {
   eq (Z.apFirst.length, 2);
   eq (Z.apFirst.name, 'apFirst');
 
@@ -1062,7 +1054,7 @@ test ('apFirst', function() {
   eq (Z.apFirst (Identity (1), Identity (2)), Identity (1));
 });
 
-test ('apSecond', function() {
+test ('apSecond', () => {
   eq (Z.apSecond.length, 2);
   eq (Z.apSecond.name, 'apSecond');
 
@@ -1070,7 +1062,7 @@ test ('apSecond', function() {
   eq (Z.apSecond (Identity (1), Identity (2)), Identity (2));
 });
 
-test ('of', function() {
+test ('of', () => {
   eq (Z.of.length, 2);
   eq (Z.of.name, 'of');
 
@@ -1081,7 +1073,7 @@ test ('of', function() {
   eq (Z.of (Maybe, 42), Just (42));
 });
 
-test ('append', function() {
+test ('append', () => {
   eq (Z.append.length, 2);
   eq (Z.append.name, 'append');
 
@@ -1094,7 +1086,7 @@ test ('append', function() {
   eq (Z.append ([2], Just ([1])), Just ([1, 2]));
 });
 
-test ('prepend', function() {
+test ('prepend', () => {
   eq (Z.prepend.length, 2);
   eq (Z.prepend.name, 'prepend');
 
@@ -1107,7 +1099,7 @@ test ('prepend', function() {
   eq (Z.prepend ([1], Just ([2])), Just ([1, 2]));
 });
 
-test ('chain', function() {
+test ('chain', () => {
   eq (Z.chain.length, 2);
   eq (Z.chain.name, 'chain');
 
@@ -1122,7 +1114,7 @@ test ('chain', function() {
   eq ((Z.chain (identity, [((new Array (1e6)).join ('x')).split ('')])).length, 999999);
 });
 
-test ('join', function() {
+test ('join', () => {
   eq (Z.join.length, 1);
   eq (Z.join.name, 'join');
 
@@ -1135,36 +1127,36 @@ test ('join', function() {
   eq (Z.join (Identity (Identity (Identity (1)))), Identity (Identity (1)));
 });
 
-test ('chainRec', function() {
+test ('chainRec', () => {
   eq (Z.chainRec.length, 3);
   eq (Z.chainRec.name, 'chainRec');
 
-  var count = 0;
+  let count = 0;
 
   //  squash :: (Any -> a, Any -> a, Any) -> Array b
-  function squash(next, done, x) {
+  const squash = (next, done, x) => {
     if (Array.isArray (x)) return x.map (next);
     count += 1;
     return [done (x)];
-  }
+  };
 
   eq (Z.chainRec (Array, squash, [1, [[2, 3], 4], 5]), [1, 2, 3, 4, 5]);
   eq (count, 5);
 
-  eq (Z.chainRec (Array, function(next, done, n) { return n === 0 ? [done ('DONE')] : [next (n - 1)]; }, 100000), ['DONE']);
+  eq (Z.chainRec (Array, (next, done, n) => n === 0 ? [done ('DONE')] : [next (n - 1)], 100000), ['DONE']);
 
-  function stepper(next, done, n) {
-    return n === 30000
-      ? Z.map (done, function(env) { return n + env.inc; })
-      : Z.map (next, function(env) { return n + env.step; });
-  }
+  const stepper = (next, done, n) => (
+    n === 30000
+    ? Z.map (done, env => n + env.inc)
+    : Z.map (next, env => n + env.step)
+  );
 
   eq (Z.chainRec (Function, stepper, 0) ({step: 2, inc: 100}), 30100);
 
-  eq (Z.chainRec (Array, function(next, done, n) { return n === 0 ? [done (0)] : Z.map (next, repeat (n) (0)); }, 1e6).length, 1e6);
+  eq (Z.chainRec (Array, (next, done, n) => n === 0 ? [done (0)] : Z.map (next, repeat (n) (0)), 1e6).length, 1e6);
 });
 
-test ('alt', function() {
+test ('alt', () => {
   eq (Z.alt.length, 2);
   eq (Z.alt.name, 'alt');
 
@@ -1185,7 +1177,7 @@ test ('alt', function() {
   eq (Z.alt (Just (3), Just (4)), Just (3));
 });
 
-test ('zero', function() {
+test ('zero', () => {
   eq (Z.zero.length, 1);
   eq (Z.zero.name, 'zero');
 
@@ -1194,25 +1186,25 @@ test ('zero', function() {
   eq (Z.zero (Maybe), Nothing);
 });
 
-function testReduce(reduce) {
+const testReduce = reduce => {
   eq (reduce (Z.concat, 'x', []), 'x');
   eq (reduce (Z.concat, 'x', ['a', 'b', 'c']), 'xabc');
   eq (reduce (add, 0, {}), 0);
   eq (reduce (add, 0, {a: 1, b: 2, c: 3, d: 4, e: 5}), 15);
-  eq (reduce (function(xs, x) { return Z.concat (xs, [x]); }, [], {a: 1, b: 2, c: 3}), [1, 2, 3]);
-  eq (reduce (function(xs, x) { return Z.concat (xs, [x]); }, [], {c: 3, b: 2, a: 1}), [1, 2, 3]);
+  eq (reduce ((xs, x) => Z.concat (xs, [x]), [], {a: 1, b: 2, c: 3}), [1, 2, 3]);
+  eq (reduce ((xs, x) => Z.concat (xs, [x]), [], {c: 3, b: 2, a: 1}), [1, 2, 3]);
   eq (reduce (Z.concat, 'x', Nil), 'x');
   eq (reduce (Z.concat, 'x', Cons ('a', Cons ('b', Cons ('c', Nil)))), 'xabc');
-}
+};
 
-test ('reduce', function() {
+test ('reduce', () => {
   eq (Z.reduce.length, 3);
   eq (Z.reduce.name, 'reduce');
 
   testReduce (Z.reduce);
 });
 
-test ('size', function() {
+test ('size', () => {
   eq (Z.size.length, 1);
   eq (Z.size.name, 'size');
 
@@ -1230,7 +1222,7 @@ test ('size', function() {
   eq (Z.size (Pair ('abc') (123)), 1);
 });
 
-test ('all', function() {
+test ('all', () => {
   eq (Z.all.length, 2);
   eq (Z.all.name, 'all');
 
@@ -1253,7 +1245,7 @@ test ('all', function() {
   eq (Z.all (gt (0), Just (1)), true);
 });
 
-test ('any', function() {
+test ('any', () => {
   eq (Z.any.length, 2);
   eq (Z.any.name, 'any');
 
@@ -1276,7 +1268,7 @@ test ('any', function() {
   eq (Z.any (gt (0), Just (1)), true);
 });
 
-test ('none', function() {
+test ('none', () => {
   eq (Z.none.length, 2);
   eq (Z.none.name, 'none');
 
@@ -1299,7 +1291,7 @@ test ('none', function() {
   eq (Z.none (gt (0), Just (1)), false);
 });
 
-test ('elem', function() {
+test ('elem', () => {
   eq (Z.elem.length, 2);
   eq (Z.elem.name, 'elem');
 
@@ -1316,7 +1308,7 @@ test ('elem', function() {
   eq (Z.elem (0, Nothing), false);
 });
 
-test ('intercalate', function() {
+test ('intercalate', () => {
   eq (Z.intercalate.length, 2);
   eq (Z.intercalate.name, 'intercalate');
 
@@ -1334,7 +1326,7 @@ test ('intercalate', function() {
   eq (Z.intercalate ('.', Cons ('x', Cons ('y', Cons ('z', Nil)))), 'x.y.z');
 });
 
-test ('foldMap', function() {
+test ('foldMap', () => {
   eq (Z.foldMap.length, 3);
   eq (Z.foldMap.name, 'foldMap');
 
@@ -1344,23 +1336,23 @@ test ('foldMap', function() {
     if (!(this instanceof DualEndo)) return new DualEndo (f);
     this.runEndo = f;
   }
-  DualEndo['fantasy-land/empty'] = function() { return DualEndo (identity); };
+  DualEndo['fantasy-land/empty'] = () => DualEndo (identity);
   DualEndo.prototype['fantasy-land/concat'] = function(other) {
     return DualEndo (a => other.runEndo (this.runEndo (a)));
   };
 
   // Derive reduce (foldl) from foldMap
-  function reduce(f, z, x) {
-    function mmap(a) { return DualEndo (function(b) { return f (b, a); }); }
-    var finalEndo = Z.foldMap (DualEndo, mmap, x);
+  const reduce = (f, z, x) => {
+    const mmap = a => DualEndo (b => f (b, a));
+    const finalEndo = Z.foldMap (DualEndo, mmap, x);
     return finalEndo.runEndo (z);
-  }
+  };
 
   // Test derived reduce behaves identically to Z.reduce
   testReduce (reduce);
 });
 
-test ('reverse', function() {
+test ('reverse', () => {
   eq (Z.reverse.length, 1);
   eq (Z.reverse.name, 'reverse');
 
@@ -1374,11 +1366,11 @@ test ('reverse', function() {
   eq (Z.reverse (Cons (1, Cons (2, Cons (3, Nil)))), Cons (3, Cons (2, Cons (1, Nil))));
 });
 
-test ('sort', function() {
+test ('sort', () => {
   eq (Z.sort.length, 1);
   eq (Z.sort.name, 'sort');
 
-  function runAssertions() {
+  const runAssertions = () => {
     eq (Z.sort ([]), []);
     eq (Z.sort (['foo']), ['foo']);
     eq (Z.sort (['foo', 'bar']), ['bar', 'foo']);
@@ -1389,35 +1381,35 @@ test ('sort', function() {
     eq (Z.sort (Cons ('foo', Cons ('bar', Cons ('baz', Nil)))), Cons ('bar', Cons ('baz', Cons ('foo', Nil))));
     eq (Z.sort ([NaN, 3, NaN, 1, NaN, 2, NaN]), [NaN, NaN, NaN, NaN, 1, 2, 3]);
     eq (Z.sort ([Just (3), Just (1), Just (2)]), [Just (1), Just (2), Just (3)]);
-  }
+  };
 
   runAssertions ();
   withUnstableArraySort (runAssertions);
 });
 
-test ('sortBy', function() {
+test ('sortBy', () => {
   eq (Z.sortBy.length, 2);
   eq (Z.sortBy.name, 'sortBy');
 
-  function rank(card) { return card.rank; }
-  function suit(card) { return card.suit; }
-  var _7s = {rank: 7, suit: 's'};
-  var _5h = {rank: 5, suit: 'h'};
-  var _2h = {rank: 2, suit: 'h'};
-  var _5s = {rank: 5, suit: 's'};
+  const rank = card => card.rank;
+  const suit = card => card.suit;
+  const _7s = {rank: 7, suit: 's'};
+  const _5h = {rank: 5, suit: 'h'};
+  const _2h = {rank: 2, suit: 'h'};
+  const _5s = {rank: 5, suit: 's'};
 
-  function runAssertions() {
+  const runAssertions = () => {
     eq (Z.sortBy (rank, [_7s, _5h, _2h, _5s]), [_2h, _5h, _5s, _7s]);
     eq (Z.sortBy (rank, [_7s, _5s, _2h, _5h]), [_2h, _5s, _5h, _7s]);
     eq (Z.sortBy (suit, [_7s, _5h, _2h, _5s]), [_5h, _2h, _7s, _5s]);
     eq (Z.sortBy (suit, [_5s, _2h, _5h, _7s]), [_2h, _5h, _5s, _7s]);
-  }
+  };
 
   runAssertions ();
   withUnstableArraySort (runAssertions);
 });
 
-test ('traverse', function() {
+test ('traverse', () => {
   eq (Z.traverse.length, 3);
   eq (Z.traverse.name, 'traverse');
 
@@ -1435,7 +1427,7 @@ test ('traverse', function() {
   eq (Z.traverse (Array, identity, {a: [1, 2], b: [3, 4]}), [{a: 1, b: 3}, {a: 1, b: 4}, {a: 2, b: 3}, {a: 2, b: 4}]);
 });
 
-test ('sequence', function() {
+test ('sequence', () => {
   eq (Z.sequence.length, 2);
   eq (Z.sequence.name, 'sequence');
 
@@ -1452,7 +1444,7 @@ test ('sequence', function() {
   eq (Z.sequence (Array, {a: [1, 2], b: [3, 4]}), [{a: 1, b: 3}, {a: 1, b: 4}, {a: 2, b: 3}, {a: 2, b: 4}]);
 });
 
-test ('extend', function() {
+test ('extend', () => {
   eq (Z.extend.length, 2);
   eq (Z.extend.name, 'extend');
 
@@ -1460,11 +1452,11 @@ test ('extend', function() {
   eq (Z.extend (joinWith (''), ['x']), ['x']);
   eq (Z.extend (joinWith (''), ['x', 'y']), ['xy', 'y']);
   eq (Z.extend (joinWith (''), ['x', 'y', 'z']), ['xyz', 'yz', 'z']);
-  eq (Z.extend (function(id) { return Z.reduce (add, 1, id); }, Identity (42)), Identity (43));
-  eq (Z.extend (function(f) { return f ([3, 4]); }, Z.reverse) ([1, 2]), [4, 3, 2, 1]);
+  eq (Z.extend (id => Z.reduce (add, 1, id), Identity (42)), Identity (43));
+  eq (Z.extend (f => f ([3, 4]), Z.reverse) ([1, 2]), [4, 3, 2, 1]);
 });
 
-test ('duplicate', function() {
+test ('duplicate', () => {
   eq (Z.duplicate.length, 1);
   eq (Z.duplicate.name, 'duplicate');
 
@@ -1476,243 +1468,243 @@ test ('duplicate', function() {
   eq (Z.duplicate (Identity (Identity (1))), Identity (Identity (Identity (1))));
 });
 
-test ('extract', function() {
+test ('extract', () => {
   eq (Z.extract.length, 1);
   eq (Z.extract.name, 'extract');
 
   eq (Z.extract (Identity (42)), 42);
 });
 
-test ('contramap', function() {
+test ('contramap', () => {
   eq (Z.contramap.length, 2);
   eq (Z.contramap.name, 'contramap');
 
   eq (Z.contramap (length, inc) ('abc'), 4);
 });
 
-function testLaws(specs) {
-  (Object.keys (specs)).forEach (function(typeClassName) {
-    suite (typeClassName, function() {
-      var spec = specs[typeClassName];
-      (Object.keys (spec.module)).forEach (function(name) {
-        test (name.replace (/[A-Z]/g, function(c) { return ' ' + c.toLowerCase (); }),
-              spec.module[name].apply (spec.module, spec.laws[name]));
+const testLaws = specs => {
+  (Object.keys (specs)).forEach (typeClassName => {
+    suite (typeClassName, () => {
+      const spec = specs[typeClassName];
+      (Object.keys (spec.module)).forEach (name => {
+        test (name.replace (/[A-Z]/g, c => ' ' + c.toLowerCase ()),
+              spec.module[name] (...spec.laws[name]));
       });
     });
   });
-}
+};
 
-suite ('laws', function() {
+suite ('laws', () => {
 
-  suite ('Null', function() {
+  suite ('Null', () => {
     testLaws ({
       Setoid: {
         module: laws.Setoid,
         laws: {
           reflexivity: [
-            jsc.constant (null)
+            jsc.constant (null),
           ],
           symmetry: [
             jsc.constant (null),
-            jsc.constant (null)
+            jsc.constant (null),
           ],
           transitivity: [
             jsc.constant (null),
             jsc.constant (null),
-            jsc.constant (null)
-          ]
-        }
+            jsc.constant (null),
+          ],
+        },
       },
       Ord: {
         module: laws.Ord,
         laws: {
           totality: [
             jsc.constant (null),
-            jsc.constant (null)
+            jsc.constant (null),
           ],
           antisymmetry: [
             jsc.constant (null),
             jsc.constant (null),
-            jsc.constant (null)
+            jsc.constant (null),
           ],
           transitivity: [
             jsc.constant (null),
             jsc.constant (null),
-            jsc.constant (null)
-          ]
-        }
-      }
+            jsc.constant (null),
+          ],
+        },
+      },
     });
   });
 
-  suite ('Undefined', function() {
+  suite ('Undefined', () => {
     testLaws ({
       Setoid: {
         module: laws.Setoid,
         laws: {
           reflexivity: [
-            jsc.constant (undefined)
+            jsc.constant (undefined),
           ],
           symmetry: [
             jsc.constant (undefined),
-            jsc.constant (undefined)
+            jsc.constant (undefined),
           ],
           transitivity: [
             jsc.constant (undefined),
             jsc.constant (undefined),
-            jsc.constant (undefined)
-          ]
-        }
+            jsc.constant (undefined),
+          ],
+        },
       },
       Ord: {
         module: laws.Ord,
         laws: {
           totality: [
             jsc.constant (undefined),
-            jsc.constant (undefined)
+            jsc.constant (undefined),
           ],
           antisymmetry: [
             jsc.constant (undefined),
             jsc.constant (undefined),
-            jsc.constant (undefined)
+            jsc.constant (undefined),
           ],
           transitivity: [
             jsc.constant (undefined),
             jsc.constant (undefined),
-            jsc.constant (undefined)
-          ]
-        }
-      }
+            jsc.constant (undefined),
+          ],
+        },
+      },
     });
   });
 
-  suite ('Boolean', function() {
+  suite ('Boolean', () => {
     testLaws ({
       Setoid: {
         module: laws.Setoid,
         laws: {
           reflexivity: [
-            jsc.bool
+            jsc.bool,
           ],
           symmetry: [
             jsc.bool,
-            jsc.bool
+            jsc.bool,
           ],
           transitivity: [
             jsc.bool,
             jsc.bool,
-            jsc.bool
-          ]
-        }
+            jsc.bool,
+          ],
+        },
       },
       Ord: {
         module: laws.Ord,
         laws: {
           totality: [
             jsc.bool,
-            jsc.bool
+            jsc.bool,
           ],
           antisymmetry: [
             jsc.bool,
             jsc.bool,
-            jsc.bool
+            jsc.bool,
           ],
           transitivity: [
             jsc.bool,
             jsc.bool,
-            jsc.bool
-          ]
-        }
-      }
+            jsc.bool,
+          ],
+        },
+      },
     });
   });
 
-  suite ('Number', function() {
-    var arb = jsc.oneof (jsc.number, jsc.number, jsc.number, jsc.constant (Infinity), jsc.constant (-Infinity), jsc.constant (NaN));
+  suite ('Number', () => {
+    const arb = jsc.oneof (jsc.number, jsc.number, jsc.number, jsc.constant (Infinity), jsc.constant (-Infinity), jsc.constant (NaN));
     testLaws ({
       Setoid: {
         module: laws.Setoid,
         laws: {
           reflexivity: [
-            arb
+            arb,
           ],
           symmetry: [
             arb,
-            arb
+            arb,
           ],
           transitivity: [
             arb,
             arb,
-            arb
-          ]
-        }
+            arb,
+          ],
+        },
       },
       Ord: {
         module: laws.Ord,
         laws: {
           totality: [
             arb,
-            arb
+            arb,
           ],
           antisymmetry: [
             arb,
-            arb
+            arb,
           ],
           transitivity: [
             arb,
             arb,
-            arb
-          ]
-        }
-      }
+            arb,
+          ],
+        },
+      },
     });
   });
 
-  suite ('Date', function() {
-    var arb = jsc.oneof (jsc.datetime, jsc.datetime, jsc.constant (new Date (NaN)));
+  suite ('Date', () => {
+    const arb = jsc.oneof (jsc.datetime, jsc.datetime, jsc.constant (new Date (NaN)));
     testLaws ({
       Setoid: {
         module: laws.Setoid,
         laws: {
           reflexivity: [
-            arb
+            arb,
           ],
           symmetry: [
             arb,
-            arb
+            arb,
           ],
           transitivity: [
             arb,
             arb,
-            arb
-          ]
-        }
+            arb,
+          ],
+        },
       },
       Ord: {
         module: laws.Ord,
         laws: {
           totality: [
             arb,
-            arb
+            arb,
           ],
           antisymmetry: [
             arb,
-            arb
+            arb,
           ],
           transitivity: [
             arb,
             arb,
-            arb
-          ]
-        }
-      }
+            arb,
+          ],
+        },
+      },
     });
   });
 
-  suite ('RegExp', function() {
-    var arb = jsc.string.smap (function(s) {
-      var validFlags = ['', 'g', 'i', 'm', 'gi', 'gm', 'im', 'gim'];
-      var flags = validFlags[Math.floor (Math.random () * validFlags.length)];
+  suite ('RegExp', () => {
+    const arb = jsc.string.smap (s => {
+      const validFlags = ['', 'g', 'i', 'm', 'gi', 'gm', 'im', 'gim'];
+      const flags = validFlags[Math.floor (Math.random () * validFlags.length)];
       try {
         return new RegExp (s, flags);
       } catch (err) {
@@ -1724,58 +1716,58 @@ suite ('laws', function() {
         module: laws.Setoid,
         laws: {
           reflexivity: [
-            arb
+            arb,
           ],
           symmetry: [
             arb,
-            arb
+            arb,
           ],
           transitivity: [
             arb,
             arb,
-            arb
-          ]
-        }
-      }
+            arb,
+          ],
+        },
+      },
     });
   });
 
-  suite ('String', function() {
+  suite ('String', () => {
     testLaws ({
       Setoid: {
         module: laws.Setoid,
         laws: {
           reflexivity: [
-            jsc.string
+            jsc.string,
           ],
           symmetry: [
             jsc.string,
-            jsc.string
+            jsc.string,
           ],
           transitivity: [
             jsc.string,
             jsc.string,
-            jsc.string
-          ]
-        }
+            jsc.string,
+          ],
+        },
       },
       Ord: {
         module: laws.Ord,
         laws: {
           totality: [
             jsc.string,
-            jsc.string
+            jsc.string,
           ],
           antisymmetry: [
             jsc.string,
-            jsc.string
+            jsc.string,
           ],
           transitivity: [
             jsc.string,
             jsc.string,
-            jsc.string
-          ]
-        }
+            jsc.string,
+          ],
+        },
       },
       Semigroup: {
         module: laws.Semigroup (Z.equals),
@@ -1783,60 +1775,60 @@ suite ('laws', function() {
           associativity: [
             jsc.string,
             jsc.string,
-            jsc.string
-          ]
-        }
+            jsc.string,
+          ],
+        },
       },
       Monoid: {
         module: laws.Monoid (Z.equals, String),
         laws: {
           leftIdentity: [
-            jsc.string
+            jsc.string,
           ],
           rightIdentity: [
-            jsc.string
-          ]
-        }
-      }
+            jsc.string,
+          ],
+        },
+      },
     });
   });
 
-  suite ('Array', function() {
+  suite ('Array', () => {
     testLaws ({
       Setoid: {
         module: laws.Setoid,
         laws: {
           reflexivity: [
-            jsc.array (jsc.number)
+            jsc.array (jsc.number),
           ],
           symmetry: [
             jsc.array (jsc.number),
-            jsc.array (jsc.number)
+            jsc.array (jsc.number),
           ],
           transitivity: [
             jsc.array (jsc.number),
             jsc.array (jsc.number),
-            jsc.array (jsc.number)
-          ]
-        }
+            jsc.array (jsc.number),
+          ],
+        },
       },
       Ord: {
         module: laws.Ord,
         laws: {
           totality: [
             jsc.array (jsc.number),
-            jsc.array (jsc.number)
+            jsc.array (jsc.number),
           ],
           antisymmetry: [
             jsc.array (jsc.number),
-            jsc.array (jsc.number)
+            jsc.array (jsc.number),
           ],
           transitivity: [
             jsc.array (jsc.number),
             jsc.array (jsc.number),
-            jsc.array (jsc.number)
-          ]
-        }
+            jsc.array (jsc.number),
+          ],
+        },
       },
       Semigroup: {
         module: laws.Semigroup (Z.equals),
@@ -1844,20 +1836,20 @@ suite ('laws', function() {
           associativity: [
             jsc.array (jsc.number),
             jsc.array (jsc.number),
-            jsc.array (jsc.number)
-          ]
-        }
+            jsc.array (jsc.number),
+          ],
+        },
       },
       Monoid: {
         module: laws.Monoid (Z.equals, Array),
         laws: {
           leftIdentity: [
-            jsc.array (jsc.number)
+            jsc.array (jsc.number),
           ],
           rightIdentity: [
-            jsc.array (jsc.number)
-          ]
-        }
+            jsc.array (jsc.number),
+          ],
+        },
       },
       Filterable: {
         module: laws.Filterable (Z.equals),
@@ -1865,29 +1857,29 @@ suite ('laws', function() {
           distributivity: [
             jsc.array (jsc.number),
             jsc.constant (gt (-10)),
-            jsc.constant (lt (10))
+            jsc.constant (lt (10)),
           ],
           identity: [
-            jsc.array (jsc.number)
+            jsc.array (jsc.number),
           ],
           annihilation: [
             jsc.array (jsc.number),
-            jsc.array (jsc.number)
-          ]
-        }
+            jsc.array (jsc.number),
+          ],
+        },
       },
       Functor: {
         module: laws.Functor (Z.equals),
         laws: {
           identity: [
-            jsc.array (jsc.number)
+            jsc.array (jsc.number),
           ],
           composition: [
             jsc.array (jsc.number),
             jsc.constant (Math.sqrt),
-            jsc.constant (Math.abs)
-          ]
-        }
+            jsc.constant (Math.abs),
+          ],
+        },
       },
       Apply: {
         module: laws.Apply (Z.equals),
@@ -1895,58 +1887,58 @@ suite ('laws', function() {
           composition: [
             jsc.constant ([Math.sqrt, square]),
             jsc.constant ([Math.abs]),
-            jsc.array (jsc.number)
-          ]
-        }
+            jsc.array (jsc.number),
+          ],
+        },
       },
       Applicative: {
         module: laws.Applicative (Z.equals, Array),
         laws: {
           identity: [
-            jsc.array (jsc.number)
+            jsc.array (jsc.number),
           ],
           homomorphism: [
             jsc.constant (square),
-            jsc.number
+            jsc.number,
           ],
           interchange: [
             jsc.constant ([Math.abs, square]),
-            jsc.number
-          ]
-        }
+            jsc.number,
+          ],
+        },
       },
       Chain: {
         module: laws.Chain (Z.equals),
         laws: {
           associativity: [
             jsc.array (jsc.number),
-            jsc.constant (function(x) { return x > 0 ? [x] : []; }),
-            jsc.constant (function(x) { return [-x, x]; })
-          ]
-        }
+            jsc.constant (x => x > 0 ? [x] : []),
+            jsc.constant (x => [-x, x]),
+          ],
+        },
       },
       ChainRec: {
         module: laws.ChainRec (Z.equals, Array),
         laws: {
           equivalence: [
-            jsc.constant (function(s) { return s.length === 2; }),
-            jsc.constant (function(s) { return [s + 'o', s + 'n']; }),
-            jsc.constant (function(s) { return [s + '!', s + '?']; }),
-            jsc.constant ('')
-          ]
-        }
+            jsc.constant (s => s.length === 2),
+            jsc.constant (s => [s + 'o', s + 'n']),
+            jsc.constant (s => [s + '!', s + '?']),
+            jsc.constant (''),
+          ],
+        },
       },
       Monad: {
         module: laws.Monad (Z.equals, Array),
         laws: {
           leftIdentity: [
             jsc.constant (double),
-            jsc.number
+            jsc.number,
           ],
           rightIdentity: [
-            jsc.array (jsc.number)
-          ]
-        }
+            jsc.array (jsc.number),
+          ],
+        },
       },
       Alt: {
         module: laws.Alt (Z.equals),
@@ -1954,28 +1946,28 @@ suite ('laws', function() {
           associativity: [
             jsc.array (jsc.number),
             jsc.array (jsc.number),
-            jsc.array (jsc.number)
+            jsc.array (jsc.number),
           ],
           distributivity: [
             jsc.array (jsc.number),
             jsc.array (jsc.number),
-            jsc.constant (square)
-          ]
-        }
+            jsc.constant (square),
+          ],
+        },
       },
       Plus: {
         module: laws.Plus (Z.equals, Array),
         laws: {
           leftIdentity: [
-            jsc.array (jsc.number)
+            jsc.array (jsc.number),
           ],
           rightIdentity: [
-            jsc.array (jsc.number)
+            jsc.array (jsc.number),
           ],
           annihilation: [
-            jsc.constant (square)
-          ]
-        }
+            jsc.constant (square),
+          ],
+        },
       },
       Alternative: {
         module: laws.Alternative (Z.equals, Array),
@@ -1983,22 +1975,22 @@ suite ('laws', function() {
           distributivity: [
             jsc.array (jsc.number),
             jsc.constant ([Math.abs, Math.sqrt]),
-            jsc.constant ([square])
+            jsc.constant ([square]),
           ],
           annihilation: [
-            jsc.array (jsc.number)
-          ]
-        }
+            jsc.array (jsc.number),
+          ],
+        },
       },
       Foldable: {
         module: laws.Foldable (Z.equals),
         laws: {
           associativity: [
-            jsc.constant (function(x, y) { return x - y; }),
+            jsc.constant ((x, y) => x - y),
             jsc.number,
-            jsc.array (jsc.number)
-          ]
-        }
+            jsc.array (jsc.number),
+          ],
+        },
       },
       Traversable: {
         module: laws.Traversable (Z.equals),
@@ -2007,18 +1999,18 @@ suite ('laws', function() {
             jsc.constant (List),
             jsc.constant (Array),
             jsc.constant (listToArray),
-            jsc.array (ListArb (jsc.number))
+            jsc.array (ListArb (jsc.number)),
           ],
           identity: [
             jsc.constant (Identity),
-            jsc.array (jsc.number)
+            jsc.array (jsc.number),
           ],
           composition: [
             jsc.constant (Maybe),
             jsc.constant (List),
-            jsc.array (MaybeArb (ListArb (jsc.number)))
-          ]
-        }
+            jsc.array (MaybeArb (ListArb (jsc.number))),
+          ],
+        },
       },
       Extend: {
         module: laws.Extend (Z.equals),
@@ -2026,113 +2018,113 @@ suite ('laws', function() {
           associativity: [
             jsc.array (jsc.number),
             jsc.constant (product),
-            jsc.constant (sum)
-          ]
-        }
-      }
+            jsc.constant (sum),
+          ],
+        },
+      },
     });
   });
 
-  suite ('Arguments', function() {
-    var arb = (jsc.array (jsc.oneof (jsc.number, jsc.string))).smap (Function.prototype.apply.bind (args));
+  suite ('Arguments', () => {
+    const arb = (jsc.array (jsc.oneof (jsc.number, jsc.string))).smap (Function.prototype.apply.bind (args));
     testLaws ({
       Setoid: {
         module: laws.Setoid,
         laws: {
           reflexivity: [
-            arb
+            arb,
           ],
           symmetry: [
             arb,
-            arb
+            arb,
           ],
           transitivity: [
             arb,
             arb,
-            arb
-          ]
-        }
+            arb,
+          ],
+        },
       },
       Ord: {
         module: laws.Ord,
         laws: {
           totality: [
             arb,
-            arb
+            arb,
           ],
           antisymmetry: [
             arb,
-            arb
+            arb,
           ],
           transitivity: [
             arb,
             arb,
-            arb
-          ]
-        }
-      }
+            arb,
+          ],
+        },
+      },
     });
   });
 
-  suite ('Error', function() {
-    var arb = jsc.string.smap (function(s) { return new Error (s); });
+  suite ('Error', () => {
+    const arb = jsc.string.smap (s => new Error (s));
     testLaws ({
       Setoid: {
         module: laws.Setoid,
         laws: {
           reflexivity: [
-            arb
+            arb,
           ],
           symmetry: [
             arb,
-            arb
+            arb,
           ],
           transitivity: [
             arb,
             arb,
-            arb
-          ]
-        }
-      }
+            arb,
+          ],
+        },
+      },
     });
   });
 
-  suite ('Object', function() {
+  suite ('Object', () => {
     testLaws ({
       Setoid: {
         module: laws.Setoid,
         laws: {
           reflexivity: [
-            jsc.dict (jsc.array (jsc.number))
+            jsc.dict (jsc.array (jsc.number)),
           ],
           symmetry: [
             jsc.dict (jsc.array (jsc.number)),
-            jsc.dict (jsc.array (jsc.number))
+            jsc.dict (jsc.array (jsc.number)),
           ],
           transitivity: [
             jsc.dict (jsc.array (jsc.number)),
             jsc.dict (jsc.array (jsc.number)),
-            jsc.dict (jsc.array (jsc.number))
-          ]
-        }
+            jsc.dict (jsc.array (jsc.number)),
+          ],
+        },
       },
       Ord: {
         module: laws.Ord,
         laws: {
           totality: [
             jsc.dict (jsc.array (jsc.number)),
-            jsc.dict (jsc.array (jsc.number))
+            jsc.dict (jsc.array (jsc.number)),
           ],
           antisymmetry: [
             jsc.dict (jsc.array (jsc.number)),
-            jsc.dict (jsc.array (jsc.number))
+            jsc.dict (jsc.array (jsc.number)),
           ],
           transitivity: [
             jsc.dict (jsc.array (jsc.number)),
             jsc.dict (jsc.array (jsc.number)),
-            jsc.dict (jsc.array (jsc.number))
-          ]
-        }
+            jsc.dict (jsc.array (jsc.number)),
+          ],
+        },
       },
       Semigroup: {
         module: laws.Semigroup (Z.equals),
@@ -2140,50 +2132,50 @@ suite ('laws', function() {
           associativity: [
             jsc.dict (jsc.array (jsc.number)),
             jsc.dict (jsc.array (jsc.number)),
-            jsc.dict (jsc.array (jsc.number))
-          ]
-        }
+            jsc.dict (jsc.array (jsc.number)),
+          ],
+        },
       },
       Monoid: {
         module: laws.Monoid (Z.equals, Object),
         laws: {
           leftIdentity: [
-            jsc.dict (jsc.array (jsc.number))
+            jsc.dict (jsc.array (jsc.number)),
           ],
           rightIdentity: [
-            jsc.dict (jsc.array (jsc.number))
-          ]
-        }
+            jsc.dict (jsc.array (jsc.number)),
+          ],
+        },
       },
       Filterable: {
         module: laws.Filterable (Z.equals),
         laws: {
           distributivity: [
             jsc.dict (jsc.array (jsc.number)),
-            jsc.constant (function(xs) { return xs.length % 2 === 0; }),
-            jsc.constant (compose (gt (0)) (sum))
+            jsc.constant (xs => xs.length % 2 === 0),
+            jsc.constant (compose (gt (0)) (sum)),
           ],
           identity: [
-            jsc.dict (jsc.array (jsc.number))
+            jsc.dict (jsc.array (jsc.number)),
           ],
           annihilation: [
             jsc.dict (jsc.array (jsc.number)),
-            jsc.dict (jsc.array (jsc.number))
-          ]
-        }
+            jsc.dict (jsc.array (jsc.number)),
+          ],
+        },
       },
       Functor: {
         module: laws.Functor (Z.equals),
         laws: {
           identity: [
-            jsc.dict (jsc.array (jsc.number))
+            jsc.dict (jsc.array (jsc.number)),
           ],
           composition: [
             jsc.dict (jsc.array (jsc.number)),
             jsc.constant (Math.round),
-            jsc.constant (sum)
-          ]
-        }
+            jsc.constant (sum),
+          ],
+        },
       },
       Apply: {
         module: laws.Apply (Z.equals),
@@ -2191,9 +2183,9 @@ suite ('laws', function() {
           composition: [
             jsc.dict (jsc.constant (Math.round)),
             jsc.dict (jsc.constant (sum)),
-            jsc.dict (jsc.array (jsc.number))
-          ]
-        }
+            jsc.dict (jsc.array (jsc.number)),
+          ],
+        },
       },
       Alt: {
         module: laws.Alt (Z.equals),
@@ -2201,28 +2193,28 @@ suite ('laws', function() {
           associativity: [
             jsc.dict (jsc.array (jsc.number)),
             jsc.dict (jsc.array (jsc.number)),
-            jsc.dict (jsc.array (jsc.number))
+            jsc.dict (jsc.array (jsc.number)),
           ],
           distributivity: [
             jsc.dict (jsc.array (jsc.number)),
             jsc.dict (jsc.array (jsc.number)),
-            jsc.constant (sum)
-          ]
-        }
+            jsc.constant (sum),
+          ],
+        },
       },
       Plus: {
         module: laws.Plus (Z.equals, Object),
         laws: {
           leftIdentity: [
-            jsc.dict (jsc.array (jsc.number))
+            jsc.dict (jsc.array (jsc.number)),
           ],
           rightIdentity: [
-            jsc.dict (jsc.array (jsc.number))
+            jsc.dict (jsc.array (jsc.number)),
           ],
           annihilation: [
-            jsc.constant (sum)
-          ]
-        }
+            jsc.constant (sum),
+          ],
+        },
       },
       Foldable: {
         module: laws.Foldable (Z.equals),
@@ -2230,9 +2222,9 @@ suite ('laws', function() {
           associativity: [
             jsc.constant (Z.concat),
             jsc.array (jsc.number),
-            jsc.dict (jsc.array (jsc.number))
-          ]
-        }
+            jsc.dict (jsc.array (jsc.number)),
+          ],
+        },
       },
       Traversable: {
         module: laws.Traversable (Z.equals),
@@ -2241,46 +2233,42 @@ suite ('laws', function() {
             jsc.constant (List),
             jsc.constant (Array),
             jsc.constant (listToArray),
-            jsc.dict (ListArb (jsc.number))
+            jsc.dict (ListArb (jsc.number)),
           ],
           identity: [
             jsc.constant (Identity),
-            jsc.dict (jsc.array (jsc.number))
+            jsc.dict (jsc.array (jsc.number)),
           ],
           composition: [
             jsc.constant (Maybe),
             jsc.constant (List),
-            jsc.dict (MaybeArb (ListArb (jsc.number)))
-          ]
-        }
-      }
+            jsc.dict (MaybeArb (ListArb (jsc.number))),
+          ],
+        },
+      },
     });
   });
 
-  suite ('Function', function() {
-    function resultsEqual(x) {
-      return function(f, g) {
-        return Z.equals (f (x), g (x));
-      };
-    }
-    var arb = jsc.oneof (jsc.constant (abs), jsc.constant (square));
+  suite ('Function', () => {
+    const resultsEqual = x => (f, g) => Z.equals (f (x), g (x));
+    const arb = jsc.oneof (jsc.constant (abs), jsc.constant (square));
     testLaws ({
       Setoid: {
         module: laws.Setoid,
         laws: {
           reflexivity: [
-            arb
+            arb,
           ],
           symmetry: [
             arb,
-            arb
+            arb,
           ],
           transitivity: [
             arb,
             arb,
-            arb
-          ]
-        }
+            arb,
+          ],
+        },
       },
       Semigroupoid: {
         module: laws.Semigroupoid (resultsEqual (['foo', 'bar', 'baz'])),
@@ -2288,133 +2276,133 @@ suite ('laws', function() {
           associativity: [
             jsc.constant (square),
             jsc.constant (length),
-            jsc.constant (joinWith (''))
-          ]
-        }
+            jsc.constant (joinWith ('')),
+          ],
+        },
       },
       Category: {
         module: laws.Category (resultsEqual (['foo', 'bar', 'baz'])),
         laws: {
           leftIdentity: [
             jsc.constant (Function),
-            jsc.constant (joinWith (''))
+            jsc.constant (joinWith ('')),
           ],
           rightIdentity: [
             jsc.constant (Function),
-            jsc.constant (joinWith (''))
-          ]
-        }
+            jsc.constant (joinWith ('')),
+          ],
+        },
       },
       Functor: {
         module: laws.Functor (resultsEqual (['foo', 'bar', 'baz'])),
         laws: {
           identity: [
-            jsc.constant (Z.reverse)
+            jsc.constant (Z.reverse),
           ],
           composition: [
             jsc.constant (Z.reverse),
             jsc.constant (splitOn ('a')),
-            jsc.constant (joinWith ('-'))
-          ]
-        }
+            jsc.constant (joinWith ('-')),
+          ],
+        },
       },
       Profunctor: {
         module: laws.Profunctor (resultsEqual (['foo', 'bar', 'baz'])),
         laws: {
           identity: [
-            jsc.constant (append ('3'))
+            jsc.constant (append ('3')),
           ],
           composition: [
             jsc.constant (append ('3')),
             jsc.constant (append ('2')),
             jsc.constant (append ('1')),
             jsc.constant (append ('5')),
-            jsc.constant (append ('4'))
-          ]
-        }
+            jsc.constant (append ('4')),
+          ],
+        },
       },
       Apply: {
         module: laws.Apply (resultsEqual (['foo', 'bar', 'baz'])),
         laws: {
           composition: [
-            jsc.constant (function(xs) { return function(x) { return [x].concat (xs); }; }),
-            jsc.constant (function(xs) { return function(n) { return xs[n - 1]; }; }),
-            jsc.constant (length)
-          ]
-        }
+            jsc.constant (xs => x => [x].concat (xs)),
+            jsc.constant (xs => n => xs[n - 1]),
+            jsc.constant (length),
+          ],
+        },
       },
       Applicative: {
         module: laws.Applicative (resultsEqual (['foo', 'bar', 'baz']), Function),
         laws: {
           identity: [
-            jsc.constant (length)
+            jsc.constant (length),
           ],
           homomorphism: [
             jsc.constant (joinWith ('')),
-            jsc.array (jsc.string)
+            jsc.array (jsc.string),
           ],
           interchange: [
             jsc.constant (concat),
-            jsc.array (jsc.string)
-          ]
-        }
+            jsc.array (jsc.string),
+          ],
+        },
       },
       Chain: {
         module: laws.Chain (resultsEqual (['foo', 'bar', 'baz'])),
         laws: {
           associativity: [
             jsc.constant (length),
-            jsc.constant (function(n) { return function(xs) { return xs[n - 1]; }; }),
-            jsc.constant (function(x) { return function(xs) { return [x].concat (xs); }; })
-          ]
-        }
+            jsc.constant (n => xs => xs[n - 1]),
+            jsc.constant (x => xs => [x].concat (xs)),
+          ],
+        },
       },
       ChainRec: {
         module: laws.ChainRec (resultsEqual ({step: 2, inc: 100}), Function),
         laws: {
           equivalence: [
-            jsc.constant (function p(n) { return n === 3000; }),
-            jsc.constant (function n(n) { return function(env) { return n + env.step; }; }),
-            jsc.constant (function d(n) { return function(env) { return n + env.inc; }; }),
-            jsc.constant (0)
-          ]
-        }
+            jsc.constant (n => n === 3000),
+            jsc.constant (n => env => n + env.step),
+            jsc.constant (n => env => n + env.inc),
+            jsc.constant (0),
+          ],
+        },
       },
       Monad: {
         module: laws.Monad (resultsEqual (['foo', 'bar', 'baz']), Function),
         laws: {
           leftIdentity: [
             jsc.constant (compose (joinWith ('-'))),
-            jsc.constant (Z.reverse)
+            jsc.constant (Z.reverse),
           ],
           rightIdentity: [
-            jsc.constant (Z.reverse)
-          ]
-        }
+            jsc.constant (Z.reverse),
+          ],
+        },
       },
       Extend: {
         module: laws.Extend (resultsEqual (['foo', 'bar', 'baz'])),
         laws: {
           associativity: [
             jsc.constant (Z.reverse),
-            jsc.constant (function(f) { return f (['(w b) -> c']); }),
-            jsc.constant (function(f) { return f (['(w a) -> b']); })
-          ]
-        }
+            jsc.constant (f => f (['(w b) -> c'])),
+            jsc.constant (f => f (['(w a) -> b'])),
+          ],
+        },
       },
       Contravariant: {
         module: laws.Contravariant (resultsEqual (['foo', 'bar', 'baz'])),
         laws: {
           identity: [
-            jsc.constant (Z.reverse)
+            jsc.constant (Z.reverse),
           ],
           composition: [
             jsc.constant (Z.reverse),
             jsc.constant (splitOn ('a')),
-            jsc.constant (joinWith ('-'))
-          ]
-        }
-      }
+            jsc.constant (joinWith ('-')),
+          ],
+        },
+      },
     });
   });
 

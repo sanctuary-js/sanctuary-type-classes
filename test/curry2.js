@@ -1,6 +1,6 @@
 'use strict';
 
-var eq = require ('./eq');
+const eq = require ('./eq');
 
 
 //  curry2 :: ((a, b) -> c) -> (a -> b -> c)

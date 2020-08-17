@@ -1,10 +1,10 @@
 'use strict';
 
-var assert = require ('assert');
+const assert = require ('assert');
 
-var show = require ('sanctuary-show');
+const show = require ('sanctuary-show');
 
-var Z = require ('..');
+const Z = require ('..');
 
 
 //  eq :: (Any, Any) -> Undefined !

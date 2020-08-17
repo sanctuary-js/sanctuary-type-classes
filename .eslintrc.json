@@ -1,13 +1,12 @@
 {
   "root": true,
-  "extends": ["./node_modules/sanctuary-style/eslint-es3.json"],
+  "extends": ["./node_modules/sanctuary-style/eslint-es6.json"],
   "overrides": [
     {
       "files": ["*.md"],
       "rules": {
         "array-element-newline": ["off"],
         "eqeqeq": ["off"],
-        "func-style": ["error", "declaration", {"allowArrowFunctions": true}],
         "no-undef": ["off"],
         "no-unused-vars": ["error", {"varsIgnorePattern": "^Bar$"}]
       }

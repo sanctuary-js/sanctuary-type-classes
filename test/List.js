@@ -1,15 +1,15 @@
 'use strict';
 
-var FL = require ('fantasy-land');
-var show = require ('sanctuary-show');
+const FL = require ('fantasy-land');
+const show = require ('sanctuary-show');
 
-var Z = require ('..');
+const Z = require ('..');
 
-var curry2 = require ('./curry2');
-var eq = require ('./eq');
+const curry2 = require ('./curry2');
+const eq = require ('./eq');
 
 
-var List = {prototype: _List.prototype};
+const List = {prototype: _List.prototype};
 
 List.prototype.constructor = List;
 
@@ -23,17 +23,17 @@ function _List(tag, head, tail) {
 }
 
 //  Nil :: List a
-var Nil = List.Nil = new _List ('Nil');
+const Nil = List.Nil = new _List ('Nil');
 
 //  Cons :: (a, List a) -> List a
-var Cons = List.Cons = function Cons(head, tail) {
+const Cons = List.Cons = function Cons(head, tail) {
   eq (arguments.length, Cons.length);
   return new _List ('Cons', head, tail);
 };
 
-List[FL.empty] = function() { return Nil; };
+List[FL.empty] = () => Nil;
 
-List[FL.of] = function(x) { return Cons (x, Nil); };
+List[FL.of] = x => Cons (x, Nil);
 
 List[FL.zero] = List[FL.empty];
 

@@ -68,7 +68,7 @@
 //.
 //. ## API
 
-(function(f) {
+(f => {
 
   'use strict';
 
@@ -81,13 +81,13 @@
     self.sanctuaryTypeClasses = f (self.sanctuaryTypeIdentifiers);
   }
 
-} (function(type) {
+}) (type => {
 
   'use strict';
 
   /* istanbul ignore if */
   if (typeof __doctest !== 'undefined') {
-    /* eslint-disable no-unused-vars */
+    /* eslint-disable no-unused-vars, no-var */
     var Identity = __doctest.require ('sanctuary-identity');
     var List = __doctest.require ('./test/List');
     var Maybe = __doctest.require ('sanctuary-maybe');
@@ -95,76 +95,36 @@
     var Sum = __doctest.require ('./test/Sum');
     var Useless = __doctest.require ('sanctuary-useless');
 
-    var Nil = List.Nil, Cons = List.Cons;
-    var Nothing = Maybe.Nothing, Just = Maybe.Just;
-    /* eslint-enable no-unused-vars */
+    var {Nil, Cons} = List;
+    var {Nothing, Just} = Maybe;
+    /* eslint-enable no-unused-vars, no-var */
   }
 
   //  concat_ :: Array a -> Array a -> Array a
-  function concat_(xs) {
-    return function(ys) {
-      return xs.concat (ys);
-    };
-  }
-
-  //  constant :: a -> b -> a
-  function constant(x) {
-    return function(y) {
-      return x;
-    };
-  }
-
-  //  forEachKey :: (StrMap a, StrMap a ~> String -> Undefined) -> Undefined
-  function forEachKey(strMap, f) {
-    (Object.keys (strMap)).forEach (f, strMap);
-  }
+  const concat_ = xs => ys => xs.concat (ys);
 
   //  has :: (String, Object) -> Boolean
-  function has(k, o) {
-    return Object.prototype.hasOwnProperty.call (o, k);
-  }
+  const has = (k, o) => Object.prototype.hasOwnProperty.call (o, k);
 
   //  identity :: a -> a
-  function identity(x) { return x; }
+  const identity = x => x;
 
   //  pair :: a -> b -> Array2 a b
-  function pair(x) {
-    return function(y) {
-      return [x, y];
-    };
-  }
+  const pair = x => y => [x, y];
 
   //  sameType :: (a, b) -> Boolean
-  function sameType(x, y) {
-    return typeof x === typeof y && type (x) === type (y);
-  }
+  const sameType = (x, y) => typeof x === typeof y && type (x) === type (y);
 
   //  sortedKeys :: Object -> Array String
-  function sortedKeys(o) {
-    return (Object.keys (o)).sort ();
-  }
-
-  //  thrush :: a -> (a -> b) -> b
-  function thrush(x) {
-    return function(f) {
-      return f (x);
-    };
-  }
-
-  //  unary :: (a -> b) -> (a, Any...) -> b
-  function unary(f) {
-    return function(x) {
-      return f (x);
-    };
-  }
+  const sortedKeys = o => (Object.keys (o)).sort ();
 
   //  type Iteration a = { value :: a, done :: Boolean }
 
   //  iterationNext :: a -> Iteration a
-  function iterationNext(x) { return {value: x, done: false}; }
+  const iterationNext = x => ({value: x, done: false});
 
   //  iterationDone :: a -> Iteration a
-  function iterationDone(x) { return {value: x, done: true}; }
+  const iterationDone = x => ({value: x, done: true});
 
   //# TypeClass :: (String, String, Array TypeClass, a -> Boolean) -> TypeClass
   //.
@@ -212,71 +172,53 @@
   //. `TypeClass` values may be used with [sanctuary-def][type-classes]
   //. to define parametrically polymorphic functions which verify their
   //. type-class constraints at run time.
-  function TypeClass(name, url, dependencies, test) {
-    return {
-      '@@type': 'sanctuary-type-classes/TypeClass@1',
-      'name': name,
-      'url': url,
-      'test': function(x) {
-        return dependencies.every (function(d) { return d.test (x); }) &&
-               test (x);
-      }
-    };
-  }
+  const TypeClass = (name, url, dependencies, test) => ({
+    '@@type': 'sanctuary-type-classes/TypeClass@1',
+    'name': name,
+    'url': url,
+    'test': x => dependencies.every (d => d.test (x)) && test (x),
+  });
 
   //  data Location = Constructor | Value
 
   //  Constructor :: Location
-  var Constructor = 'Constructor';
+  const Constructor = 'Constructor';
 
   //  Value :: Location
-  var Value = 'Value';
+  const Value = 'Value';
 
-  //  functionName :: Function -> String
-  var functionName = has ('name', Function) ?
-    function functionName(f) { return f.name; } :
-    /* istanbul ignore next */
-    function functionName(f) {
-      var match = /function (\w*)/.exec (f);
-      return match == null ? '' : match[1];
-    };
+  const getStaticMethod = _name => {
+    const name = 'fantasy-land/' + _name;
+    return typeRep => (
+      typeRep != null && typeof typeRep[name] === 'function' ?
+        typeRep[name] :
+      typeof typeRep === 'function' ?
+        staticMethod (name, typeRep) :
+      // else
+        null
+    );
+  };
 
-  function getStaticMethod(_name) {
-    var name = 'fantasy-land/' + _name;
-    return function(typeRep) {
-      return (
-        typeRep != null && typeof typeRep[name] === 'function' ?
-          typeRep[name] :
-        typeof typeRep === 'function' ?
-          staticMethod (name, typeRep) :
-        // else
-          null
-      );
-    };
-  }
-
-  function getPrototypeMethod(_name) {
-    var name = 'fantasy-land/' + _name;
-    return function(x) {
-      return (
-        x != null &&
-        (x.constructor == null || x.constructor.prototype !== x) &&
-        typeof x[name] === 'function' ?
-          x[name] :
-        // else
-          prototypeMethod (name, x)
-      );
-    };
-  }
+  const getPrototypeMethod = _name => {
+    const name = 'fantasy-land/' + _name;
+    return x => (
+      x != null &&
+      (x.constructor == null || x.constructor.prototype !== x) &&
+      typeof x[name] === 'function' ?
+        x[name] :
+      // else
+        prototypeMethod (name, x)
+    );
+  };
 
   //  $ :: (String, Array TypeClass, StrMap (Array Location)) -> TypeClass
-  function $(_name, dependencies, requirements) {
-    var version = '12.1.0';  // updated programmatically
+  const $ = (_name, dependencies, requirements) => {
+    const version = '12.1.0';  // updated programmatically
 
-    var staticMethodNames = [];
-    var prototypeMethodNames = [];
+    const staticMethodNames = [];
+    const prototypeMethodNames = [];
     Object.keys (requirements)
-    .forEach (function(_name) {
+    .forEach (_name => {
       switch (requirements[_name]) {
         case Constructor:
           return staticMethodNames.push (_name);
@@ -285,46 +227,41 @@
       }
     });
 
-    var typeClass = TypeClass (
-      'sanctuary-type-classes/' + _name,
-      'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version
-        + '#' + _name,
+    const typeClass = TypeClass (
+      `sanctuary-type-classes/${_name}`,
+      `https://github.com/sanctuary-js/sanctuary-type-classes/tree/v${version}#${_name}`,
       dependencies,
-      (function() {
-        var $seen = [];
-        return function(x) {
-          if ($seen.includes (x)) return true;
+      ($seen => x => {
+        if ($seen.includes (x)) return true;
 
-          $seen.push (x);
-          try {
-            return (
-              staticMethodNames.every (function(_name) {
-                return x != null &&
-                       getStaticMethod (_name) (x.constructor) != null;
-              }) &&
-              prototypeMethodNames.every (function(_name) {
-                return getPrototypeMethod (_name) (x) != null;
-              })
-            );
-          } finally {
-            $seen.pop ();
-          }
-        };
-      } ())
+        $seen.push (x);
+        try {
+          return (
+            staticMethodNames.every (_name =>
+              x != null && getStaticMethod (_name) (x.constructor) != null
+            ) &&
+            prototypeMethodNames.every (_name =>
+              getPrototypeMethod (_name) (x) != null
+            )
+          );
+        } finally {
+          $seen.pop ();
+        }
+      }) ([])
     );
 
     typeClass.methods = {};
-    staticMethodNames.forEach (function(_name) {
+    staticMethodNames.forEach (_name => {
       typeClass.methods[_name] = getStaticMethod (_name);
     });
-    prototypeMethodNames.forEach (function(_name) {
-      typeClass.methods[_name] = function(x) {
-        return (getPrototypeMethod (_name) (x)).bind (x);
-      };
+    prototypeMethodNames.forEach (_name => {
+      typeClass.methods[_name] = x => (
+        (getPrototypeMethod (_name) (x)).bind (x)
+      );
     });
 
     return typeClass;
-  }
+  };
 
   //# Setoid :: TypeClass
   //.
@@ -343,7 +280,8 @@
   //. > Setoid.test ([Useless])
   //. false
   //. ```
-  var Setoid = $ ('Setoid', [], {equals: Value});
+  const Setoid =
+    $ ('Setoid', [], {equals: Value});
 
   //# Ord :: TypeClass
   //.
@@ -362,7 +300,8 @@
   //. > Ord.test ([Math.sqrt])
   //. false
   //. ```
-  var Ord = $ ('Ord', [Setoid], {lte: Value});
+  const Ord =
+    $ ('Ord', [Setoid], {lte: Value});
 
   //# Semigroupoid :: TypeClass
   //.
@@ -375,7 +314,8 @@
   //. > Semigroupoid.test (0)
   //. false
   //. ```
-  var Semigroupoid = $ ('Semigroupoid', [], {compose: Value});
+  const Semigroupoid =
+    $ ('Semigroupoid', [], {compose: Value});
 
   //# Category :: TypeClass
   //.
@@ -388,7 +328,8 @@
   //. > Category.test (0)
   //. false
   //. ```
-  var Category = $ ('Category', [Semigroupoid], {id: Constructor});
+  const Category =
+    $ ('Category', [Semigroupoid], {id: Constructor});
 
   //# Semigroup :: TypeClass
   //.
@@ -401,7 +342,8 @@
   //. > Semigroup.test (0)
   //. false
   //. ```
-  var Semigroup = $ ('Semigroup', [], {concat: Value});
+  const Semigroup =
+    $ ('Semigroup', [], {concat: Value});
 
   //# Monoid :: TypeClass
   //.
@@ -414,7 +356,8 @@
   //. > Monoid.test (0)
   //. false
   //. ```
-  var Monoid = $ ('Monoid', [Semigroup], {empty: Constructor});
+  const Monoid =
+    $ ('Monoid', [Semigroup], {empty: Constructor});
 
   //# Group :: TypeClass
   //.
@@ -427,7 +370,8 @@
   //. > Group.test ('')
   //. false
   //. ```
-  var Group = $ ('Group', [Monoid], {invert: Value});
+  const Group =
+    $ ('Group', [Monoid], {invert: Value});
 
   //# Filterable :: TypeClass
   //.
@@ -440,7 +384,8 @@
   //. > Filterable.test ('')
   //. false
   //. ```
-  var Filterable = $ ('Filterable', [], {filter: Value});
+  const Filterable =
+    $ ('Filterable', [], {filter: Value});
 
   //# Functor :: TypeClass
   //.
@@ -453,7 +398,8 @@
   //. > Functor.test ('')
   //. false
   //. ```
-  var Functor = $ ('Functor', [], {map: Value});
+  const Functor =
+    $ ('Functor', [], {map: Value});
 
   //# Bifunctor :: TypeClass
   //.
@@ -466,7 +412,8 @@
   //. > Bifunctor.test ([])
   //. false
   //. ```
-  var Bifunctor = $ ('Bifunctor', [Functor], {bimap: Value});
+  const Bifunctor =
+    $ ('Bifunctor', [Functor], {bimap: Value});
 
   //# Profunctor :: TypeClass
   //.
@@ -479,7 +426,8 @@
   //. > Profunctor.test ([])
   //. false
   //. ```
-  var Profunctor = $ ('Profunctor', [Functor], {promap: Value});
+  const Profunctor =
+    $ ('Profunctor', [Functor], {promap: Value});
 
   //# Apply :: TypeClass
   //.
@@ -492,7 +440,8 @@
   //. > Apply.test ('')
   //. false
   //. ```
-  var Apply = $ ('Apply', [Functor], {ap: Value});
+  const Apply =
+    $ ('Apply', [Functor], {ap: Value});
 
   //# Applicative :: TypeClass
   //.
@@ -505,7 +454,8 @@
   //. > Applicative.test ({})
   //. false
   //. ```
-  var Applicative = $ ('Applicative', [Apply], {of: Constructor});
+  const Applicative =
+    $ ('Applicative', [Apply], {of: Constructor});
 
   //# Chain :: TypeClass
   //.
@@ -518,7 +468,8 @@
   //. > Chain.test ({})
   //. false
   //. ```
-  var Chain = $ ('Chain', [Apply], {chain: Value});
+  const Chain =
+    $ ('Chain', [Apply], {chain: Value});
 
   //# ChainRec :: TypeClass
   //.
@@ -531,7 +482,8 @@
   //. > ChainRec.test ({})
   //. false
   //. ```
-  var ChainRec = $ ('ChainRec', [Chain], {chainRec: Constructor});
+  const ChainRec =
+    $ ('ChainRec', [Chain], {chainRec: Constructor});
 
   //# Monad :: TypeClass
   //.
@@ -544,7 +496,8 @@
   //. > Monad.test ({})
   //. false
   //. ```
-  var Monad = $ ('Monad', [Applicative, Chain], {});
+  const Monad =
+    $ ('Monad', [Applicative, Chain], {});
 
   //# Alt :: TypeClass
   //.
@@ -557,7 +510,8 @@
   //. > Alt.test ('')
   //. false
   //. ```
-  var Alt = $ ('Alt', [Functor], {alt: Value});
+  const Alt =
+    $ ('Alt', [Functor], {alt: Value});
 
   //# Plus :: TypeClass
   //.
@@ -570,7 +524,8 @@
   //. > Plus.test ('')
   //. false
   //. ```
-  var Plus = $ ('Plus', [Alt], {zero: Constructor});
+  const Plus =
+    $ ('Plus', [Alt], {zero: Constructor});
 
   //# Alternative :: TypeClass
   //.
@@ -583,7 +538,8 @@
   //. > Alternative.test ({})
   //. false
   //. ```
-  var Alternative = $ ('Alternative', [Applicative, Plus], {});
+  const Alternative =
+    $ ('Alternative', [Applicative, Plus], {});
 
   //# Foldable :: TypeClass
   //.
@@ -596,7 +552,8 @@
   //. > Foldable.test ('')
   //. false
   //. ```
-  var Foldable = $ ('Foldable', [], {reduce: Value});
+  const Foldable =
+    $ ('Foldable', [], {reduce: Value});
 
   //# Traversable :: TypeClass
   //.
@@ -609,7 +566,8 @@
   //. > Traversable.test ('')
   //. false
   //. ```
-  var Traversable = $ ('Traversable', [Functor, Foldable], {traverse: Value});
+  const Traversable =
+    $ ('Traversable', [Functor, Foldable], {traverse: Value});
 
   //# Extend :: TypeClass
   //.
@@ -622,7 +580,8 @@
   //. > Extend.test ({})
   //. false
   //. ```
-  var Extend = $ ('Extend', [Functor], {extend: Value});
+  const Extend =
+    $ ('Extend', [Functor], {extend: Value});
 
   //# Comonad :: TypeClass
   //.
@@ -635,7 +594,8 @@
   //. > Comonad.test ([])
   //. false
   //. ```
-  var Comonad = $ ('Comonad', [Extend], {extract: Value});
+  const Comonad =
+    $ ('Comonad', [Extend], {extract: Value});
 
   //# Contravariant :: TypeClass
   //.
@@ -648,7 +608,8 @@
   //. > Contravariant.test ([])
   //. false
   //. ```
-  var Contravariant = $ ('Contravariant', [], {contramap: Value});
+  const Contravariant =
+    $ ('Contravariant', [], {contramap: Value});
 
   //  Null$prototype$equals :: Null ~> Null -> Boolean
   function Null$prototype$equals(other) {
@@ -719,9 +680,7 @@
   }
 
   //  String$empty :: () -> String
-  function String$empty() {
-    return '';
-  }
+  const String$empty = () => '';
 
   //  String$prototype$equals :: String ~> String -> Boolean
   function String$prototype$equals(other) {
@@ -743,25 +702,21 @@
   }
 
   //  Array$empty :: () -> Array a
-  function Array$empty() {
-    return [];
-  }
+  const Array$empty = () => [];
 
   //  Array$of :: a -> Array a
-  function Array$of(x) {
-    return [x];
-  }
+  const Array$of = x => [x];
 
   //  Array$chainRec :: ((a -> c, b -> c, a) -> Array c, a) -> Array b
-  function Array$chainRec(f, x) {
-    var result = [];
-    var nil = {};
-    var todo = {head: x, tail: nil};
+  const Array$chainRec = (f, x) => {
+    const result = [];
+    const nil = {};
+    let todo = {head: x, tail: nil};
     while (todo !== nil) {
-      var more = nil;
-      var steps = f (iterationNext, iterationDone, todo.head);
-      for (var idx = 0; idx < steps.length; idx += 1) {
-        var step = steps[idx];
+      let more = nil;
+      const steps = f (iterationNext, iterationDone, todo.head);
+      for (let idx = 0; idx < steps.length; idx += 1) {
+        const step = steps[idx];
         if (step.done) {
           result.push (step.value);
         } else {
@@ -775,17 +730,15 @@
       }
     }
     return result;
-  }
+  };
 
   //  Array$zero :: () -> Array a
-  function Array$zero() {
-    return [];
-  }
+  const Array$zero = () => [];
 
   //  Array$prototype$equals :: Setoid a => Array a ~> Array a -> Boolean
   function Array$prototype$equals(other) {
     if (other.length !== this.length) return false;
-    for (var idx = 0; idx < this.length; idx += 1) {
+    for (let idx = 0; idx < this.length; idx += 1) {
       if (!(equals (this[idx], other[idx]))) return false;
     }
     return true;
@@ -793,7 +746,7 @@
 
   //  Array$prototype$lte :: Ord a => Array a ~> Array a -> Boolean
   function Array$prototype$lte(other) {
-    for (var idx = 0; true; idx += 1) {
+    for (let idx = 0; true; idx += 1) {
       if (idx === this.length) return true;
       if (idx === other.length) return false;
       if (!(equals (this[idx], other[idx]))) {
@@ -809,19 +762,19 @@
 
   //  Array$prototype$filter :: Array a ~> (a -> Boolean) -> Array a
   function Array$prototype$filter(pred) {
-    return this.filter (function(x) { return pred (x); });
+    return this.filter (x => pred (x));
   }
 
   //  Array$prototype$map :: Array a ~> (a -> b) -> Array b
   function Array$prototype$map(f) {
-    return this.map (function(x) { return f (x); });
+    return this.map (x => f (x));
   }
 
   //  Array$prototype$ap :: Array a ~> Array (a -> b) -> Array b
   function Array$prototype$ap(fs) {
-    var result = [];
-    for (var idx = 0; idx < fs.length; idx += 1) {
-      for (var idx2 = 0; idx2 < this.length; idx2 += 1) {
+    const result = [];
+    for (let idx = 0; idx < fs.length; idx += 1) {
+      for (let idx2 = 0; idx2 < this.length; idx2 += 1) {
         result.push (fs[idx] (this[idx2]));
       }
     }
@@ -830,9 +783,9 @@
 
   //  Array$prototype$chain :: Array a ~> (a -> Array b) -> Array b
   function Array$prototype$chain(f) {
-    var result = [];
-    for (var idx = 0; idx < this.length; idx += 1) {
-      for (var idx2 = 0, xs = f (this[idx]); idx2 < xs.length; idx2 += 1) {
+    const result = [];
+    for (let idx = 0; idx < this.length; idx += 1) {
+      for (let idx2 = 0, xs = f (this[idx]); idx2 < xs.length; idx2 += 1) {
         result.push (xs[idx2]);
       }
     }
@@ -840,27 +793,27 @@
   }
 
   //  Array$prototype$alt :: Array a ~> Array a -> Array a
-  var Array$prototype$alt = Array$prototype$concat;
+  const Array$prototype$alt = Array$prototype$concat;
 
   //  Array$prototype$reduce :: Array a ~> ((b, a) -> b, b) -> b
   function Array$prototype$reduce(f, initial) {
-    var acc = initial;
-    for (var idx = 0; idx < this.length; idx += 1) acc = f (acc, this[idx]);
+    let acc = initial;
+    for (let idx = 0; idx < this.length; idx += 1) acc = f (acc, this[idx]);
     return acc;
   }
 
   //  Array$prototype$traverse :: Applicative f => Array a ~> (TypeRep f, a -> f b) -> f (Array b)
   function Array$prototype$traverse(typeRep, f) {
-    var xs = this;
-    function go(idx, n) {
+    const go = (idx, n) => {
       switch (n) {
         case 0: return of (typeRep, []);
-        case 2: return lift2 (pair, f (xs[idx]), f (xs[idx + 1]));
-        default:
-          var m = Math.floor (n / 4) * 2;
+        case 2: return lift2 (pair, f (this[idx]), f (this[idx + 1]));
+        default: {
+          const m = Math.floor (n / 4) * 2;
           return lift2 (concat_, go (idx, m), go (idx + m, n - m));
+        }
       }
-    }
+    };
     return this.length % 2 === 1 ?
       lift2 (concat_, map (Array$of, f (this[0])), go (1, this.length - 1)) :
       go (0, this.length);
@@ -868,7 +821,7 @@
 
   //  Array$prototype$extend :: Array a ~> (Array a -> b) -> Array b
   function Array$prototype$extend(f) {
-    return this.map (function(_, idx, xs) { return f (xs.slice (idx)); });
+    return this.map ((_, idx, xs) => f (xs.slice (idx)));
   }
 
   //  Arguments$prototype$equals :: Arguments ~> Arguments -> Boolean
@@ -888,32 +841,27 @@
   }
 
   //  Object$empty :: () -> StrMap a
-  function Object$empty() {
-    return {};
-  }
+  const Object$empty = () => ({});
 
   //  Object$zero :: () -> StrMap a
-  function Object$zero() {
-    return {};
-  }
+  const Object$zero = () => ({});
 
   //  Object$prototype$equals :: Setoid a => StrMap a ~> StrMap a -> Boolean
   function Object$prototype$equals(other) {
-    var self = this;
-    var keys = sortedKeys (this);
+    const keys = sortedKeys (this);
     return equals (keys, sortedKeys (other)) &&
-           keys.every (function(k) { return equals (self[k], other[k]); });
+           keys.every (k => equals (this[k], other[k]));
   }
 
   //  Object$prototype$lte :: Ord a => StrMap a ~> StrMap a -> Boolean
   function Object$prototype$lte(other) {
-    var theseKeys = sortedKeys (this);
-    var otherKeys = sortedKeys (other);
+    const theseKeys = sortedKeys (this);
+    const otherKeys = sortedKeys (other);
     while (true) {
       if (theseKeys.length === 0) return true;
       if (otherKeys.length === 0) return false;
-      var k = theseKeys.shift ();
-      var z = otherKeys.shift ();
+      const k = theseKeys.shift ();
+      const z = otherKeys.shift ();
       if (k < z) return true;
       if (k > z) return false;
       if (!(equals (this[k], other[k]))) return lte (this[k], other[k]);
@@ -922,17 +870,16 @@
 
   //  Object$prototype$concat :: StrMap a ~> StrMap a -> StrMap a
   function Object$prototype$concat(other) {
-    var result = {};
-    function assign(k) { result[k] = this[k]; }
-    forEachKey (this, assign);
-    forEachKey (other, assign);
+    const result = {};
+    (Object.keys (this)).forEach (k => { result[k] = this[k]; });
+    (Object.keys (other)).forEach (k => { result[k] = other[k]; });
     return result;
   }
 
   //  Object$prototype$filter :: StrMap a ~> (a -> Boolean) -> StrMap a
   function Object$prototype$filter(pred) {
-    var result = {};
-    forEachKey (this, function(k) {
+    const result = {};
+    (Object.keys (this)).forEach (k => {
       if (pred (this[k])) result[k] = this[k];
     });
     return result;
@@ -940,64 +887,56 @@
 
   //  Object$prototype$map :: StrMap a ~> (a -> b) -> StrMap b
   function Object$prototype$map(f) {
-    var result = {};
-    forEachKey (this, function(k) { result[k] = f (this[k]); });
+    const result = {};
+    (Object.keys (this)).forEach (k => { result[k] = f (this[k]); });
     return result;
   }
 
   //  Object$prototype$ap :: StrMap a ~> StrMap (a -> b) -> StrMap b
   function Object$prototype$ap(other) {
-    var result = {};
-    forEachKey (this, function(k) {
+    const result = {};
+    (Object.keys (this)).forEach (k => {
       if (has (k, other)) result[k] = other[k] (this[k]);
     });
     return result;
   }
 
   //  Object$prototype$alt :: StrMap a ~> StrMap a -> StrMap a
-  var Object$prototype$alt = Object$prototype$concat;
+  const Object$prototype$alt = Object$prototype$concat;
 
   //  Object$prototype$reduce :: StrMap a ~> ((b, a) -> b, b) -> b
   function Object$prototype$reduce(f, initial) {
-    var self = this;
-    function reducer(acc, k) { return f (acc, self[k]); }
-    return (sortedKeys (this)).reduce (reducer, initial);
+    return sortedKeys (this)
+           .reduce ((acc, k) => f (acc, this[k]), initial);
   }
 
   //  Object$prototype$traverse :: Applicative f => StrMap a ~> (TypeRep f, a -> f b) -> f (StrMap b)
   function Object$prototype$traverse(typeRep, f) {
-    var self = this;
-    return (Object.keys (this)).reduce (function(applicative, k) {
-      function set(o) {
-        return function(v) {
-          var singleton = {}; singleton[k] = v;
-          return Object$prototype$concat.call (o, singleton);
-        };
-      }
-      return lift2 (set, applicative, f (self[k]));
-    }, of (typeRep, {}));
+    return Object.keys (this)
+           .reduce (
+             (applicative, k) => (
+               lift2 (
+                 o => v => Object$prototype$concat.call (o, {[k]: v}),
+                 applicative,
+                 f (this[k])
+               )
+             ),
+             of (typeRep, {})
+           );
   }
 
   //  Function$id :: () -> a -> a
-  function Function$id() {
-    return identity;
-  }
+  const Function$id = () => identity;
 
   //  Function$of :: b -> (a -> b)
-  function Function$of(x) {
-    return function(_) { return x; };
-  }
+  const Function$of = x => _ => x;
 
   //  Function$chainRec :: ((a -> c, b -> c, a) -> (z -> c), a) -> (z -> b)
-  function Function$chainRec(f, x) {
-    return function(a) {
-      var step = iterationNext (x);
-      while (!step.done) {
-        step = f (iterationNext, iterationDone, step.value) (a);
-      }
-      return step.value;
-    };
-  }
+  const Function$chainRec = (f, x) => a => {
+    let step = iterationNext (x);
+    while (!step.done) step = f (iterationNext, iterationDone, step.value) (a);
+    return step.value;
+  };
 
   //  Function$prototype$equals :: Function ~> Function -> Boolean
   function Function$prototype$equals(other) {
@@ -1006,50 +945,41 @@
 
   //  Function$prototype$compose :: (a -> b) ~> (b -> c) -> (a -> c)
   function Function$prototype$compose(other) {
-    var semigroupoid = this;
-    return function(x) { return other (semigroupoid (x)); };
+    return x => other (this (x));
   }
 
   //  Function$prototype$map :: (a -> b) ~> (b -> c) -> (a -> c)
   function Function$prototype$map(f) {
-    var functor = this;
-    return function(x) { return f (functor (x)); };
+    return x => f (this (x));
   }
 
   //  Function$prototype$promap :: (b -> c) ~> (a -> b, c -> d) -> (a -> d)
   function Function$prototype$promap(f, g) {
-    var profunctor = this;
-    return function(x) { return g (profunctor (f (x))); };
+    return x => g (this (f (x)));
   }
 
   //  Function$prototype$ap :: (a -> b) ~> (a -> b -> c) -> (a -> c)
   function Function$prototype$ap(f) {
-    var apply = this;
-    return function(x) { return f (x) (apply (x)); };
+    return x => f (x) (this (x));
   }
 
   //  Function$prototype$chain :: (a -> b) ~> (b -> a -> c) -> (a -> c)
   function Function$prototype$chain(f) {
-    var chain = this;
-    return function(x) { return f (chain (x)) (x); };
+    return x => f (this (x)) (x);
   }
 
   //  Function$prototype$extend :: Semigroup a => (a -> b) ~> ((a -> b) -> c) -> (a -> c)
   function Function$prototype$extend(f) {
-    var extend = this;
-    return function(x) {
-      return f (function(y) { return extend (concat (x, y)); });
-    };
+    return x => f (y => this (concat (x, y)));
   }
 
   //  Function$prototype$contramap :: (b -> c) ~> (a -> b) -> (a -> c)
   function Function$prototype$contramap(f) {
-    var contravariant = this;
-    return function(x) { return contravariant (f (x)); };
+    return x => this (f (x));
   }
 
-  function staticMethod(name, typeRep) {
-    switch (functionName (typeRep) + '.' + name) {
+  const staticMethod = (name, typeRep) => {
+    switch (typeRep.name + '.' + name) {
       case 'String.fantasy-land/empty':
         return String$empty;
       case 'Array.fantasy-land/empty':
@@ -1073,9 +1003,9 @@
       default:
         return null;
     }
-  }
+  };
 
-  function prototypeMethod(name, value) {
+  const prototypeMethod = (name, value) => {
     switch (type (value) + '#' + name) {
       case 'Null#fantasy-land/equals':
         return Null$prototype$equals;
@@ -1174,7 +1104,7 @@
       default:
         return null;
     }
-  }
+  };
 
   //# equals :: (a, b) -> Boolean
   //.
@@ -1204,16 +1134,16 @@
   //. > equals (Cons (1, Cons (2, Nil)), Cons (2, Cons (1, Nil)))
   //. false
   //. ```
-  var equals = (function() {
+  const equals = (() => {
     //  $pairs :: Array (Array2 Any Any)
-    var $pairs = [];
+    const $pairs = [];
 
-    return function equals(x, y) {
+    const equals = (x, y) => {
       if (!(sameType (x, y))) return false;
 
       //  This algorithm for comparing circular data structures was
       //  suggested in <http://stackoverflow.com/a/40622794/312785>.
-      if ($pairs.some (function(p) { return p[0] === x && p[1] === y; })) {
+      if ($pairs.some (([xx, yy]) => xx === x && yy === y)) {
         return true;
       }
 
@@ -1226,7 +1156,8 @@
         $pairs.pop ();
       }
     };
-  } ());
+    return equals;
+  }) ();
 
   //# lt :: (a, b) -> Boolean
   //.
@@ -1248,9 +1179,7 @@
   //. > lt (1, 0)
   //. false
   //. ```
-  function lt(x, y) {
-    return sameType (x, y) && !(lte (y, x));
-  }
+  const lt = (x, y) => sameType (x, y) && !(lte (y, x));
 
   //# lte :: (a, b) -> Boolean
   //.
@@ -1277,16 +1206,16 @@
   //. > lte (1, 0)
   //. false
   //. ```
-  var lte = (function() {
+  const lte = (() => {
     //  $pairs :: Array (Array2 Any Any)
-    var $pairs = [];
+    const $pairs = [];
 
-    return function lte(x, y) {
+    const lte = (x, y) => {
       if (!(sameType (x, y))) return false;
 
       //  This algorithm for comparing circular data structures was
       //  suggested in <http://stackoverflow.com/a/40622794/312785>.
-      if ($pairs.some (function(p) { return p[0] === x && p[1] === y; })) {
+      if ($pairs.some (([xx, yy]) => xx === x && yy === y)) {
         return equals (x, y);
       }
 
@@ -1297,7 +1226,8 @@
         $pairs.pop ();
       }
     };
-  } ());
+    return lte;
+  }) ();
 
   //# gt :: (a, b) -> Boolean
   //.
@@ -1319,9 +1249,7 @@
   //. > gt (1, 0)
   //. true
   //. ```
-  function gt(x, y) {
-    return lt (y, x);
-  }
+  const gt = (x, y) => lt (y, x);
 
   //# gte :: (a, b) -> Boolean
   //.
@@ -1343,9 +1271,7 @@
   //. > gte (1, 0)
   //. true
   //. ```
-  function gte(x, y) {
-    return lte (y, x);
-  }
+  const gte = (x, y) => lte (y, x);
 
   //# min :: Ord a => (a, a) -> a
   //.
@@ -1365,9 +1291,7 @@
   //. > min ('10', '2')
   //. '10'
   //. ```
-  function min(x, y) {
-    return lte (x, y) ? x : y;
-  }
+  const min = (x, y) => lte (x, y) ? x : y;
 
   //# max :: Ord a => (a, a) -> a
   //.
@@ -1387,9 +1311,7 @@
   //. > max ('10', '2')
   //. '2'
   //. ```
-  function max(x, y) {
-    return lte (x, y) ? y : x;
-  }
+  const max = (x, y) => lte (x, y) ? y : x;
 
   //# clamp :: Ord a => (a, a, a) -> a
   //.
@@ -1408,9 +1330,7 @@
   //. > clamp ('A', 'Z', '~')
   //. 'Z'
   //. ```
-  function clamp(lower, upper, x) {
-    return max (lower, min (upper, x));
-  }
+  const clamp = (lower, upper, x) => max (lower, min (upper, x));
 
   //# compose :: Semigroupoid c => (c j k, c i j) -> c i k
   //.
@@ -1423,9 +1343,7 @@
   //. > compose (Math.sqrt, x => x + 1) (99)
   //. 10
   //. ```
-  function compose(x, y) {
-    return Semigroupoid.methods.compose (y) (x);
-  }
+  const compose = (x, y) => Semigroupoid.methods.compose (y) (x);
 
   //# id :: Category c => TypeRep c -> c
   //.
@@ -1438,9 +1356,7 @@
   //. > id (Function) ('foo')
   //. 'foo'
   //. ```
-  function id(typeRep) {
-    return Category.methods.id (typeRep) ();
-  }
+  const id = typeRep => Category.methods.id (typeRep) ();
 
   //# concat :: Semigroup a => (a, a) -> a
   //.
@@ -1462,9 +1378,7 @@
   //. > concat (Cons ('foo', Cons ('bar', Cons ('baz', Nil))), Cons ('quux', Nil))
   //. Cons ('foo', Cons ('bar', Cons ('baz', Cons ('quux', Nil))))
   //. ```
-  function concat(x, y) {
-    return Semigroup.methods.concat (x) (y);
-  }
+  const concat = (x, y) => Semigroup.methods.concat (x) (y);
 
   //# empty :: Monoid m => TypeRep m -> m
   //.
@@ -1486,9 +1400,7 @@
   //. > empty (List)
   //. Nil
   //. ```
-  function empty(typeRep) {
-    return Monoid.methods.empty (typeRep) ();
-  }
+  const empty = typeRep => Monoid.methods.empty (typeRep) ();
 
   //# invert :: Group g => g -> g
   //.
@@ -1498,9 +1410,7 @@
   //. > invert (Sum (5))
   //. Sum (-5)
   //. ```
-  function invert(group) {
-    return Group.methods.invert (group) ();
-  }
+  const invert = group => Group.methods.invert (group) ();
 
   //# filter :: Filterable f => (a -> Boolean, f a) -> f a
   //.
@@ -1531,9 +1441,9 @@
   //. > filter (x => x % 2 == 1, Just (1))
   //. Just (1)
   //. ```
-  function filter(pred, filterable) {
-    return Filterable.methods.filter (filterable) (pred);
-  }
+  const filter = (pred, filterable) => (
+    Filterable.methods.filter (filterable) (pred)
+  );
 
   //# reject :: Filterable f => (a -> Boolean, f a) -> f a
   //.
@@ -1560,9 +1470,7 @@
   //. > reject (x => x % 2 == 1, Just (1))
   //. Nothing
   //. ```
-  function reject(pred, filterable) {
-    return filter (function(x) { return !(pred (x)); }, filterable);
-  }
+  const reject = (pred, filterable) => filter (x => !(pred (x)), filterable);
 
   //# map :: Functor f => (a -> b, f a) -> f b
   //.
@@ -1590,9 +1498,7 @@
   //. > map (Math.sqrt, Cons (1, Cons (4, Cons (9, Nil))))
   //. Cons (1, Cons (2, Cons (3, Nil)))
   //. ```
-  function map(f, functor) {
-    return Functor.methods.map (functor) (f);
-  }
+  const map = (f, functor) => Functor.methods.map (functor) (f);
 
   //# flip :: Functor f => (f (a -> b), a) -> f b
   //.
@@ -1613,9 +1519,7 @@
   //. > flip (Cons (Math.floor, Cons (Math.ceil, Nil)), 1.5)
   //. Cons (1, Cons (2, Nil))
   //. ```
-  function flip(functor, x) {
-    return Functor.methods.map (functor) (thrush (x));
-  }
+  const flip = (functor, x) => Functor.methods.map (functor) (f => f (x));
 
   //# bimap :: Bifunctor f => (a -> b, c -> d, f a c) -> f b d
   //.
@@ -1625,9 +1529,9 @@
   //. > bimap (s => s.toUpperCase (), Math.sqrt, Pair ('foo') (64))
   //. Pair ('FOO') (8)
   //. ```
-  function bimap(f, g, bifunctor) {
-    return Bifunctor.methods.bimap (bifunctor) (f, g);
-  }
+  const bimap = (f, g, bifunctor) => (
+    Bifunctor.methods.bimap (bifunctor) (f, g)
+  );
 
   //# mapLeft :: Bifunctor f => (a -> b, f a c) -> f b c
   //.
@@ -1637,9 +1541,7 @@
   //. > mapLeft (Math.sqrt, Pair (64) (9))
   //. Pair (8) (9)
   //. ```
-  function mapLeft(f, bifunctor) {
-    return bimap (f, identity, bifunctor);
-  }
+  const mapLeft = (f, bifunctor) => bimap (f, identity, bifunctor);
 
   //# promap :: Profunctor p => (a -> b, c -> d, p b c) -> p a d
   //.
@@ -1652,9 +1554,9 @@
   //. > promap (Math.abs, x => x + 1, Math.sqrt) (-100)
   //. 11
   //. ```
-  function promap(f, g, profunctor) {
-    return Profunctor.methods.promap (profunctor) (f, g);
-  }
+  const promap = (f, g, profunctor) => (
+    Profunctor.methods.promap (profunctor) (f, g)
+  );
 
   //# ap :: Apply f => (f (a -> b), f a) -> f b
   //.
@@ -1679,9 +1581,7 @@
   //. > ap (Cons (Math.sqrt, Cons (x => x * x, Nil)), Cons (16, Cons (100, Nil)))
   //. Cons (4, Cons (10, Cons (256, Cons (10000, Nil))))
   //. ```
-  function ap(applyF, applyX) {
-    return Apply.methods.ap (applyX) (applyF);
-  }
+  const ap = (applyF, applyX) => Apply.methods.ap (applyX) (applyF);
 
   //# lift2 :: Apply f => (a -> b -> c, f a, f b) -> f c
   //.
@@ -1699,9 +1599,7 @@
   //. > lift2 (x => y => Math.pow (x, y), Identity (10), Identity (3))
   //. Identity (1000)
   //. ```
-  function lift2(f, x, y) {
-    return ap (map (f, x), y);
-  }
+  const lift2 = (f, x, y) => ap (map (f, x), y);
 
   //# lift3 :: Apply f => (a -> b -> c -> d, f a, f b, f c) -> f d
   //.
@@ -1728,9 +1626,7 @@
   //. .        Identity ('baz'))
   //. Identity ('<baz>')
   //. ```
-  function lift3(f, x, y, z) {
-    return ap (ap (map (f, x), y), z);
-  }
+  const lift3 = (f, x, y, z) => ap (ap (map (f, x), y), z);
 
   //# apFirst :: Apply f => (f a, f b) -> f a
   //.
@@ -1748,9 +1644,7 @@
   //. > apFirst (Identity (1), Identity (2))
   //. Identity (1)
   //. ```
-  function apFirst(x, y) {
-    return lift2 (constant, x, y);
-  }
+  const apFirst = (x, y) => lift2 (x => y => x, x, y);
 
   //# apSecond :: Apply f => (f a, f b) -> f b
   //.
@@ -1768,9 +1662,7 @@
   //. > apSecond (Identity (1), Identity (2))
   //. Identity (2)
   //. ```
-  function apSecond(x, y) {
-    return lift2 (constant (identity), x, y);
-  }
+  const apSecond = (x, y) => lift2 (x => y => y, x, y);
 
   //# of :: Applicative f => (TypeRep f, a) -> f a
   //.
@@ -1789,9 +1681,7 @@
   //. > of (List, 42)
   //. Cons (42, Nil)
   //. ```
-  function of(typeRep, x) {
-    return Applicative.methods.of (typeRep) (x);
-  }
+  const of = (typeRep, x) => Applicative.methods.of (typeRep) (x);
 
   //# append :: (Applicative f, Semigroup (f a)) => (a, f a) -> f a
   //.
@@ -1808,9 +1698,7 @@
   //. > append (3, Cons (1, Cons (2, Nil)))
   //. Cons (1, Cons (2, Cons (3, Nil)))
   //. ```
-  function append(x, xs) {
-    return concat (xs, of (xs.constructor, x));
-  }
+  const append = (x, xs) => concat (xs, of (xs.constructor, x));
 
   //# prepend :: (Applicative f, Semigroup (f a)) => (a, f a) -> f a
   //.
@@ -1827,9 +1715,7 @@
   //. > prepend (1, Cons (2, Cons (3, Nil)))
   //. Cons (1, Cons (2, Cons (3, Nil)))
   //. ```
-  function prepend(x, xs) {
-    return concat (of (xs.constructor, x), xs);
-  }
+  const prepend = (x, xs) => concat (of (xs.constructor, x), xs);
 
   //# chain :: Chain m => (a -> m b, m a) -> m b
   //.
@@ -1851,9 +1737,7 @@
   //. .       ('Haskell')
   //. 'Hask'
   //. ```
-  function chain(f, chain_) {
-    return Chain.methods.chain (chain_) (f);
-  }
+  const chain = (f, chain_) => Chain.methods.chain (chain_) (f);
 
   //# join :: Chain m => m (m a) -> m a
   //.
@@ -1871,9 +1755,7 @@
   //. > join (Identity (Identity (1)))
   //. Identity (1)
   //. ```
-  function join(chain_) {
-    return chain (identity, chain_);
-  }
+  const join = chain_ => chain (identity, chain_);
 
   //# chainRec :: ChainRec m => (TypeRep m, (a -> c, b -> c, a) -> m c, a) -> m b
   //.
@@ -1891,9 +1773,9 @@
   //. . )
   //. ['oo!', 'oo?', 'on!', 'on?', 'no!', 'no?', 'nn!', 'nn?']
   //. ```
-  function chainRec(typeRep, f, x) {
-    return ChainRec.methods.chainRec (typeRep) (f, x);
-  }
+  const chainRec = (typeRep, f, x) => (
+    ChainRec.methods.chainRec (typeRep) (f, x)
+  );
 
   //# alt :: Alt f => (f a, f a) -> f a
   //.
@@ -1915,9 +1797,7 @@
   //. > alt (Just (2), Just (3))
   //. Just (2)
   //. ```
-  function alt(x, y) {
-    return Alt.methods.alt (x) (y);
-  }
+  const alt = (x, y) => Alt.methods.alt (x) (y);
 
   //# zero :: Plus f => TypeRep f -> f a
   //.
@@ -1936,9 +1816,7 @@
   //. > zero (Maybe)
   //. Nothing
   //. ```
-  function zero(typeRep) {
-    return Plus.methods.zero (typeRep) ();
-  }
+  const zero = typeRep => Plus.methods.zero (typeRep) ();
 
   //# reduce :: Foldable f => ((b, a) -> b, b, f a) -> b
   //.
@@ -1957,9 +1835,7 @@
   //. > reduce (concat, '', {foo: 'x', bar: 'y', baz: 'z'})
   //. 'yzx'
   //. ```
-  function reduce(f, x, foldable) {
-    return Foldable.methods.reduce (foldable) (f, x);
-  }
+  const reduce = (f, x, foldable) => Foldable.methods.reduce (foldable) (f, x);
 
   //# size :: Foldable f => f a -> Integer
   //.
@@ -1980,11 +1856,11 @@
   //. > size (Cons ('foo', Cons ('bar', Cons ('baz', Nil))))
   //. 3
   //. ```
-  function size(foldable) {
-    //  Fast path for arrays.
-    if (Array.isArray (foldable)) return foldable.length;
-    return reduce (function(n, _) { return n + 1; }, 0, foldable);
-  }
+  const size = foldable => (
+    Array.isArray (foldable)
+    ? foldable.length
+    : reduce ((n, _) => n + 1, 0, foldable)
+  );
 
   //# all :: Foldable f => (a -> Boolean, f a) -> Boolean
   //.
@@ -2005,11 +1881,11 @@
   //. > all (Number.isInteger, [0, 0.25, 0.5, 0.75, 1])
   //. false
   //. ```
-  function all(pred, foldable) {
-    //  Fast path for arrays.
-    if (Array.isArray (foldable)) return foldable.every (unary (pred));
-    return reduce (function(b, x) { return b && pred (x); }, true, foldable);
-  }
+  const all = (pred, foldable) => (
+    Array.isArray (foldable)
+    ? foldable.every (x => pred (x))
+    : reduce ((b, x) => b && pred (x), true, foldable)
+  );
 
   //# any :: Foldable f => (a -> Boolean, f a) -> Boolean
   //.
@@ -2030,11 +1906,11 @@
   //. > any (Number.isInteger, [0, 0.25, 0.5, 0.75, 1])
   //. true
   //. ```
-  function any(pred, foldable) {
-    //  Fast path for arrays.
-    if (Array.isArray (foldable)) return foldable.some (unary (pred));
-    return reduce (function(b, x) { return b || pred (x); }, false, foldable);
-  }
+  const any = (pred, foldable) => (
+    Array.isArray (foldable)
+    ? foldable.some (x => pred (x))
+    : reduce ((b, x) => b || pred (x), false, foldable)
+  );
 
   //# none :: Foldable f => (a -> Boolean, f a) -> Boolean
   //.
@@ -2053,9 +1929,7 @@
   //. > none (Number.isInteger, [0, 0.25, 0.5, 0.75, 1])
   //. false
   //. ```
-  function none(pred, foldable) {
-    return !(any (pred, foldable));
-  }
+  const none = (pred, foldable) => !(any (pred, foldable));
 
   //# elem :: (Setoid a, Foldable f) => (a, f a) -> Boolean
   //.
@@ -2087,9 +1961,7 @@
   //. > elem (0, Nothing)
   //. false
   //. ```
-  function elem(x, foldable) {
-    return any (function(y) { return equals (x, y); }, foldable);
-  }
+  const elem = (x, foldable) => any (y => equals (x, y), foldable);
 
   //# intercalate :: (Monoid m, Foldable f) => (m, f m) -> m
   //.
@@ -2118,19 +1990,17 @@
   //. > intercalate ([0, 0, 0], [[1], [2, 3], [4, 5, 6], [7, 8], [9]])
   //. [1, 0, 0, 0, 2, 3, 0, 0, 0, 4, 5, 6, 0, 0, 0, 7, 8, 0, 0, 0, 9]
   //. ```
-  function intercalate(separator, foldable) {
-    var result = reduce (
-      function(acc, x) {
-        return {
-          empty: false,
-          value: concat (acc.value, acc.empty ? x : concat (separator, x))
-        };
-      },
+  const intercalate = (separator, foldable) => (
+    reduce (
+      ({empty, value}, x) => ({
+        empty: false,
+        value: concat (value, empty ? x : concat (separator, x)),
+      }),
       {empty: true, value: empty (separator.constructor)},
       foldable
-    );
-    return result.value;
-  }
+    )
+    .value
+  );
 
   //# foldMap :: (Monoid m, Foldable f) => (TypeRep m, a -> m, f a) -> m
   //.
@@ -2144,11 +2014,9 @@
   //. > foldMap (String, f => f.name, [Math.sin, Math.cos, Math.tan])
   //. 'sincostan'
   //. ```
-  function foldMap(typeRep, f, foldable) {
-    return reduce (function(monoid, x) { return concat (monoid, f (x)); },
-                   empty (typeRep),
-                   foldable);
-  }
+  const foldMap = (typeRep, f, foldable) => (
+    reduce ((monoid, x) => concat (monoid, f (x)), empty (typeRep), foldable)
+  );
 
   //# reverse :: (Applicative f, Foldable f, Monoid (f a)) => f a -> f a
   //.
@@ -2164,14 +2032,12 @@
   //. > reverse (Cons (1, Cons (2, Cons (3, Nil))))
   //. Cons (3, Cons (2, Cons (1, Nil)))
   //. ```
-  function reverse(foldable) {
+  const reverse = foldable => {
     //  Fast path for arrays.
     if (Array.isArray (foldable)) return (foldable.slice ()).reverse ();
-    var F = foldable.constructor;
-    return reduce (function(xs, x) { return concat (of (F, x), xs); },
-                   empty (F),
-                   foldable);
-  }
+    const F = foldable.constructor;
+    return reduce ((xs, x) => concat (of (F, x), xs), empty (F), foldable);
+  };
 
   //# sort :: (Ord a, Applicative f, Foldable f, Monoid (f a)) => f a -> f a
   //.
@@ -2193,9 +2059,7 @@
   //. > sort (Cons ('foo', Cons ('bar', Cons ('baz', Nil))))
   //. Cons ('bar', Cons ('baz', Cons ('foo', Nil)))
   //. ```
-  function sort(foldable) {
-    return sortBy (identity, foldable);
-  }
+  const sort = foldable => sortBy (identity, foldable);
 
   //# sortBy :: (Ord b, Applicative f, Foldable f, Monoid (f a)) => (a -> b, f a) -> f a
   //.
@@ -2221,36 +2085,36 @@
   //. > sortBy (s => s.length, Cons ('red', Cons ('green', Cons ('blue', Nil))))
   //. Cons ('red', Cons ('blue', Cons ('green', Nil)))
   //. ```
-  function sortBy(f, foldable) {
-    var rs = reduce (function(rs, x) {
-      rs.push ({idx: rs.length, x: x, fx: f (x)});
+  const sortBy = (f, foldable) => {
+    const rs = reduce ((rs, x) => {
+      rs.push ({idx: rs.length, x, fx: f (x)});
       return rs;
     }, [], foldable);
 
-    var lte_ = (function(r) {
+    const lte_ = (r => {
       switch (typeof (r && r.fx)) {
-        case 'number':  return function(x, y) { return x <= y || x !== x; };
-        case 'string':  return function(x, y) { return x <= y; };
+        case 'number':  return (x, y) => x <= y || x !== x;
+        case 'string':  return (x, y) => x <= y;
         default:        return lte;
       }
-    } (rs[0]));
+    }) (rs[0]);
 
-    rs.sort (function(a, b) {
-      return lte_ (a.fx, b.fx) ? lte_ (b.fx, a.fx) ? a.idx - b.idx : -1 : 1;
-    });
+    rs.sort ((a, b) => (
+      lte_ (a.fx, b.fx) ? lte_ (b.fx, a.fx) ? a.idx - b.idx : -1 : 1
+    ));
 
     if (Array.isArray (foldable)) {
-      for (var idx = 0; idx < rs.length; idx += 1) rs[idx] = rs[idx].x;
+      for (let idx = 0; idx < rs.length; idx += 1) rs[idx] = rs[idx].x;
       return rs;
     }
 
-    var F = foldable.constructor;
-    var result = empty (F);
-    for (idx = 0; idx < rs.length; idx += 1) {
+    const F = foldable.constructor;
+    let result = empty (F);
+    for (let idx = 0; idx < rs.length; idx += 1) {
       result = concat (result, of (F, rs[idx].x));
     }
     return result;
-  }
+  };
 
   //# traverse :: (Applicative f, Traversable t) => (TypeRep f, a -> f b, t a) -> f (t b)
   //.
@@ -2268,9 +2132,9 @@
   //. > traverse (Identity, x => Identity (x + 1), [1, 2, 3])
   //. Identity ([2, 3, 4])
   //. ```
-  function traverse(typeRep, f, traversable) {
-    return Traversable.methods.traverse (traversable) (typeRep, f);
-  }
+  const traverse = (typeRep, f, traversable) => (
+    Traversable.methods.traverse (traversable) (typeRep, f)
+  );
 
   //# sequence :: (Applicative f, Traversable t) => (TypeRep f, t (f a)) -> f (t a)
   //.
@@ -2285,9 +2149,9 @@
   //. > sequence (Identity, [Identity (1), Identity (2), Identity (3)])
   //. Identity ([1, 2, 3])
   //. ```
-  function sequence(typeRep, traversable) {
-    return traverse (typeRep, identity, traversable);
-  }
+  const sequence = (typeRep, traversable) => (
+    traverse (typeRep, identity, traversable)
+  );
 
   //# extend :: Extend w => (w a -> b, w a) -> w b
   //.
@@ -2303,9 +2167,7 @@
   //. > extend (f => f ([3, 4]), reverse) ([1, 2])
   //. [4, 3, 2, 1]
   //. ```
-  function extend(f, extend_) {
-    return Extend.methods.extend (extend_) (f);
-  }
+  const extend = (f, extend_) => Extend.methods.extend (extend_) (f);
 
   //# duplicate :: Extend w => w a -> w (w a)
   //.
@@ -2326,9 +2188,7 @@
   //. > duplicate (reverse) ([1, 2]) ([3, 4])
   //. [4, 3, 2, 1]
   //. ```
-  function duplicate(extend_) {
-    return extend (identity, extend_);
-  }
+  const duplicate = extend_ => extend (identity, extend_);
 
   //# extract :: Comonad w => w a -> a
   //.
@@ -2338,9 +2198,7 @@
   //. > extract (Identity (42))
   //. 42
   //. ```
-  function extract(comonad) {
-    return Comonad.methods.extract (comonad) ();
-  }
+  const extract = comonad => Comonad.methods.extract (comonad) ();
 
   //# contramap :: Contravariant f => (b -> a, f a) -> f b
   //.
@@ -2353,89 +2211,89 @@
   //. > contramap (s => s.length, Math.sqrt) ('Sanctuary')
   //. 3
   //. ```
-  function contramap(f, contravariant) {
-    return Contravariant.methods.contramap (contravariant) (f);
-  }
+  const contramap = (f, contravariant) => (
+    Contravariant.methods.contramap (contravariant) (f)
+  );
 
   return {
-    TypeClass: TypeClass,
-    Setoid: Setoid,
-    Ord: Ord,
-    Semigroupoid: Semigroupoid,
-    Category: Category,
-    Semigroup: Semigroup,
-    Monoid: Monoid,
-    Group: Group,
-    Filterable: Filterable,
-    Functor: Functor,
-    Bifunctor: Bifunctor,
-    Profunctor: Profunctor,
-    Apply: Apply,
-    Applicative: Applicative,
-    Chain: Chain,
-    ChainRec: ChainRec,
-    Monad: Monad,
-    Alt: Alt,
-    Plus: Plus,
-    Alternative: Alternative,
-    Foldable: Foldable,
-    Traversable: Traversable,
-    Extend: Extend,
-    Comonad: Comonad,
-    Contravariant: Contravariant,
-    equals: equals,
-    lt: lt,
-    lte: lte,
-    gt: gt,
-    gte: gte,
-    min: min,
-    max: max,
-    clamp: clamp,
-    compose: compose,
-    id: id,
-    concat: concat,
-    empty: empty,
-    invert: invert,
-    filter: filter,
-    reject: reject,
-    map: map,
-    flip: flip,
-    bimap: bimap,
-    mapLeft: mapLeft,
-    promap: promap,
-    ap: ap,
-    lift2: lift2,
-    lift3: lift3,
-    apFirst: apFirst,
-    apSecond: apSecond,
-    of: of,
-    append: append,
-    prepend: prepend,
-    chain: chain,
-    join: join,
-    chainRec: chainRec,
-    alt: alt,
-    zero: zero,
-    reduce: reduce,
-    size: size,
-    all: all,
-    any: any,
-    none: none,
-    elem: elem,
-    intercalate: intercalate,
-    foldMap: foldMap,
-    reverse: reverse,
-    sort: sort,
-    sortBy: sortBy,
-    traverse: traverse,
-    sequence: sequence,
-    extend: extend,
-    duplicate: duplicate,
-    extract: extract,
-    contramap: contramap
+    TypeClass,
+    Setoid,
+    Ord,
+    Semigroupoid,
+    Category,
+    Semigroup,
+    Monoid,
+    Group,
+    Filterable,
+    Functor,
+    Bifunctor,
+    Profunctor,
+    Apply,
+    Applicative,
+    Chain,
+    ChainRec,
+    Monad,
+    Alt,
+    Plus,
+    Alternative,
+    Foldable,
+    Traversable,
+    Extend,
+    Comonad,
+    Contravariant,
+    equals,
+    lt,
+    lte,
+    gt,
+    gte,
+    min,
+    max,
+    clamp,
+    compose,
+    id,
+    concat,
+    empty,
+    invert,
+    filter,
+    reject,
+    map,
+    flip,
+    bimap,
+    mapLeft,
+    promap,
+    ap,
+    lift2,
+    lift3,
+    apFirst,
+    apSecond,
+    of,
+    append,
+    prepend,
+    chain,
+    join,
+    chainRec,
+    alt,
+    zero,
+    reduce,
+    size,
+    all,
+    any,
+    none,
+    elem,
+    intercalate,
+    foldMap,
+    reverse,
+    sort,
+    sortBy,
+    traverse,
+    sequence,
+    extend,
+    duplicate,
+    extract,
+    contramap,
   };
 
-}));
+});
 
 //. [Alt]:                      v:fantasyland/fantasy-land#alt
 //. [Alternative]:              v:fantasyland/fantasy-land#alternative

@@ -1,9 +1,9 @@
 'use strict';
 
-var FL = require ('fantasy-land');
-var show = require ('sanctuary-show');
+const FL = require ('fantasy-land');
+const show = require ('sanctuary-show');
 
-var Z = require ('..');
+const Z = require ('..');
 
 
 //  Sum :: Number -> Sum
@@ -12,7 +12,7 @@ function Sum(value) {
   this.value = value;
 }
 
-Sum[FL.empty] = function() { return Sum (0); };
+Sum[FL.empty] = () => Sum (0);
 
 Sum.prototype['@@type'] = 'sanctuary-type-classes/Sum@1';
 
