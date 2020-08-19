@@ -1901,6 +1901,9 @@
   //.
   //. > reduce (concat, '', Cons ('foo', Cons ('bar', Cons ('baz', Nil))))
   //. 'foobarbaz'
+  //.
+  //. > reduce (concat, '', {foo: 'x', bar: 'y', baz: 'z'})
+  //. 'yzx'
   //. ```
   function reduce(f, x, foldable) {
     return Foldable.methods.reduce (foldable) (f, x);
