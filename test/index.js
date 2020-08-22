@@ -1,5 +1,7 @@
 'use strict';
 
+var assert = require ('assert');
+
 var laws = require ('fantasy-laws');
 var jsc = require ('jsverify');
 var Identity = require ('sanctuary-identity');
@@ -903,6 +905,11 @@ test ('empty', function() {
   eq (Z.empty (Object), {});
   eq (Z.empty (List), Nil);
   eq (Z.empty (Maybe), Nothing);
+
+  assert.throws (
+    () => Z.empty (null),
+    new TypeError ('Monoid.methods.empty(...) is not a function')
+  );
 });
 
 test ('invert', function() {
