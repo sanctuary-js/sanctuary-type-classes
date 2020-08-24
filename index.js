@@ -233,25 +233,12 @@
   //  Value :: Location
   var Value = 'Value';
 
-  //  _funcPath :: (Boolean, Array String, a) -> Nullable Function
-  function _funcPath(allowInheritedProps, path, _x) {
-    var x = _x;
-    for (var idx = 0; idx < path.length; idx += 1) {
-      var k = path[idx];
-      if (x == null || !(allowInheritedProps || has (k, x))) return null;
-      x = x[k];
-    }
-    return typeof x === 'function' ? x : null;
-  }
-
   //  funcPath :: (Array String, a) -> Nullable Function
-  function funcPath(path, x) {
-    return _funcPath (true, path, x);
-  }
-
-  //  implPath :: Array String -> Nullable Function
-  function implPath(path) {
-    return _funcPath (false, path, implementations);
+  function funcPath(path, _x) {
+    var x = _x;
+    // eslint-disable-next-line no-plusplus
+    for (var idx = 0; x != null && idx < path.length; x = x[path[idx++]]);
+    return typeof x === 'function' ? x : null;
   }
 
   //  functionName :: Function -> String
@@ -269,18 +256,17 @@
       var name = 'fantasy-land/' + _name;
       return requirements[_name] === Constructor ?
         function(typeRep) {
-          var f = funcPath ([name], typeRep);
-          return f == null && typeof typeRep === 'function' ?
-            implPath ([functionName (typeRep), name]) :
-            f;
+          return (funcPath ([name], typeRep)) ||
+                 (typeof typeRep === 'function'
+                  ? funcPath ([functionName (typeRep), name], implementations)
+                  : null);
         } :
         function(x) {
           var isPrototype = x != null &&
                             x.constructor != null &&
                             x.constructor.prototype === x;
-          var m = null;
-          if (!isPrototype) m = funcPath ([name], x);
-          if (m == null)    m = implPath ([type (x), 'prototype', name]);
+          var m = (isPrototype ? null : funcPath ([name], x)) ||
+                  (funcPath ([type (x), 'prototype', name], implementations));
           return m && m.bind (x);
         };
     }
