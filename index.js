@@ -93,6 +93,7 @@
     var Maybe = __doctest.require ('sanctuary-maybe');
     var Pair = __doctest.require ('sanctuary-pair');
     var Sum = __doctest.require ('./test/Sum');
+    var Useless = __doctest.require ('sanctuary-useless');
 
     var Nil = List.Nil, Cons = List.Cons;
     var Nothing = Maybe.Nothing, Just = Maybe.Just;
@@ -294,7 +295,7 @@
       (function() {
         var $seen = [];
         return function(x) {
-//        if ($seen.includes (x)) return true;
+          if ($seen.includes (x)) return true;
 
           $seen.push (x);
           try {
@@ -334,6 +335,15 @@
   //. ```javascript
   //. > Setoid.test (null)
   //. true
+  //.
+  //. > Setoid.test (Useless)
+  //. false
+  //.
+  //. > Setoid.test ([1, 2, 3])
+  //. true
+  //.
+  //. > Setoid.test ([Useless])
+  //. false
   //. ```
   var Setoid = $ ('Setoid', [], {equals: Value});
 
@@ -346,6 +356,12 @@
   //. true
   //.
   //. > Ord.test (Math.sqrt)
+  //. false
+  //.
+  //. > Ord.test ([1, 2, 3])
+  //. true
+  //.
+  //. > Ord.test ([Math.sqrt])
   //. false
   //. ```
   var Ord = $ ('Ord', [Setoid], {lte: Value});
@@ -768,7 +784,7 @@
     return [];
   }
 
-  //  Array$prototype$equals :: Array a ~> Array a -> Boolean
+  //  Array$prototype$equals :: Setoid a => Array a ~> Array a -> Boolean
   function Array$prototype$equals(other) {
     if (other.length !== this.length) return false;
     for (var idx = 0; idx < this.length; idx += 1) {
@@ -777,7 +793,7 @@
     return true;
   }
 
-  //  Array$prototype$lte :: Array a ~> Array a -> Boolean
+  //  Array$prototype$lte :: Ord a => Array a ~> Array a -> Boolean
   function Array$prototype$lte(other) {
     for (var idx = 0; true; idx += 1) {
       if (idx === this.length) return true;
@@ -883,7 +899,7 @@
     return {};
   }
 
-  //  Object$prototype$equals :: StrMap a ~> StrMap a -> Boolean
+  //  Object$prototype$equals :: Setoid a => StrMap a ~> StrMap a -> Boolean
   function Object$prototype$equals(other) {
     var self = this;
     var keys = sortedKeys (this);
@@ -891,7 +907,7 @@
            keys.every (function(k) { return equals (self[k], other[k]); });
   }
 
-  //  Object$prototype$lte :: StrMap a ~> StrMap a -> Boolean
+  //  Object$prototype$lte :: Ord a => StrMap a ~> StrMap a -> Boolean
   function Object$prototype$lte(other) {
     var theseKeys = sortedKeys (this);
     var otherKeys = sortedKeys (other);
@@ -1092,9 +1108,9 @@
       case 'String#fantasy-land/concat':
         return String$prototype$concat;
       case 'Array#fantasy-land/equals':
-        return Array$prototype$equals;
+        return value.every (Setoid.test) ? Array$prototype$equals : null;
       case 'Array#fantasy-land/lte':
-        return Array$prototype$lte;
+        return value.every (Ord.test) ? Array$prototype$lte : null;
       case 'Array#fantasy-land/concat':
         return Array$prototype$concat;
       case 'Array#fantasy-land/filter':
@@ -1120,9 +1136,13 @@
       case 'Error#fantasy-land/equals':
         return Error$prototype$equals;
       case 'Object#fantasy-land/equals':
-        return Object$prototype$equals;
+        return (Object.values (value)).every (Setoid.test) ?
+          Object$prototype$equals :
+          null;
       case 'Object#fantasy-land/lte':
-        return Object$prototype$lte;
+        return (Object.values (value)).every (Ord.test) ?
+          Object$prototype$lte :
+          null;
       case 'Object#fantasy-land/concat':
         return Object$prototype$concat;
       case 'Object#fantasy-land/filter':

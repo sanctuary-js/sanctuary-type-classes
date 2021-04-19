@@ -323,6 +323,8 @@ test ('Setoid', function() {
   eq (Z.Setoid.test ([]), true);
   eq (Z.Setoid.test ({}), true);
   eq (Z.Setoid.test (Useless), false);
+  eq (Z.Setoid.test ([Useless]), false);
+  eq (Z.Setoid.test ({foo: Useless}), false);
 });
 
 test ('Ord', function() {
@@ -334,6 +336,8 @@ test ('Ord', function() {
   eq (Z.Ord.test ([]), true);
   eq (Z.Ord.test ({}), true);
   eq (Z.Ord.test (Math.abs), false);
+  eq (Z.Ord.test ([Math.abs]), false);
+  eq (Z.Ord.test ({foo: Math.abs}), false);
 });
 
 test ('Semigroupoid', function() {
