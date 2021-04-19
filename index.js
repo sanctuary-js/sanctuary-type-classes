@@ -249,7 +249,7 @@
         typeRep != null && typeof typeRep[name] === 'function' ?
           typeRep[name] :
         typeof typeRep === 'function' ?
-          implementations[functionName (typeRep) + '.' + name] :
+          staticMethod (name, typeRep) :
         // else
           null
       );
@@ -265,7 +265,7 @@
         typeof x[name] === 'function' ?
           x[name] :
         // else
-          implementations[type (x) + '#' + name]
+          prototypeMethod (name, x)
       );
     };
   }
@@ -1024,65 +1024,129 @@
     return function(x) { return contravariant (f (x)); };
   }
 
-  /* eslint-disable key-spacing */
-  var implementations = {
-    'Null#fantasy-land/equals':         Null$prototype$equals,
-    'Null#fantasy-land/lte':            Null$prototype$lte,
-    'Undefined#fantasy-land/equals':    Undefined$prototype$equals,
-    'Undefined#fantasy-land/lte':       Undefined$prototype$lte,
-    'Boolean#fantasy-land/equals':      Boolean$prototype$equals,
-    'Boolean#fantasy-land/lte':         Boolean$prototype$lte,
-    'Number#fantasy-land/equals':       Number$prototype$equals,
-    'Number#fantasy-land/lte':          Number$prototype$lte,
-    'Date#fantasy-land/equals':         Date$prototype$equals,
-    'Date#fantasy-land/lte':            Date$prototype$lte,
-    'RegExp#fantasy-land/equals':       RegExp$prototype$equals,
-    'String.fantasy-land/empty':        String$empty,
-    'String#fantasy-land/equals':       String$prototype$equals,
-    'String#fantasy-land/lte':          String$prototype$lte,
-    'String#fantasy-land/concat':       String$prototype$concat,
-    'Array.fantasy-land/empty':         Array$empty,
-    'Array.fantasy-land/of':            Array$of,
-    'Array.fantasy-land/chainRec':      Array$chainRec,
-    'Array.fantasy-land/zero':          Array$zero,
-    'Array#fantasy-land/equals':        Array$prototype$equals,
-    'Array#fantasy-land/lte':           Array$prototype$lte,
-    'Array#fantasy-land/concat':        Array$prototype$concat,
-    'Array#fantasy-land/filter':        Array$prototype$filter,
-    'Array#fantasy-land/map':           Array$prototype$map,
-    'Array#fantasy-land/ap':            Array$prototype$ap,
-    'Array#fantasy-land/chain':         Array$prototype$chain,
-    'Array#fantasy-land/alt':           Array$prototype$alt,
-    'Array#fantasy-land/reduce':        Array$prototype$reduce,
-    'Array#fantasy-land/traverse':      Array$prototype$traverse,
-    'Array#fantasy-land/extend':        Array$prototype$extend,
-    'Arguments#fantasy-land/equals':    Arguments$prototype$equals,
-    'Arguments#fantasy-land/lte':       Arguments$prototype$lte,
-    'Error#fantasy-land/equals':        Error$prototype$equals,
-    'Object.fantasy-land/empty':        Object$empty,
-    'Object.fantasy-land/zero':         Object$zero,
-    'Object#fantasy-land/equals':       Object$prototype$equals,
-    'Object#fantasy-land/lte':          Object$prototype$lte,
-    'Object#fantasy-land/concat':       Object$prototype$concat,
-    'Object#fantasy-land/filter':       Object$prototype$filter,
-    'Object#fantasy-land/map':          Object$prototype$map,
-    'Object#fantasy-land/ap':           Object$prototype$ap,
-    'Object#fantasy-land/alt':          Object$prototype$alt,
-    'Object#fantasy-land/reduce':       Object$prototype$reduce,
-    'Object#fantasy-land/traverse':     Object$prototype$traverse,
-    'Function.fantasy-land/id':         Function$id,
-    'Function.fantasy-land/of':         Function$of,
-    'Function.fantasy-land/chainRec':   Function$chainRec,
-    'Function#fantasy-land/equals':     Function$prototype$equals,
-    'Function#fantasy-land/compose':    Function$prototype$compose,
-    'Function#fantasy-land/map':        Function$prototype$map,
-    'Function#fantasy-land/promap':     Function$prototype$promap,
-    'Function#fantasy-land/ap':         Function$prototype$ap,
-    'Function#fantasy-land/chain':      Function$prototype$chain,
-    'Function#fantasy-land/extend':     Function$prototype$extend,
-    'Function#fantasy-land/contramap':  Function$prototype$contramap
-  };
-  /* eslint-enable key-spacing */
+  function staticMethod(name, typeRep) {
+    switch (functionName (typeRep) + '.' + name) {
+      case 'String.fantasy-land/empty':
+        return String$empty;
+      case 'Array.fantasy-land/empty':
+        return Array$empty;
+      case 'Array.fantasy-land/of':
+        return Array$of;
+      case 'Array.fantasy-land/chainRec':
+        return Array$chainRec;
+      case 'Array.fantasy-land/zero':
+        return Array$zero;
+      case 'Object.fantasy-land/empty':
+        return Object$empty;
+      case 'Object.fantasy-land/zero':
+        return Object$zero;
+      case 'Function.fantasy-land/id':
+        return Function$id;
+      case 'Function.fantasy-land/of':
+        return Function$of;
+      case 'Function.fantasy-land/chainRec':
+        return Function$chainRec;
+      default:
+        return null;
+    }
+  }
+
+  function prototypeMethod(name, value) {
+    switch (type (value) + '#' + name) {
+      case 'Null#fantasy-land/equals':
+        return Null$prototype$equals;
+      case 'Null#fantasy-land/lte':
+        return Null$prototype$lte;
+      case 'Undefined#fantasy-land/equals':
+        return Undefined$prototype$equals;
+      case 'Undefined#fantasy-land/lte':
+        return Undefined$prototype$lte;
+      case 'Boolean#fantasy-land/equals':
+        return Boolean$prototype$equals;
+      case 'Boolean#fantasy-land/lte':
+        return Boolean$prototype$lte;
+      case 'Number#fantasy-land/equals':
+        return Number$prototype$equals;
+      case 'Number#fantasy-land/lte':
+        return Number$prototype$lte;
+      case 'Date#fantasy-land/equals':
+        return Date$prototype$equals;
+      case 'Date#fantasy-land/lte':
+        return Date$prototype$lte;
+      case 'RegExp#fantasy-land/equals':
+        return RegExp$prototype$equals;
+      case 'String#fantasy-land/equals':
+        return String$prototype$equals;
+      case 'String#fantasy-land/lte':
+        return String$prototype$lte;
+      case 'String#fantasy-land/concat':
+        return String$prototype$concat;
+      case 'Array#fantasy-land/equals':
+        return Array$prototype$equals;
+      case 'Array#fantasy-land/lte':
+        return Array$prototype$lte;
+      case 'Array#fantasy-land/concat':
+        return Array$prototype$concat;
+      case 'Array#fantasy-land/filter':
+        return Array$prototype$filter;
+      case 'Array#fantasy-land/map':
+        return Array$prototype$map;
+      case 'Array#fantasy-land/ap':
+        return Array$prototype$ap;
+      case 'Array#fantasy-land/chain':
+        return Array$prototype$chain;
+      case 'Array#fantasy-land/alt':
+        return Array$prototype$alt;
+      case 'Array#fantasy-land/reduce':
+        return Array$prototype$reduce;
+      case 'Array#fantasy-land/traverse':
+        return Array$prototype$traverse;
+      case 'Array#fantasy-land/extend':
+        return Array$prototype$extend;
+      case 'Arguments#fantasy-land/equals':
+        return Arguments$prototype$equals;
+      case 'Arguments#fantasy-land/lte':
+        return Arguments$prototype$lte;
+      case 'Error#fantasy-land/equals':
+        return Error$prototype$equals;
+      case 'Object#fantasy-land/equals':
+        return Object$prototype$equals;
+      case 'Object#fantasy-land/lte':
+        return Object$prototype$lte;
+      case 'Object#fantasy-land/concat':
+        return Object$prototype$concat;
+      case 'Object#fantasy-land/filter':
+        return Object$prototype$filter;
+      case 'Object#fantasy-land/map':
+        return Object$prototype$map;
+      case 'Object#fantasy-land/ap':
+        return Object$prototype$ap;
+      case 'Object#fantasy-land/alt':
+        return Object$prototype$alt;
+      case 'Object#fantasy-land/reduce':
+        return Object$prototype$reduce;
+      case 'Object#fantasy-land/traverse':
+        return Object$prototype$traverse;
+      case 'Function#fantasy-land/equals':
+        return Function$prototype$equals;
+      case 'Function#fantasy-land/compose':
+        return Function$prototype$compose;
+      case 'Function#fantasy-land/map':
+        return Function$prototype$map;
+      case 'Function#fantasy-land/promap':
+        return Function$prototype$promap;
+      case 'Function#fantasy-land/ap':
+        return Function$prototype$ap;
+      case 'Function#fantasy-land/chain':
+        return Function$prototype$chain;
+      case 'Function#fantasy-land/extend':
+        return Function$prototype$extend;
+      case 'Function#fantasy-land/contramap':
+        return Function$prototype$contramap;
+      default:
+        return null;
+    }
+  }
 
   //# equals :: (a, b) -> Boolean
   //.
