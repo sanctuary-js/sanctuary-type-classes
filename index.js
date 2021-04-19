@@ -291,17 +291,27 @@
       'https://github.com/sanctuary-js/sanctuary-type-classes/tree/v' + version
         + '#' + _name,
       dependencies,
-      function(x) {
-        return (
-          staticMethodNames.every (function(_name) {
-            return x != null &&
-                   getStaticMethod (_name) (x.constructor) != null;
-          }) &&
-          prototypeMethodNames.every (function(_name) {
-            return getPrototypeMethod (_name) (x) != null;
-          })
-        );
-      }
+      (function() {
+        var $seen = [];
+        return function(x) {
+//        if ($seen.includes (x)) return true;
+
+          $seen.push (x);
+          try {
+            return (
+              staticMethodNames.every (function(_name) {
+                return x != null &&
+                       getStaticMethod (_name) (x.constructor) != null;
+              }) &&
+              prototypeMethodNames.every (function(_name) {
+                return getPrototypeMethod (_name) (x) != null;
+              })
+            );
+          } finally {
+            $seen.pop ();
+          }
+        };
+      } ())
     );
 
     typeClass.methods = {};

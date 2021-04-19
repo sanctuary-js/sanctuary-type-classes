@@ -676,6 +676,14 @@ test ('equals', function() {
   eq (Z.equals (Nothing.constructor, Maybe), true);
   eq (Z.equals ((Just (0)).constructor, Maybe), true);
   eq (Z.equals (Lazy$of (0), Lazy$of (0)), false);
+
+  var $0 = {z: 0};
+  var $1 = {z: 1};
+  $0.a = $1;
+  $1.a = $0;
+  eq (Z.equals ($0, $0), true);
+  eq (Z.equals ($0, $1), false);
+  eq (Z.equals ($1, $0), false);
 });
 
 test ('lt', function() {
