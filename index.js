@@ -1111,10 +1111,11 @@
     }
   };
 
-  //# equals :: (a, b) -> Boolean
+  //# equals :: Setoid a => (a, a) -> Boolean
   //.
   //. Returns `true` if its arguments are of the same type and equal according
-  //. to the type's [`fantasy-land/equals`][] method; `false` otherwise.
+  //. to the type's [`fantasy-land/equals`][] method. Returns `false` for
+  //. inputs of differing types.
   //.
   //. `fantasy-land/equals` implementations are provided for the following
   //. built-in types: Null, Undefined, Boolean, Number, Date, RegExp, String,
@@ -1154,20 +1155,18 @@
 
       $pairs.push ([x, y]);
       try {
-        return Z.Setoid.test (x) &&
-               Z.Setoid.test (y) &&
-               Z.Setoid.methods.equals (x) (y);
+        return Z.Setoid.methods.equals (x) (y);
       } finally {
         $pairs.pop ();
       }
     };
   }
 
-  //# lt :: (a, b) -> Boolean
+  //# lt :: Ord a => (a, a) -> Boolean
   //.
   //. Returns `true` if its arguments are of the same type and the first is
   //. less than the second according to the type's [`fantasy-land/lte`][]
-  //. method; `false` otherwise.
+  //. method. Returns `false` for inputs of differing types.
   //.
   //. This function is derived from [`lte`](#lte).
   //.
@@ -1185,11 +1184,12 @@
   //. ```
   Z.lt = (x, y) => sameType (x, y) && !(Z.lte (y, x));
 
-  //# lte :: (a, b) -> Boolean
+  //# lte :: Ord a => (a, a) -> Boolean
   //.
   //. Returns `true` if its arguments are of the same type and the first
   //. is less than or equal to the second according to the type's
-  //. [`fantasy-land/lte`][] method; `false` otherwise.
+  //. [`fantasy-land/lte`][] method. Returns `false` for inputs of
+  //. differing types.
   //.
   //. `fantasy-land/lte` implementations are provided for the following
   //. built-in types: Null, Undefined, Boolean, Number, Date, String, Array,
@@ -1225,18 +1225,18 @@
 
       $pairs.push ([x, y]);
       try {
-        return Z.Ord.test (x) && Z.Ord.test (y) && Z.Ord.methods.lte (x) (y);
+        return Z.Ord.methods.lte (x) (y);
       } finally {
         $pairs.pop ();
       }
     };
   }
 
-  //# gt :: (a, b) -> Boolean
+  //# gt :: Ord a => (a, a) -> Boolean
   //.
   //. Returns `true` if its arguments are of the same type and the first is
   //. greater than the second according to the type's [`fantasy-land/lte`][]
-  //. method; `false` otherwise.
+  //. method. Returns `false` for inputs of differing types.
   //.
   //. This function is derived from [`lte`](#lte).
   //.
@@ -1254,11 +1254,12 @@
   //. ```
   Z.gt = (x, y) => Z.lt (y, x);
 
-  //# gte :: (a, b) -> Boolean
+  //# gte :: Ord a => (a, a) -> Boolean
   //.
   //. Returns `true` if its arguments are of the same type and the first
   //. is greater than or equal to the second according to the type's
-  //. [`fantasy-land/lte`][] method; `false` otherwise.
+  //. [`fantasy-land/lte`][] method. Returns `false` for inputs of
+  //. differing types.
   //.
   //. This function is derived from [`lte`](#lte).
   //.

@@ -673,11 +673,9 @@ test ('equals', () => {
   eq (Z.equals (Math.sin, Math.cos), false);
   eq (Z.equals (Identity (Identity (Identity (0))), Identity (Identity (Identity (0)))), true);
   eq (Z.equals (Identity (Identity (Identity (0))), Identity (Identity (Identity (1)))), false);
-  eq (Z.equals (Useless, Useless), false);
   eq (Z.equals (Array.prototype, Array.prototype), true);
   eq (Z.equals (Nothing.constructor, Maybe), true);
   eq (Z.equals ((Just (0)).constructor, Maybe), true);
-  eq (Z.equals (Lazy$of (0), Lazy$of (0)), false);
 
   const $0 = {z: 0};
   const $1 = {z: 1};
@@ -798,7 +796,6 @@ test ('lte', () => {
   eq (Z.lte (Identity (Identity (Identity (0))), Identity (Identity (Identity (0)))), true);
   eq (Z.lte (Identity (Identity (Identity (0))), Identity (Identity (Identity (1)))), true);
   eq (Z.lte (Identity (Identity (Identity (1))), Identity (Identity (Identity (0)))), false);
-  eq (Z.lte (Lazy$of (0), Lazy$of (0)), false);
   eq (Z.lte ('abc', 123), false);
 
   const $0 = {z: 0};
