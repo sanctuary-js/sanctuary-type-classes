@@ -8,6 +8,7 @@ var Identity = require ('sanctuary-identity');
 var Maybe = require ('sanctuary-maybe');
 var Pair = require ('sanctuary-pair');
 var type = require ('sanctuary-type-identifiers');
+var Useless = require ('sanctuary-useless');
 
 var Z = require ('..');
 var version = (require ('../package.json')).version;
@@ -321,7 +322,7 @@ test ('Setoid', function() {
   eq (Z.Setoid.test (''), true);
   eq (Z.Setoid.test ([]), true);
   eq (Z.Setoid.test ({}), true);
-  eq (Z.Setoid.test ({'@@type': 'my-package/Quux@1'}), false);
+  eq (Z.Setoid.test (Useless), false);
 });
 
 test ('Ord', function() {
@@ -670,7 +671,7 @@ test ('equals', function() {
   eq (Z.equals (Math.sin, Math.cos), false);
   eq (Z.equals (Identity (Identity (Identity (0))), Identity (Identity (Identity (0)))), true);
   eq (Z.equals (Identity (Identity (Identity (0))), Identity (Identity (Identity (1)))), false);
-  eq (Z.equals ({'@@type': 'my-package/Quux@1'}, {'@@type': 'my-package/Quux@1'}), false);
+  eq (Z.equals (Useless, Useless), false);
   eq (Z.equals (Array.prototype, Array.prototype), true);
   eq (Z.equals (Nothing.constructor, Maybe), true);
   eq (Z.equals ((Just (0)).constructor, Maybe), true);
