@@ -213,18 +213,16 @@
   //. to define parametrically polymorphic functions which verify their
   //. type-class constraints at run time.
   function TypeClass(name, url, dependencies, test) {
-    if (!(this instanceof TypeClass)) {
-      return new TypeClass (name, url, dependencies, test);
-    }
-    this.name = name;
-    this.url = url;
-    this.test = function(x) {
-      return dependencies.every (function(d) { return d.test (x); }) &&
-             test (x);
+    return {
+      '@@type': 'sanctuary-type-classes/TypeClass@1',
+      'name': name,
+      'url': url,
+      'test': function(x) {
+        return dependencies.every (function(d) { return d.test (x); }) &&
+               test (x);
+      }
     };
   }
-
-  TypeClass.prototype['@@type'] = 'sanctuary-type-classes/TypeClass@1';
 
   //  data Location = Constructor | Value
 
