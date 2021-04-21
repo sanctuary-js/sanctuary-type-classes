@@ -109,6 +109,9 @@
   //  identity :: a -> a
   const identity = x => x;
 
+  //  nameProp :: { name :: a } -> a
+  const nameProp = x => x.name;
+
   //  pair :: a -> b -> Array2 a b
   const pair = x => y => [x, y];
 
@@ -193,17 +196,16 @@
   const $ = (_name, dependencies, requirements) => {
     const version = '12.1.0';  // updated programmatically
 
-    const staticMethodNames = [];
-    const prototypeMethodNames = [];
-    Object.keys (requirements)
-    .forEach (_name => {
-      switch (requirements[_name]) {
-        case Constructor:
-          return staticMethodNames.push (_name);
-        case Value:
-          return prototypeMethodNames.push (_name);
-      }
-    });
+    const staticMethods = requirements.filter (req => (
+      req.location === Constructor
+    ));
+
+    const prototypeMethods = requirements.filter (req => (
+      req.location === Value
+    ));
+
+    const staticMethodNames = staticMethods.map (nameProp);
+    const prototypeMethodNames = prototypeMethods.map (nameProp);
 
     const typeClass = Z.TypeClass (
       `sanctuary-type-classes/${_name}`,
@@ -230,15 +232,33 @@
 
     typeClass.methods = {};
 
-    staticMethodNames.forEach (_name => {
-      typeClass.methods[_name] = (typeRep, a, b) => (
-        staticMethod (_name, typeRep) (a, b)
+    staticMethods.forEach (method => {
+      const _name = method.name;
+      typeClass.methods[_name] = (
+        method.arity === 0 ? typeRep => (
+          staticMethod (_name, typeRep) ()
+        ) :
+        method.arity === 1 ? (typeRep, a) => (
+          staticMethod (_name, typeRep) (a)
+        ) :
+        (typeRep, a, b) => (
+          staticMethod (_name, typeRep) (a, b)
+        )
       );
     });
 
-    prototypeMethodNames.forEach (_name => {
-      typeClass.methods[_name] = (a, b, c) => (
-        (prototypeMethod (_name, a)).call (a, b, c)
+    prototypeMethods.forEach (method => {
+      const _name = method.name;
+      typeClass.methods[_name] = (
+        method.arity === 0 ? a => (
+          (prototypeMethod (_name, a)).call (a)
+        ) :
+        method.arity === 1 ? (a, b) => (
+          (prototypeMethod (_name, a)).call (a, b)
+        ) :
+        (a, b, c) => (
+          (prototypeMethod (_name, a)).call (a, b, c)
+        )
       );
     });
 
@@ -262,8 +282,11 @@
   //. > Z.Setoid.test ([Useless])
   //. false
   //. ```
-  Z.Setoid =
-    $ ('Setoid', [], {equals: Value});
+  Z.Setoid = $ ('Setoid', [], [{
+    name: 'equals',
+    location: Value,
+    arity: 1,
+  }]);
 
   //# Ord :: TypeClass
   //.
@@ -282,8 +305,11 @@
   //. > Z.Ord.test ([Math.sqrt])
   //. false
   //. ```
-  Z.Ord =
-    $ ('Ord', [Z.Setoid], {lte: Value});
+  Z.Ord = $ ('Ord', [Z.Setoid], [{
+    name: 'lte',
+    location: Value,
+    arity: 1,
+  }]);
 
   //# Semigroupoid :: TypeClass
   //.
@@ -296,8 +322,11 @@
   //. > Z.Semigroupoid.test (0)
   //. false
   //. ```
-  Z.Semigroupoid =
-    $ ('Semigroupoid', [], {compose: Value});
+  Z.Semigroupoid = $ ('Semigroupoid', [], [{
+    name: 'compose',
+    location: Value,
+    arity: 1,
+  }]);
 
   //# Category :: TypeClass
   //.
@@ -310,8 +339,11 @@
   //. > Z.Category.test (0)
   //. false
   //. ```
-  Z.Category =
-    $ ('Category', [Z.Semigroupoid], {id: Constructor});
+  Z.Category = $ ('Category', [Z.Semigroupoid], [{
+    name: 'id',
+    location: Constructor,
+    arity: 0,
+  }]);
 
   //# Semigroup :: TypeClass
   //.
@@ -324,8 +356,11 @@
   //. > Z.Semigroup.test (0)
   //. false
   //. ```
-  Z.Semigroup =
-    $ ('Semigroup', [], {concat: Value});
+  Z.Semigroup = $ ('Semigroup', [], [{
+    name: 'concat',
+    location: Value,
+    arity: 1,
+  }]);
 
   //# Monoid :: TypeClass
   //.
@@ -338,8 +373,11 @@
   //. > Z.Monoid.test (0)
   //. false
   //. ```
-  Z.Monoid =
-    $ ('Monoid', [Z.Semigroup], {empty: Constructor});
+  Z.Monoid = $ ('Monoid', [Z.Semigroup], [{
+    name: 'empty',
+    location: Constructor,
+    arity: 0,
+  }]);
 
   //# Group :: TypeClass
   //.
@@ -352,8 +390,11 @@
   //. > Z.Group.test ('')
   //. false
   //. ```
-  Z.Group =
-    $ ('Group', [Z.Monoid], {invert: Value});
+  Z.Group = $ ('Group', [Z.Monoid], [{
+    name: 'invert',
+    location: Value,
+    arity: 0,
+  }]);
 
   //# Filterable :: TypeClass
   //.
@@ -366,8 +407,11 @@
   //. > Z.Filterable.test ('')
   //. false
   //. ```
-  Z.Filterable =
-    $ ('Filterable', [], {filter: Value});
+  Z.Filterable = $ ('Filterable', [], [{
+    name: 'filter',
+    location: Value,
+    arity: 1,
+  }]);
 
   //# Functor :: TypeClass
   //.
@@ -380,8 +424,11 @@
   //. > Z.Functor.test ('')
   //. false
   //. ```
-  Z.Functor =
-    $ ('Functor', [], {map: Value});
+  Z.Functor = $ ('Functor', [], [{
+    name: 'map',
+    location: Value,
+    arity: 1,
+  }]);
 
   //# Bifunctor :: TypeClass
   //.
@@ -394,8 +441,11 @@
   //. > Z.Bifunctor.test ([])
   //. false
   //. ```
-  Z.Bifunctor =
-    $ ('Bifunctor', [Z.Functor], {bimap: Value});
+  Z.Bifunctor = $ ('Bifunctor', [Z.Functor], [{
+    name: 'bimap',
+    location: Value,
+    arity: 2,
+  }]);
 
   //# Profunctor :: TypeClass
   //.
@@ -408,8 +458,11 @@
   //. > Z.Profunctor.test ([])
   //. false
   //. ```
-  Z.Profunctor =
-    $ ('Profunctor', [Z.Functor], {promap: Value});
+  Z.Profunctor = $ ('Profunctor', [Z.Functor], [{
+    name: 'promap',
+    location: Value,
+    arity: 2,
+  }]);
 
   //# Apply :: TypeClass
   //.
@@ -422,8 +475,11 @@
   //. > Z.Apply.test ('')
   //. false
   //. ```
-  Z.Apply =
-    $ ('Apply', [Z.Functor], {ap: Value});
+  Z.Apply = $ ('Apply', [Z.Functor], [{
+    name: 'ap',
+    location: Value,
+    arity: 1,
+  }]);
 
   //# Applicative :: TypeClass
   //.
@@ -436,8 +492,11 @@
   //. > Z.Applicative.test ({})
   //. false
   //. ```
-  Z.Applicative =
-    $ ('Applicative', [Z.Apply], {of: Constructor});
+  Z.Applicative = $ ('Applicative', [Z.Apply], [{
+    name: 'of',
+    location: Constructor,
+    arity: 1,
+  }]);
 
   //# Chain :: TypeClass
   //.
@@ -450,8 +509,11 @@
   //. > Z.Chain.test ({})
   //. false
   //. ```
-  Z.Chain =
-    $ ('Chain', [Z.Apply], {chain: Value});
+  Z.Chain = $ ('Chain', [Z.Apply], [{
+    name: 'chain',
+    location: Value,
+    arity: 1,
+  }]);
 
   //# ChainRec :: TypeClass
   //.
@@ -464,8 +526,11 @@
   //. > Z.ChainRec.test ({})
   //. false
   //. ```
-  Z.ChainRec =
-    $ ('ChainRec', [Z.Chain], {chainRec: Constructor});
+  Z.ChainRec = $ ('ChainRec', [Z.Chain], [{
+    name: 'chainRec',
+    location: Constructor,
+    arity: 2,
+  }]);
 
   //# Monad :: TypeClass
   //.
@@ -478,8 +543,7 @@
   //. > Z.Monad.test ({})
   //. false
   //. ```
-  Z.Monad =
-    $ ('Monad', [Z.Applicative, Z.Chain], {});
+  Z.Monad = $ ('Monad', [Z.Applicative, Z.Chain], []);
 
   //# Alt :: TypeClass
   //.
@@ -492,8 +556,11 @@
   //. > Z.Alt.test ('')
   //. false
   //. ```
-  Z.Alt =
-    $ ('Alt', [Z.Functor], {alt: Value});
+  Z.Alt = $ ('Alt', [Z.Functor], [{
+    name: 'alt',
+    location: Value,
+    arity: 1,
+  }]);
 
   //# Plus :: TypeClass
   //.
@@ -506,8 +573,11 @@
   //. > Z.Plus.test ('')
   //. false
   //. ```
-  Z.Plus =
-    $ ('Plus', [Z.Alt], {zero: Constructor});
+  Z.Plus = $ ('Plus', [Z.Alt], [{
+    name: 'zero',
+    location: Constructor,
+    arity: 0,
+  }]);
 
   //# Alternative :: TypeClass
   //.
@@ -520,8 +590,7 @@
   //. > Z.Alternative.test ({})
   //. false
   //. ```
-  Z.Alternative =
-    $ ('Alternative', [Z.Applicative, Z.Plus], {});
+  Z.Alternative = $ ('Alternative', [Z.Applicative, Z.Plus], []);
 
   //# Foldable :: TypeClass
   //.
@@ -534,8 +603,11 @@
   //. > Z.Foldable.test ('')
   //. false
   //. ```
-  Z.Foldable =
-    $ ('Foldable', [], {reduce: Value});
+  Z.Foldable = $ ('Foldable', [], [{
+    name: 'reduce',
+    location: Value,
+    arity: 2,
+  }]);
 
   //# Traversable :: TypeClass
   //.
@@ -548,8 +620,11 @@
   //. > Z.Traversable.test ('')
   //. false
   //. ```
-  Z.Traversable =
-    $ ('Traversable', [Z.Functor, Z.Foldable], {traverse: Value});
+  Z.Traversable = $ ('Traversable', [Z.Functor, Z.Foldable], [{
+    name: 'traverse',
+    location: Value,
+    arity: 2,
+  }]);
 
   //# Extend :: TypeClass
   //.
@@ -562,8 +637,11 @@
   //. > Z.Extend.test ({})
   //. false
   //. ```
-  Z.Extend =
-    $ ('Extend', [Z.Functor], {extend: Value});
+  Z.Extend = $ ('Extend', [Z.Functor], [{
+    name: 'extend',
+    location: Value,
+    arity: 1,
+  }]);
 
   //# Comonad :: TypeClass
   //.
@@ -576,8 +654,11 @@
   //. > Z.Comonad.test ([])
   //. false
   //. ```
-  Z.Comonad =
-    $ ('Comonad', [Z.Extend], {extract: Value});
+  Z.Comonad = $ ('Comonad', [Z.Extend], [{
+    name: 'extract',
+    location: Value,
+    arity: 0,
+  }]);
 
   //# Contravariant :: TypeClass
   //.
@@ -590,8 +671,11 @@
   //. > Z.Contravariant.test ([])
   //. false
   //. ```
-  Z.Contravariant =
-    $ ('Contravariant', [], {contramap: Value});
+  Z.Contravariant = $ ('Contravariant', [], [{
+    name: 'contramap',
+    location: Value,
+    arity: 1,
+  }]);
 
   //  Null$prototype$equals :: Null ~> Null -> Boolean
   function Null$prototype$equals(other) {
