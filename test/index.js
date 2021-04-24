@@ -798,7 +798,7 @@ test ('lte', () => {
   eq (Z.lte (Identity (Identity (Identity (0))), Identity (Identity (Identity (0)))), true);
   eq (Z.lte (Identity (Identity (Identity (0))), Identity (Identity (Identity (1)))), true);
   eq (Z.lte (Identity (Identity (Identity (1))), Identity (Identity (Identity (0)))), false);
-  eq (Z.lte (Lazy$of (0), Lazy$of (0)), false);
+  eq (Z.lte (Lazy$of (0), Lazy$of (0)), true);
   eq (Z.lte ('abc', 123), false);
 
   const $0 = {z: 0};
