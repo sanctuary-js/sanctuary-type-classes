@@ -1113,12 +1113,20 @@
 
   //# equals :: (a, b) -> Boolean
   //.
-  //. Returns `true` if its arguments are of the same type and equal according
-  //. to the type's [`fantasy-land/equals`][] method; `false` otherwise.
+  //. Returns `true` if its arguments are equal; `false` otherwise.
   //.
-  //. `fantasy-land/equals` implementations are provided for the following
-  //. built-in types: Null, Undefined, Boolean, Number, Date, RegExp, String,
-  //. Array, Arguments, Error, Object, and Function.
+  //. Specifically:
+  //.
+  //.   - Arguments with different [type identities][] are unequal.
+  //.
+  //.   - If the first argument has a [`fantasy-land/equals`][] method,
+  //.     that method is invoked to determine whether the arguments are
+  //.     equal (`fantasy-land/equals` implementations are provided for the
+  //.     following built-in types: Null, Undefined, Boolean, Number, Date,
+  //.     RegExp, String, Array, Arguments, Error, Object, and Function).
+  //.
+  //.   - Otherwise, the arguments are equal if their
+  //.     [entries][`Object.entries`] are equal (according to this algorithm).
   //.
   //. The algorithm supports circular data structures. Two arrays are equal
   //. if they have the same index paths and for each path have equal values.
@@ -1154,9 +1162,9 @@
 
       $pairs.push ([x, y]);
       try {
-        return Z.Setoid.test (x) &&
-               Z.Setoid.test (y) &&
-               Z.Setoid.methods.equals (x) (y);
+        return Z.Setoid.test (x) ?
+          Z.Setoid.methods.equals (x) (y) :
+          Object$prototype$equals.call (x, y);
       } finally {
         $pairs.pop ();
       }
@@ -2253,6 +2261,7 @@
 //. [Semigroupoid]:             v:fantasyland/fantasy-land#semigroupoid
 //. [Setoid]:                   v:fantasyland/fantasy-land#setoid
 //. [Traversable]:              v:fantasyland/fantasy-land#traversable
+//. [`Object.entries`]:         https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/entries
 //. [`fantasy-land/alt`]:       v:fantasyland/fantasy-land#alt-method
 //. [`fantasy-land/ap`]:        v:fantasyland/fantasy-land#ap-method
 //. [`fantasy-land/bimap`]:     v:fantasyland/fantasy-land#bimap-method
@@ -2276,4 +2285,5 @@
 //. [`fantasy-land/traverse`]:  v:fantasyland/fantasy-land#traverse-method
 //. [`fantasy-land/zero`]:      v:fantasyland/fantasy-land#zero-method
 //. [stable sort]:              https://en.wikipedia.org/wiki/Sorting_algorithm#Stability
+//. [type identities]:          v:sanctuary-js/sanctuary-type-identifiers
 //. [type-classes]:             https://github.com/sanctuary-js/sanctuary-def#type-classes

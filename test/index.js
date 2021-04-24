@@ -673,7 +673,7 @@ test ('equals', () => {
   eq (Z.equals (Math.sin, Math.cos), false);
   eq (Z.equals (Identity (Identity (Identity (0))), Identity (Identity (Identity (0)))), true);
   eq (Z.equals (Identity (Identity (Identity (0))), Identity (Identity (Identity (1)))), false);
-  eq (Z.equals (Useless, Useless), false);
+  eq (Z.equals (Useless, Useless), true);
   eq (Z.equals (Array.prototype, Array.prototype), true);
   eq (Z.equals (Nothing.constructor, Maybe), true);
   eq (Z.equals ((Just (0)).constructor, Maybe), true);
