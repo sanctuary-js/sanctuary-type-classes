@@ -901,7 +901,7 @@ test ('empty', () => {
 
   assert.throws (
     () => Z.empty (null),
-    new TypeError ('Monoid.methods.empty(...) is not a function')
+    new TypeError ('Z.Monoid.methods.empty(...) is not a function')
   );
 });
 
