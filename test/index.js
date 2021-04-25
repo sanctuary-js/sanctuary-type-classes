@@ -561,7 +561,6 @@ test ('Contravariant', () => {
 
 test ('equals', () => {
   eq (Z.equals.length, 2);
-  eq (Z.equals.name, 'equals');
 
   eq (Z.equals (null, null), true);
   eq (Z.equals (null, undefined), false);
@@ -684,7 +683,6 @@ test ('equals', () => {
 
 test ('lt', () => {
   eq (Z.lt.length, 2);
-  eq (Z.lt.name, 'lt');
 
   eq (Z.lt (0, 0), false);
   eq (Z.lt (0, 1), true);
@@ -694,7 +692,6 @@ test ('lt', () => {
 
 test ('lte', () => {
   eq (Z.lte.length, 2);
-  eq (Z.lte.name, 'lte');
 
   eq (Z.lte (null, null), true);
   eq (Z.lte (null, undefined), false);
@@ -808,7 +805,6 @@ test ('lte', () => {
 
 test ('gt', () => {
   eq (Z.gt.length, 2);
-  eq (Z.gt.name, 'gt');
 
   eq (Z.gt (0, 0), false);
   eq (Z.gt (0, 1), false);
@@ -818,7 +814,6 @@ test ('gt', () => {
 
 test ('gte', () => {
   eq (Z.gte.length, 2);
-  eq (Z.gte.name, 'gte');
 
   eq (Z.gte (0, 0), true);
   eq (Z.gte (0, 1), false);
@@ -828,7 +823,6 @@ test ('gte', () => {
 
 test ('min', () => {
   eq (Z.min.length, 2);
-  eq (Z.min.name, 'min');
 
   eq (Z.min (0, 1), 0);
   eq (Z.min (['x', 'x'], ['x']), ['x']);
@@ -836,7 +830,6 @@ test ('min', () => {
 
 test ('max', () => {
   eq (Z.max.length, 2);
-  eq (Z.max.name, 'max');
 
   eq (Z.max (0, 1), 1);
   eq (Z.max (['x', 'x'], ['x']), ['x', 'x']);
@@ -844,7 +837,6 @@ test ('max', () => {
 
 test ('clamp', () => {
   eq (Z.clamp.length, 3);
-  eq (Z.clamp.name, 'clamp');
 
   eq (Z.clamp (0, 100, -1), 0);
   eq (Z.clamp (0, 100, 0), 0);
@@ -860,21 +852,18 @@ test ('clamp', () => {
 
 test ('compose', () => {
   eq (Z.compose.length, 2);
-  eq (Z.compose.name, 'compose');
 
   eq (Z.compose (Math.sqrt, inc) (99), 10);
 });
 
 test ('id', () => {
   eq (Z.id.length, 1);
-  eq (Z.id.name, 'id');
 
   eq (Z.id (Function) (42), 42);
 });
 
 test ('concat', () => {
   eq (Z.concat.length, 2);
-  eq (Z.concat.name, 'concat');
 
   eq (Z.concat ('', ''), '');
   eq (Z.concat ('', 'abc'), 'abc');
@@ -903,7 +892,6 @@ test ('concat', () => {
 
 test ('empty', () => {
   eq (Z.empty.length, 1);
-  eq (Z.empty.name, 'empty');
 
   eq (Z.empty (String), '');
   eq (Z.empty (Array), []);
@@ -919,7 +907,6 @@ test ('empty', () => {
 
 test ('invert', () => {
   eq (Z.invert.length, 1);
-  eq (Z.invert.name, 'invert');
 
   eq (Z.invert (Sum (5)), Sum (-5));
   eq (Z.invert (Sum (-5)), Sum (5));
@@ -927,7 +914,6 @@ test ('invert', () => {
 
 test ('filter', () => {
   eq (Z.filter.length, 2);
-  eq (Z.filter.name, 'filter');
 
   eq (Z.filter (odd, []), []);
   eq (Z.filter (odd, [1, 2, 3, 4, 5]), [1, 3, 5]);
@@ -942,7 +928,6 @@ test ('filter', () => {
 
 test ('reject', () => {
   eq (Z.reject.length, 2);
-  eq (Z.reject.name, 'reject');
 
   eq (Z.reject (odd, []), []);
   eq (Z.reject (odd, [1, 2, 3, 4, 5]), [2, 4]);
@@ -957,7 +942,6 @@ test ('reject', () => {
 
 test ('map', () => {
   eq (Z.map.length, 2);
-  eq (Z.map.name, 'map');
 
   eq (Z.map (inc, []), []);
   eq (Z.map (inc, [1, 2, 3]), [2, 3, 4]);
@@ -972,7 +956,6 @@ test ('map', () => {
 
 test ('flip', () => {
   eq (Z.flip.length, 2);
-  eq (Z.flip.name, 'flip');
 
   eq (Z.flip (pow, 2) (10), 100);
   eq (Z.flip ([Math.floor, Math.ceil], 1.5), [1, 2]);
@@ -982,21 +965,18 @@ test ('flip', () => {
 
 test ('bimap', () => {
   eq (Z.bimap.length, 3);
-  eq (Z.bimap.name, 'bimap');
 
   eq (Z.bimap (toUpper, inc, Pair ('abc') (123)), Pair ('ABC') (124));
 });
 
 test ('mapLeft', () => {
   eq (Z.mapLeft.length, 2);
-  eq (Z.mapLeft.name, 'mapLeft');
 
   eq (Z.mapLeft (toUpper, Pair ('abc') ('def')), Pair ('ABC') ('def'));
 });
 
 test ('promap', () => {
   eq (Z.promap.length, 3);
-  eq (Z.promap.name, 'promap');
 
   const lengths = xs => Z.map (length, xs);
   eq (Z.promap (lengths, square, sum) (['foo', 'bar', 'baz', 'quux']), 169);
@@ -1004,7 +984,6 @@ test ('promap', () => {
 
 test ('ap', () => {
   eq (Z.ap.length, 2);
-  eq (Z.ap.name, 'ap');
 
   eq (Z.ap ([], []), []);
   eq (Z.ap ([], [1, 2, 3]), []);
@@ -1032,7 +1011,6 @@ test ('ap', () => {
 
 test ('lift2', () => {
   eq (Z.lift2.length, 3);
-  eq (Z.lift2.name, 'lift2');
 
   eq (Z.lift2 (pow, [10], [1, 2, 3]), [10, 100, 1000]);
   eq (Z.lift2 (pow, Identity (10), Identity (3)), Identity (1000));
@@ -1040,7 +1018,6 @@ test ('lift2', () => {
 
 test ('lift3', () => {
   eq (Z.lift3.length, 4);
-  eq (Z.lift3.name, 'lift3');
 
   eq (Z.lift3 (wrap, ['<'], ['>'], ['foo', 'bar', 'baz']), ['<foo>', '<bar>', '<baz>']);
   eq (Z.lift3 (wrap, Identity ('<'), Identity ('>'), Identity ('baz')), Identity ('<baz>'));
@@ -1048,7 +1025,6 @@ test ('lift3', () => {
 
 test ('apFirst', () => {
   eq (Z.apFirst.length, 2);
-  eq (Z.apFirst.name, 'apFirst');
 
   eq (Z.apFirst ([1, 2], [3, 4]), [1, 1, 2, 2]);
   eq (Z.apFirst (Identity (1), Identity (2)), Identity (1));
@@ -1056,7 +1032,6 @@ test ('apFirst', () => {
 
 test ('apSecond', () => {
   eq (Z.apSecond.length, 2);
-  eq (Z.apSecond.name, 'apSecond');
 
   eq (Z.apSecond ([1, 2], [3, 4]), [3, 4, 3, 4]);
   eq (Z.apSecond (Identity (1), Identity (2)), Identity (2));
@@ -1064,7 +1039,6 @@ test ('apSecond', () => {
 
 test ('of', () => {
   eq (Z.of.length, 2);
-  eq (Z.of.name, 'of');
 
   eq (Z.of (Array, 42), [42]);
   eq (Z.of (Function, 42) (null), 42);
@@ -1075,7 +1049,6 @@ test ('of', () => {
 
 test ('append', () => {
   eq (Z.append.length, 2);
-  eq (Z.append.name, 'append');
 
   eq (Z.append (3, []), [3]);
   eq (Z.append (3, [1, 2]), [1, 2, 3]);
@@ -1088,7 +1061,6 @@ test ('append', () => {
 
 test ('prepend', () => {
   eq (Z.prepend.length, 2);
-  eq (Z.prepend.name, 'prepend');
 
   eq (Z.prepend (1, []), [1]);
   eq (Z.prepend (1, [2, 3]), [1, 2, 3]);
@@ -1101,7 +1073,6 @@ test ('prepend', () => {
 
 test ('chain', () => {
   eq (Z.chain.length, 2);
-  eq (Z.chain.name, 'chain');
 
   eq (Z.chain (double, []), []);
   eq (Z.chain (double, [1, 2, 3]), [1, 1, 2, 2, 3, 3]);
@@ -1116,7 +1087,6 @@ test ('chain', () => {
 
 test ('join', () => {
   eq (Z.join.length, 1);
-  eq (Z.join.name, 'join');
 
   eq (Z.join ([]), []);
   eq (Z.join ([[]]), []);
@@ -1129,7 +1099,6 @@ test ('join', () => {
 
 test ('chainRec', () => {
   eq (Z.chainRec.length, 3);
-  eq (Z.chainRec.name, 'chainRec');
 
   let count = 0;
 
@@ -1158,7 +1127,6 @@ test ('chainRec', () => {
 
 test ('alt', () => {
   eq (Z.alt.length, 2);
-  eq (Z.alt.name, 'alt');
 
   eq (Z.alt ([], []), []);
   eq (Z.alt ([], [1, 2, 3]), [1, 2, 3]);
@@ -1179,7 +1147,6 @@ test ('alt', () => {
 
 test ('zero', () => {
   eq (Z.zero.length, 1);
-  eq (Z.zero.name, 'zero');
 
   eq (Z.zero (Array), []);
   eq (Z.zero (Object), {});
@@ -1199,14 +1166,12 @@ const testReduce = reduce => {
 
 test ('reduce', () => {
   eq (Z.reduce.length, 3);
-  eq (Z.reduce.name, 'reduce');
 
   testReduce (Z.reduce);
 });
 
 test ('size', () => {
   eq (Z.size.length, 1);
-  eq (Z.size.name, 'size');
 
   eq (Z.size ([]), 0);
   eq (Z.size (['foo']), 1);
@@ -1224,7 +1189,6 @@ test ('size', () => {
 
 test ('all', () => {
   eq (Z.all.length, 2);
-  eq (Z.all.name, 'all');
 
   eq (Z.all (gt (0), []), true);
   eq (Z.all (gt (0), [0]), false);
@@ -1247,7 +1211,6 @@ test ('all', () => {
 
 test ('any', () => {
   eq (Z.any.length, 2);
-  eq (Z.any.name, 'any');
 
   eq (Z.any (gt (0), []), false);
   eq (Z.any (gt (0), [0]), false);
@@ -1270,7 +1233,6 @@ test ('any', () => {
 
 test ('none', () => {
   eq (Z.none.length, 2);
-  eq (Z.none.name, 'none');
 
   eq (Z.none (gt (0), []), true);
   eq (Z.none (gt (0), [0]), true);
@@ -1293,7 +1255,6 @@ test ('none', () => {
 
 test ('elem', () => {
   eq (Z.elem.length, 2);
-  eq (Z.elem.name, 'elem');
 
   eq (Z.elem ('a', ['a', 'b', 'c']), true);
   eq (Z.elem ('b', ['a', 'b', 'c']), true);
@@ -1310,7 +1271,6 @@ test ('elem', () => {
 
 test ('intercalate', () => {
   eq (Z.intercalate.length, 2);
-  eq (Z.intercalate.name, 'intercalate');
 
   eq (Z.intercalate (', ', []), '');
   eq (Z.intercalate (', ', ['foo']), 'foo');
@@ -1328,7 +1288,6 @@ test ('intercalate', () => {
 
 test ('foldMap', () => {
   eq (Z.foldMap.length, 3);
-  eq (Z.foldMap.name, 'foldMap');
 
   // Monoid instance for functions of type a -> a corresponding
   // to reverse function composition
@@ -1354,7 +1313,6 @@ test ('foldMap', () => {
 
 test ('reverse', () => {
   eq (Z.reverse.length, 1);
-  eq (Z.reverse.name, 'reverse');
 
   eq (Z.reverse ([]), []);
   eq (Z.reverse ([1]), [1]);
@@ -1368,7 +1326,6 @@ test ('reverse', () => {
 
 test ('sort', () => {
   eq (Z.sort.length, 1);
-  eq (Z.sort.name, 'sort');
 
   const runAssertions = () => {
     eq (Z.sort ([]), []);
@@ -1389,7 +1346,6 @@ test ('sort', () => {
 
 test ('sortBy', () => {
   eq (Z.sortBy.length, 2);
-  eq (Z.sortBy.name, 'sortBy');
 
   const rank = card => card.rank;
   const suit = card => card.suit;
@@ -1411,7 +1367,6 @@ test ('sortBy', () => {
 
 test ('traverse', () => {
   eq (Z.traverse.length, 3);
-  eq (Z.traverse.name, 'traverse');
 
   eq (Z.traverse (Array, identity, []), [[]]);
   eq (Z.traverse (Array, identity, [[1], [2], [3]]), [[1, 2, 3]]);
@@ -1429,7 +1384,6 @@ test ('traverse', () => {
 
 test ('sequence', () => {
   eq (Z.sequence.length, 2);
-  eq (Z.sequence.name, 'sequence');
 
   eq (Z.sequence (Identity, []), Identity ([]));
   eq (Z.sequence (Identity, [Identity (1), Identity (2), Identity (3)]), Identity ([1, 2, 3]));
@@ -1446,7 +1400,6 @@ test ('sequence', () => {
 
 test ('extend', () => {
   eq (Z.extend.length, 2);
-  eq (Z.extend.name, 'extend');
 
   eq (Z.extend (joinWith (''), []), []);
   eq (Z.extend (joinWith (''), ['x']), ['x']);
@@ -1458,7 +1411,6 @@ test ('extend', () => {
 
 test ('duplicate', () => {
   eq (Z.duplicate.length, 1);
-  eq (Z.duplicate.name, 'duplicate');
 
   eq (Z.duplicate ([]), []);
   eq (Z.duplicate ([[]]), [[[]]]);
@@ -1470,14 +1422,12 @@ test ('duplicate', () => {
 
 test ('extract', () => {
   eq (Z.extract.length, 1);
-  eq (Z.extract.name, 'extract');
 
   eq (Z.extract (Identity (42)), 42);
 });
 
 test ('contramap', () => {
   eq (Z.contramap.length, 2);
-  eq (Z.contramap.name, 'contramap');
 
   eq (Z.contramap (length, inc) ('abc'), 4);
 });

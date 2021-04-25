@@ -1138,7 +1138,7 @@
     //  $pairs :: Array (Array2 Any Any)
     const $pairs = [];
 
-    const equals = (x, y) => {
+    return (x, y) => {
       if (!(sameType (x, y))) return false;
 
       //  This algorithm for comparing circular data structures was
@@ -1156,7 +1156,6 @@
         $pairs.pop ();
       }
     };
-    return equals;
   }) ();
 
   //# lt :: (a, b) -> Boolean
@@ -1210,7 +1209,7 @@
     //  $pairs :: Array (Array2 Any Any)
     const $pairs = [];
 
-    const lte = (x, y) => {
+    return (x, y) => {
       if (!(sameType (x, y))) return false;
 
       //  This algorithm for comparing circular data structures was
@@ -1226,7 +1225,6 @@
         $pairs.pop ();
       }
     };
-    return lte;
   }) ();
 
   //# gt :: (a, b) -> Boolean
