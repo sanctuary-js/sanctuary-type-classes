@@ -1,8 +1,8 @@
 'use strict';
 
-var FL = require ('fantasy-land');
+const FL = require ('fantasy-land');
 
-var Z = require ('..');
+const Z = require ('..');
 
 
 //  Lazy :: (() -> a) -> Lazy a
@@ -11,9 +11,7 @@ function Lazy(f) {
   this.run = f;
 }
 
-Lazy[FL.of] = function(a) {
-  return Lazy (function() { return a; });
-};
+Lazy[FL.of] = a => Lazy (() => a);
 
 Lazy.prototype['@@type'] = 'sanctuary-type-classes/Lazy@1';
 
@@ -22,8 +20,7 @@ Lazy.prototype[FL.map] = function(f) {
 };
 
 Lazy.prototype[FL.ap] = function(other) {
-  var task = this;
-  return Lazy (function() { return other.run () (task.run ()); });
+  return Lazy (() => other.run () (this.run ()));
 };
 
 module.exports = Lazy;
