@@ -7,6 +7,7 @@ const jsc = require ('jsverify');
 const Identity = require ('sanctuary-identity');
 const Maybe = require ('sanctuary-maybe');
 const Pair = require ('sanctuary-pair');
+const show = require ('sanctuary-show');
 const type = require ('sanctuary-type-identifiers');
 const Useless = require ('sanctuary-useless');
 
@@ -23,6 +24,12 @@ const {withUnstableArraySort} = require ('./quicksort');
 const {Nil, Cons} = List;
 const {Nothing, Just} = Maybe;
 
+//  mapArb :: (a -> b) -> Arbitrary a -> Arbitrary b
+const mapArb = f => arb => jsc.bless ({generator: arb.generator.map (f)});
+
+//  smapArb :: (a -> b) -> (b -> a) -> Arbitrary a -> Arbitrary b
+const smapArb = f => g => arb => arb.smap (f, g, show);
+
 //  Lazy$of :: a -> Lazy a
 function Lazy$of(x) {
   eq (arguments.length, Lazy$of.length);
@@ -30,17 +37,10 @@ function Lazy$of(x) {
 }
 
 //  ListArb :: Arbitrary a -> Arbitrary (List a)
-const ListArb = arb => (
-  jsc.array (arb)
-  .smap (xs => {
-    let list = Nil;
-    for (let idx = 0; idx < xs.length; idx += 1) list = Cons (xs[idx], list);
-    return list;
-  })
-);
+const ListArb = arb => smapArb (arrayToList) (listToArray) (jsc.array (arb));
 
 //  MaybeArb :: Arbitrary a -> Arbitrary (Maybe a)
-const MaybeArb = arb => jsc.oneof (jsc.constant (Nothing), arb.smap (Just));
+const MaybeArb = arb => jsc.oneof (jsc.constant (Nothing), mapArb (Just) (arb));
 
 //  Point :: () -> Point
 function Point() {
@@ -76,6 +76,13 @@ function args() {
   // eslint-disable-next-line prefer-rest-params
   return arguments;
 }
+
+//  arrayToList :: Array a -> List a
+const arrayToList = xs => {
+  let list = Nil;
+  for (let idx = 0; idx < xs.length; idx += 1) list = Cons (xs[idx], list);
+  return list;
+};
 
 //  compose :: (b -> c) -> (a -> b) -> a -> c
 function compose(f) {
@@ -1652,15 +1659,19 @@ suite ('laws', () => {
   });
 
   suite ('RegExp', () => {
-    const arb = jsc.string.smap (s => {
-      const validFlags = ['', 'g', 'i', 'm', 'gi', 'gm', 'im', 'gim'];
-      const flags = validFlags[Math.floor (Math.random () * validFlags.length)];
+    const flagsArb = jsc.oneof (['', 'g', 'i', 'm', 'gi', 'gm', 'im', 'gim'].map (jsc.constant));
+    const patternArb = jsc.suchthat (jsc.string, s => {
       try {
-        return new RegExp (s, flags);
-      } catch (err) {
-        return /(?:)/;
+        new RegExp (s);
+        return true;
+      } catch (e) {
+        return false;
       }
     });
+
+    const arb = mapArb (({flags, pattern}) => new RegExp (pattern, flags))
+                       (jsc.record ({flags: flagsArb, pattern: patternArb}));
+
     testLaws ({
       Setoid: {
         module: laws.Setoid,
@@ -1976,7 +1987,8 @@ suite ('laws', () => {
   });
 
   suite ('Arguments', () => {
-    const arb = (jsc.array (jsc.oneof (jsc.number, jsc.string))).smap (Function.prototype.apply.bind (args));
+    const arb = mapArb (Function.prototype.apply.bind (args))
+                       (jsc.array (jsc.oneof (jsc.number, jsc.string)));
     testLaws ({
       Setoid: {
         module: laws.Setoid,
@@ -2017,7 +2029,7 @@ suite ('laws', () => {
   });
 
   suite ('Error', () => {
-    const arb = jsc.string.smap (s => new Error (s));
+    const arb = smapArb (s => new Error (s)) (e => e.message) (jsc.string);
     testLaws ({
       Setoid: {
         module: laws.Setoid,
