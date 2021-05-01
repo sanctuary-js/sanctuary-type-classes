@@ -100,8 +100,8 @@
     /* eslint-enable no-unused-vars, no-var */
   }
 
-  //  concat_ :: Array a -> Array a -> Array a
-  const concat_ = xs => ys => xs.concat (ys);
+  //  concat :: Array a -> Array a -> Array a
+  const concat = xs => ys => xs.concat (ys);
 
   //  has :: (String, Object) -> Boolean
   const has = (k, o) => Object.prototype.hasOwnProperty.call (o, k);
@@ -125,6 +125,8 @@
 
   //  iterationDone :: a -> Iteration a
   const iterationDone = x => ({value: x, done: true});
+
+  const Z = {};
 
   //# TypeClass :: (String, String, Array TypeClass, a -> Boolean) -> TypeClass
   //.
@@ -172,7 +174,7 @@
   //. `TypeClass` values may be used with [sanctuary-def][type-classes]
   //. to define parametrically polymorphic functions which verify their
   //. type-class constraints at run time.
-  const TypeClass = (name, url, dependencies, test) => ({
+  Z.TypeClass = (name, url, dependencies, test) => ({
     '@@type': 'sanctuary-type-classes/TypeClass@1',
     'name': name,
     'url': url,
@@ -227,7 +229,7 @@
       }
     });
 
-    const typeClass = TypeClass (
+    const typeClass = Z.TypeClass (
       `sanctuary-type-classes/${_name}`,
       `https://github.com/sanctuary-js/sanctuary-type-classes/tree/v${version}#${_name}`,
       dependencies,
@@ -268,19 +270,19 @@
   //. `TypeClass` value for [Setoid][].
   //.
   //. ```javascript
-  //. > Setoid.test (null)
+  //. > Z.Setoid.test (null)
   //. true
   //.
-  //. > Setoid.test (Useless)
+  //. > Z.Setoid.test (Useless)
   //. false
   //.
-  //. > Setoid.test ([1, 2, 3])
+  //. > Z.Setoid.test ([1, 2, 3])
   //. true
   //.
-  //. > Setoid.test ([Useless])
+  //. > Z.Setoid.test ([Useless])
   //. false
   //. ```
-  const Setoid =
+  Z.Setoid =
     $ ('Setoid', [], {equals: Value});
 
   //# Ord :: TypeClass
@@ -288,33 +290,33 @@
   //. `TypeClass` value for [Ord][].
   //.
   //. ```javascript
-  //. > Ord.test (0)
+  //. > Z.Ord.test (0)
   //. true
   //.
-  //. > Ord.test (Math.sqrt)
+  //. > Z.Ord.test (Math.sqrt)
   //. false
   //.
-  //. > Ord.test ([1, 2, 3])
+  //. > Z.Ord.test ([1, 2, 3])
   //. true
   //.
-  //. > Ord.test ([Math.sqrt])
+  //. > Z.Ord.test ([Math.sqrt])
   //. false
   //. ```
-  const Ord =
-    $ ('Ord', [Setoid], {lte: Value});
+  Z.Ord =
+    $ ('Ord', [Z.Setoid], {lte: Value});
 
   //# Semigroupoid :: TypeClass
   //.
   //. `TypeClass` value for [Semigroupoid][].
   //.
   //. ```javascript
-  //. > Semigroupoid.test (Math.sqrt)
+  //. > Z.Semigroupoid.test (Math.sqrt)
   //. true
   //.
-  //. > Semigroupoid.test (0)
+  //. > Z.Semigroupoid.test (0)
   //. false
   //. ```
-  const Semigroupoid =
+  Z.Semigroupoid =
     $ ('Semigroupoid', [], {compose: Value});
 
   //# Category :: TypeClass
@@ -322,27 +324,27 @@
   //. `TypeClass` value for [Category][].
   //.
   //. ```javascript
-  //. > Category.test (Math.sqrt)
+  //. > Z.Category.test (Math.sqrt)
   //. true
   //.
-  //. > Category.test (0)
+  //. > Z.Category.test (0)
   //. false
   //. ```
-  const Category =
-    $ ('Category', [Semigroupoid], {id: Constructor});
+  Z.Category =
+    $ ('Category', [Z.Semigroupoid], {id: Constructor});
 
   //# Semigroup :: TypeClass
   //.
   //. `TypeClass` value for [Semigroup][].
   //.
   //. ```javascript
-  //. > Semigroup.test ('')
+  //. > Z.Semigroup.test ('')
   //. true
   //.
-  //. > Semigroup.test (0)
+  //. > Z.Semigroup.test (0)
   //. false
   //. ```
-  const Semigroup =
+  Z.Semigroup =
     $ ('Semigroup', [], {concat: Value});
 
   //# Monoid :: TypeClass
@@ -350,41 +352,41 @@
   //. `TypeClass` value for [Monoid][].
   //.
   //. ```javascript
-  //. > Monoid.test ('')
+  //. > Z.Monoid.test ('')
   //. true
   //.
-  //. > Monoid.test (0)
+  //. > Z.Monoid.test (0)
   //. false
   //. ```
-  const Monoid =
-    $ ('Monoid', [Semigroup], {empty: Constructor});
+  Z.Monoid =
+    $ ('Monoid', [Z.Semigroup], {empty: Constructor});
 
   //# Group :: TypeClass
   //.
   //. `TypeClass` value for [Group][].
   //.
   //. ```javascript
-  //. > Group.test (Sum (0))
+  //. > Z.Group.test (Sum (0))
   //. true
   //.
-  //. > Group.test ('')
+  //. > Z.Group.test ('')
   //. false
   //. ```
-  const Group =
-    $ ('Group', [Monoid], {invert: Value});
+  Z.Group =
+    $ ('Group', [Z.Monoid], {invert: Value});
 
   //# Filterable :: TypeClass
   //.
   //. `TypeClass` value for [Filterable][].
   //.
   //. ```javascript
-  //. > Filterable.test ({})
+  //. > Z.Filterable.test ({})
   //. true
   //.
-  //. > Filterable.test ('')
+  //. > Z.Filterable.test ('')
   //. false
   //. ```
-  const Filterable =
+  Z.Filterable =
     $ ('Filterable', [], {filter: Value});
 
   //# Functor :: TypeClass
@@ -392,13 +394,13 @@
   //. `TypeClass` value for [Functor][].
   //.
   //. ```javascript
-  //. > Functor.test ([])
+  //. > Z.Functor.test ([])
   //. true
   //.
-  //. > Functor.test ('')
+  //. > Z.Functor.test ('')
   //. false
   //. ```
-  const Functor =
+  Z.Functor =
     $ ('Functor', [], {map: Value});
 
   //# Bifunctor :: TypeClass
@@ -406,153 +408,153 @@
   //. `TypeClass` value for [Bifunctor][].
   //.
   //. ```javascript
-  //. > Bifunctor.test (Pair ('foo') (64))
+  //. > Z.Bifunctor.test (Pair ('foo') (64))
   //. true
   //.
-  //. > Bifunctor.test ([])
+  //. > Z.Bifunctor.test ([])
   //. false
   //. ```
-  const Bifunctor =
-    $ ('Bifunctor', [Functor], {bimap: Value});
+  Z.Bifunctor =
+    $ ('Bifunctor', [Z.Functor], {bimap: Value});
 
   //# Profunctor :: TypeClass
   //.
   //. `TypeClass` value for [Profunctor][].
   //.
   //. ```javascript
-  //. > Profunctor.test (Math.sqrt)
+  //. > Z.Profunctor.test (Math.sqrt)
   //. true
   //.
-  //. > Profunctor.test ([])
+  //. > Z.Profunctor.test ([])
   //. false
   //. ```
-  const Profunctor =
-    $ ('Profunctor', [Functor], {promap: Value});
+  Z.Profunctor =
+    $ ('Profunctor', [Z.Functor], {promap: Value});
 
   //# Apply :: TypeClass
   //.
   //. `TypeClass` value for [Apply][].
   //.
   //. ```javascript
-  //. > Apply.test ([])
+  //. > Z.Apply.test ([])
   //. true
   //.
-  //. > Apply.test ('')
+  //. > Z.Apply.test ('')
   //. false
   //. ```
-  const Apply =
-    $ ('Apply', [Functor], {ap: Value});
+  Z.Apply =
+    $ ('Apply', [Z.Functor], {ap: Value});
 
   //# Applicative :: TypeClass
   //.
   //. `TypeClass` value for [Applicative][].
   //.
   //. ```javascript
-  //. > Applicative.test ([])
+  //. > Z.Applicative.test ([])
   //. true
   //.
-  //. > Applicative.test ({})
+  //. > Z.Applicative.test ({})
   //. false
   //. ```
-  const Applicative =
-    $ ('Applicative', [Apply], {of: Constructor});
+  Z.Applicative =
+    $ ('Applicative', [Z.Apply], {of: Constructor});
 
   //# Chain :: TypeClass
   //.
   //. `TypeClass` value for [Chain][].
   //.
   //. ```javascript
-  //. > Chain.test ([])
+  //. > Z.Chain.test ([])
   //. true
   //.
-  //. > Chain.test ({})
+  //. > Z.Chain.test ({})
   //. false
   //. ```
-  const Chain =
-    $ ('Chain', [Apply], {chain: Value});
+  Z.Chain =
+    $ ('Chain', [Z.Apply], {chain: Value});
 
   //# ChainRec :: TypeClass
   //.
   //. `TypeClass` value for [ChainRec][].
   //.
   //. ```javascript
-  //. > ChainRec.test ([])
+  //. > Z.ChainRec.test ([])
   //. true
   //.
-  //. > ChainRec.test ({})
+  //. > Z.ChainRec.test ({})
   //. false
   //. ```
-  const ChainRec =
-    $ ('ChainRec', [Chain], {chainRec: Constructor});
+  Z.ChainRec =
+    $ ('ChainRec', [Z.Chain], {chainRec: Constructor});
 
   //# Monad :: TypeClass
   //.
   //. `TypeClass` value for [Monad][].
   //.
   //. ```javascript
-  //. > Monad.test ([])
+  //. > Z.Monad.test ([])
   //. true
   //.
-  //. > Monad.test ({})
+  //. > Z.Monad.test ({})
   //. false
   //. ```
-  const Monad =
-    $ ('Monad', [Applicative, Chain], {});
+  Z.Monad =
+    $ ('Monad', [Z.Applicative, Z.Chain], {});
 
   //# Alt :: TypeClass
   //.
   //. `TypeClass` value for [Alt][].
   //.
   //. ```javascript
-  //. > Alt.test ({})
+  //. > Z.Alt.test ({})
   //. true
   //.
-  //. > Alt.test ('')
+  //. > Z.Alt.test ('')
   //. false
   //. ```
-  const Alt =
-    $ ('Alt', [Functor], {alt: Value});
+  Z.Alt =
+    $ ('Alt', [Z.Functor], {alt: Value});
 
   //# Plus :: TypeClass
   //.
   //. `TypeClass` value for [Plus][].
   //.
   //. ```javascript
-  //. > Plus.test ({})
+  //. > Z.Plus.test ({})
   //. true
   //.
-  //. > Plus.test ('')
+  //. > Z.Plus.test ('')
   //. false
   //. ```
-  const Plus =
-    $ ('Plus', [Alt], {zero: Constructor});
+  Z.Plus =
+    $ ('Plus', [Z.Alt], {zero: Constructor});
 
   //# Alternative :: TypeClass
   //.
   //. `TypeClass` value for [Alternative][].
   //.
   //. ```javascript
-  //. > Alternative.test ([])
+  //. > Z.Alternative.test ([])
   //. true
   //.
-  //. > Alternative.test ({})
+  //. > Z.Alternative.test ({})
   //. false
   //. ```
-  const Alternative =
-    $ ('Alternative', [Applicative, Plus], {});
+  Z.Alternative =
+    $ ('Alternative', [Z.Applicative, Z.Plus], {});
 
   //# Foldable :: TypeClass
   //.
   //. `TypeClass` value for [Foldable][].
   //.
   //. ```javascript
-  //. > Foldable.test ({})
+  //. > Z.Foldable.test ({})
   //. true
   //.
-  //. > Foldable.test ('')
+  //. > Z.Foldable.test ('')
   //. false
   //. ```
-  const Foldable =
+  Z.Foldable =
     $ ('Foldable', [], {reduce: Value});
 
   //# Traversable :: TypeClass
@@ -560,55 +562,55 @@
   //. `TypeClass` value for [Traversable][].
   //.
   //. ```javascript
-  //. > Traversable.test ([])
+  //. > Z.Traversable.test ([])
   //. true
   //.
-  //. > Traversable.test ('')
+  //. > Z.Traversable.test ('')
   //. false
   //. ```
-  const Traversable =
-    $ ('Traversable', [Functor, Foldable], {traverse: Value});
+  Z.Traversable =
+    $ ('Traversable', [Z.Functor, Z.Foldable], {traverse: Value});
 
   //# Extend :: TypeClass
   //.
   //. `TypeClass` value for [Extend][].
   //.
   //. ```javascript
-  //. > Extend.test ([])
+  //. > Z.Extend.test ([])
   //. true
   //.
-  //. > Extend.test ({})
+  //. > Z.Extend.test ({})
   //. false
   //. ```
-  const Extend =
-    $ ('Extend', [Functor], {extend: Value});
+  Z.Extend =
+    $ ('Extend', [Z.Functor], {extend: Value});
 
   //# Comonad :: TypeClass
   //.
   //. `TypeClass` value for [Comonad][].
   //.
   //. ```javascript
-  //. > Comonad.test (Identity (0))
+  //. > Z.Comonad.test (Identity (0))
   //. true
   //.
-  //. > Comonad.test ([])
+  //. > Z.Comonad.test ([])
   //. false
   //. ```
-  const Comonad =
-    $ ('Comonad', [Extend], {extract: Value});
+  Z.Comonad =
+    $ ('Comonad', [Z.Extend], {extract: Value});
 
   //# Contravariant :: TypeClass
   //.
   //. `TypeClass` value for [Contravariant][].
   //.
   //. ```javascript
-  //. > Contravariant.test (Math.sqrt)
+  //. > Z.Contravariant.test (Math.sqrt)
   //. true
   //.
-  //. > Contravariant.test ([])
+  //. > Z.Contravariant.test ([])
   //. false
   //. ```
-  const Contravariant =
+  Z.Contravariant =
     $ ('Contravariant', [], {contramap: Value});
 
   //  Null$prototype$equals :: Null ~> Null -> Boolean
@@ -634,39 +636,39 @@
   //  Boolean$prototype$equals :: Boolean ~> Boolean -> Boolean
   function Boolean$prototype$equals(other) {
     return typeof this === 'object' ?
-      equals (this.valueOf (), other.valueOf ()) :
+      Z.equals (this.valueOf (), other.valueOf ()) :
       this === other;
   }
 
   //  Boolean$prototype$lte :: Boolean ~> Boolean -> Boolean
   function Boolean$prototype$lte(other) {
     return typeof this === 'object' ?
-      lte (this.valueOf (), other.valueOf ()) :
+      Z.lte (this.valueOf (), other.valueOf ()) :
       this === false || other === true;
   }
 
   //  Number$prototype$equals :: Number ~> Number -> Boolean
   function Number$prototype$equals(other) {
     return typeof this === 'object' ?
-      equals (this.valueOf (), other.valueOf ()) :
+      Z.equals (this.valueOf (), other.valueOf ()) :
       isNaN (this) && isNaN (other) || this === other;
   }
 
   //  Number$prototype$lte :: Number ~> Number -> Boolean
   function Number$prototype$lte(other) {
     return typeof this === 'object' ?
-      lte (this.valueOf (), other.valueOf ()) :
+      Z.lte (this.valueOf (), other.valueOf ()) :
       isNaN (this) || this <= other;
   }
 
   //  Date$prototype$equals :: Date ~> Date -> Boolean
   function Date$prototype$equals(other) {
-    return equals (this.valueOf (), other.valueOf ());
+    return Z.equals (this.valueOf (), other.valueOf ());
   }
 
   //  Date$prototype$lte :: Date ~> Date -> Boolean
   function Date$prototype$lte(other) {
-    return lte (this.valueOf (), other.valueOf ());
+    return Z.lte (this.valueOf (), other.valueOf ());
   }
 
   //  RegExp$prototype$equals :: RegExp ~> RegExp -> Boolean
@@ -685,14 +687,14 @@
   //  String$prototype$equals :: String ~> String -> Boolean
   function String$prototype$equals(other) {
     return typeof this === 'object' ?
-      equals (this.valueOf (), other.valueOf ()) :
+      Z.equals (this.valueOf (), other.valueOf ()) :
       this === other;
   }
 
   //  String$prototype$lte :: String ~> String -> Boolean
   function String$prototype$lte(other) {
     return typeof this === 'object' ?
-      lte (this.valueOf (), other.valueOf ()) :
+      Z.lte (this.valueOf (), other.valueOf ()) :
       this <= other;
   }
 
@@ -739,7 +741,7 @@
   function Array$prototype$equals(other) {
     if (other.length !== this.length) return false;
     for (let idx = 0; idx < this.length; idx += 1) {
-      if (!(equals (this[idx], other[idx]))) return false;
+      if (!(Z.equals (this[idx], other[idx]))) return false;
     }
     return true;
   }
@@ -749,8 +751,8 @@
     for (let idx = 0; true; idx += 1) {
       if (idx === this.length) return true;
       if (idx === other.length) return false;
-      if (!(equals (this[idx], other[idx]))) {
-        return lte (this[idx], other[idx]);
+      if (!(Z.equals (this[idx], other[idx]))) {
+        return Z.lte (this[idx], other[idx]);
       }
     }
   }
@@ -806,16 +808,19 @@
   function Array$prototype$traverse(typeRep, f) {
     const go = (idx, n) => {
       switch (n) {
-        case 0: return of (typeRep, []);
-        case 2: return lift2 (pair, f (this[idx]), f (this[idx + 1]));
+        case 0: return Z.of (typeRep, []);
+        case 2: return Z.lift2 (pair, f (this[idx]), f (this[idx + 1]));
         default: {
           const m = Math.floor (n / 4) * 2;
-          return lift2 (concat_, go (idx, m), go (idx + m, n - m));
+          return Z.lift2 (concat, go (idx, m), go (idx + m, n - m));
         }
       }
     };
     return this.length % 2 === 1 ?
-      lift2 (concat_, map (Array$of, f (this[0])), go (1, this.length - 1)) :
+      Z.lift2 (
+        concat,
+        Z.map (Array$of, f (this[0])), go (1, this.length - 1)
+      ) :
       go (0, this.length);
   }
 
@@ -836,8 +841,8 @@
 
   //  Error$prototype$equals :: Error ~> Error -> Boolean
   function Error$prototype$equals(other) {
-    return equals (this.name, other.name) &&
-           equals (this.message, other.message);
+    return Z.equals (this.name, other.name) &&
+           Z.equals (this.message, other.message);
   }
 
   //  Object$empty :: () -> StrMap a
@@ -849,8 +854,8 @@
   //  Object$prototype$equals :: Setoid a => StrMap a ~> StrMap a -> Boolean
   function Object$prototype$equals(other) {
     const keys = sortedKeys (this);
-    return equals (keys, sortedKeys (other)) &&
-           keys.every (k => equals (this[k], other[k]));
+    return Z.equals (keys, sortedKeys (other)) &&
+           keys.every (k => Z.equals (this[k], other[k]));
   }
 
   //  Object$prototype$lte :: Ord a => StrMap a ~> StrMap a -> Boolean
@@ -864,7 +869,7 @@
       const z = otherKeys.shift ();
       if (k < z) return true;
       if (k > z) return false;
-      if (!(equals (this[k], other[k]))) return lte (this[k], other[k]);
+      if (!(Z.equals (this[k], other[k]))) return Z.lte (this[k], other[k]);
     }
   }
 
@@ -915,13 +920,13 @@
     return Object.keys (this)
            .reduce (
              (applicative, k) => (
-               lift2 (
+               Z.lift2 (
                  o => v => Object$prototype$concat.call (o, {[k]: v}),
                  applicative,
                  f (this[k])
                )
              ),
-             of (typeRep, {})
+             Z.of (typeRep, {})
            );
   }
 
@@ -970,7 +975,7 @@
 
   //  Function$prototype$extend :: Semigroup a => (a -> b) ~> ((a -> b) -> c) -> (a -> c)
   function Function$prototype$extend(f) {
-    return x => f (y => this (concat (x, y)));
+    return x => f (y => this (Z.concat (x, y)));
   }
 
   //  Function$prototype$contramap :: (b -> c) ~> (a -> b) -> (a -> c)
@@ -1036,9 +1041,9 @@
       case 'String#fantasy-land/concat':
         return String$prototype$concat;
       case 'Array#fantasy-land/equals':
-        return value.every (Setoid.test) ? Array$prototype$equals : null;
+        return value.every (Z.Setoid.test) ? Array$prototype$equals : null;
       case 'Array#fantasy-land/lte':
-        return value.every (Ord.test) ? Array$prototype$lte : null;
+        return value.every (Z.Ord.test) ? Array$prototype$lte : null;
       case 'Array#fantasy-land/concat':
         return Array$prototype$concat;
       case 'Array#fantasy-land/filter':
@@ -1064,11 +1069,11 @@
       case 'Error#fantasy-land/equals':
         return Error$prototype$equals;
       case 'Object#fantasy-land/equals':
-        return (Object.values (value)).every (Setoid.test) ?
+        return (Object.values (value)).every (Z.Setoid.test) ?
           Object$prototype$equals :
           null;
       case 'Object#fantasy-land/lte':
-        return (Object.values (value)).every (Ord.test) ?
+        return (Object.values (value)).every (Z.Ord.test) ?
           Object$prototype$lte :
           null;
       case 'Object#fantasy-land/concat':
@@ -1122,23 +1127,23 @@
   //. if they have the same property paths and for each path have equal values.
   //.
   //. ```javascript
-  //. > equals (0, -0)
+  //. > Z.equals (0, -0)
   //. true
   //.
-  //. > equals (NaN, NaN)
+  //. > Z.equals (NaN, NaN)
   //. true
   //.
-  //. > equals (Cons (1, Cons (2, Nil)), Cons (1, Cons (2, Nil)))
+  //. > Z.equals (Cons (1, Cons (2, Nil)), Cons (1, Cons (2, Nil)))
   //. true
   //.
-  //. > equals (Cons (1, Cons (2, Nil)), Cons (2, Cons (1, Nil)))
+  //. > Z.equals (Cons (1, Cons (2, Nil)), Cons (2, Cons (1, Nil)))
   //. false
   //. ```
-  const equals = (() => {
+  {
     //  $pairs :: Array (Array2 Any Any)
     const $pairs = [];
 
-    return (x, y) => {
+    Z.equals = (x, y) => {
       if (!(sameType (x, y))) return false;
 
       //  This algorithm for comparing circular data structures was
@@ -1149,14 +1154,14 @@
 
       $pairs.push ([x, y]);
       try {
-        return Setoid.test (x) &&
-               Setoid.test (y) &&
-               Setoid.methods.equals (x) (y);
+        return Z.Setoid.test (x) &&
+               Z.Setoid.test (y) &&
+               Z.Setoid.methods.equals (x) (y);
       } finally {
         $pairs.pop ();
       }
     };
-  }) ();
+  }
 
   //# lt :: (a, b) -> Boolean
   //.
@@ -1169,16 +1174,16 @@
   //. See also [`gt`](#gt) and [`gte`](#gte).
   //.
   //. ```javascript
-  //. > lt (0, 0)
+  //. > Z.lt (0, 0)
   //. false
   //.
-  //. > lt (0, 1)
+  //. > Z.lt (0, 1)
   //. true
   //.
-  //. > lt (1, 0)
+  //. > Z.lt (1, 0)
   //. false
   //. ```
-  const lt = (x, y) => sameType (x, y) && !(lte (y, x));
+  Z.lt = (x, y) => sameType (x, y) && !(Z.lte (y, x));
 
   //# lte :: (a, b) -> Boolean
   //.
@@ -1196,36 +1201,36 @@
   //. See also [`lt`](#lt), [`gt`](#gt), and [`gte`](#gte).
   //.
   //. ```javascript
-  //. > lte (0, 0)
+  //. > Z.lte (0, 0)
   //. true
   //.
-  //. > lte (0, 1)
+  //. > Z.lte (0, 1)
   //. true
   //.
-  //. > lte (1, 0)
+  //. > Z.lte (1, 0)
   //. false
   //. ```
-  const lte = (() => {
+  {
     //  $pairs :: Array (Array2 Any Any)
     const $pairs = [];
 
-    return (x, y) => {
+    Z.lte = (x, y) => {
       if (!(sameType (x, y))) return false;
 
       //  This algorithm for comparing circular data structures was
       //  suggested in <http://stackoverflow.com/a/40622794/312785>.
       if ($pairs.some (([xx, yy]) => xx === x && yy === y)) {
-        return equals (x, y);
+        return Z.equals (x, y);
       }
 
       $pairs.push ([x, y]);
       try {
-        return Ord.test (x) && Ord.test (y) && Ord.methods.lte (x) (y);
+        return Z.Ord.test (x) && Z.Ord.test (y) && Z.Ord.methods.lte (x) (y);
       } finally {
         $pairs.pop ();
       }
     };
-  }) ();
+  }
 
   //# gt :: (a, b) -> Boolean
   //.
@@ -1238,16 +1243,16 @@
   //. See also [`lt`](#lt) and [`gte`](#gte).
   //.
   //. ```javascript
-  //. > gt (0, 0)
+  //. > Z.gt (0, 0)
   //. false
   //.
-  //. > gt (0, 1)
+  //. > Z.gt (0, 1)
   //. false
   //.
-  //. > gt (1, 0)
+  //. > Z.gt (1, 0)
   //. true
   //. ```
-  const gt = (x, y) => lt (y, x);
+  Z.gt = (x, y) => Z.lt (y, x);
 
   //# gte :: (a, b) -> Boolean
   //.
@@ -1260,16 +1265,16 @@
   //. See also [`lt`](#lt) and [`gt`](#gt).
   //.
   //. ```javascript
-  //. > gte (0, 0)
+  //. > Z.gte (0, 0)
   //. true
   //.
-  //. > gte (0, 1)
+  //. > Z.gte (0, 1)
   //. false
   //.
-  //. > gte (1, 0)
+  //. > Z.gte (1, 0)
   //. true
   //. ```
-  const gte = (x, y) => lte (y, x);
+  Z.gte = (x, y) => Z.lte (y, x);
 
   //# min :: Ord a => (a, a) -> a
   //.
@@ -1280,16 +1285,16 @@
   //. See also [`max`](#max).
   //.
   //. ```javascript
-  //. > min (10, 2)
+  //. > Z.min (10, 2)
   //. 2
   //.
-  //. > min (new Date ('1999-12-31'), new Date ('2000-01-01'))
+  //. > Z.min (new Date ('1999-12-31'), new Date ('2000-01-01'))
   //. new Date ('1999-12-31')
   //.
-  //. > min ('10', '2')
+  //. > Z.min ('10', '2')
   //. '10'
   //. ```
-  const min = (x, y) => lte (x, y) ? x : y;
+  Z.min = (x, y) => Z.lte (x, y) ? x : y;
 
   //# max :: Ord a => (a, a) -> a
   //.
@@ -1300,16 +1305,16 @@
   //. See also [`min`](#min).
   //.
   //. ```javascript
-  //. > max (10, 2)
+  //. > Z.max (10, 2)
   //. 10
   //.
-  //. > max (new Date ('1999-12-31'), new Date ('2000-01-01'))
+  //. > Z.max (new Date ('1999-12-31'), new Date ('2000-01-01'))
   //. new Date ('2000-01-01')
   //.
-  //. > max ('10', '2')
+  //. > Z.max ('10', '2')
   //. '2'
   //. ```
-  const max = (x, y) => lte (x, y) ? y : x;
+  Z.max = (x, y) => Z.lte (x, y) ? y : x;
 
   //# clamp :: Ord a => (a, a, a) -> a
   //.
@@ -1319,16 +1324,16 @@
   //. This function is derived from [`min`](#min) and [`max`](#max).
   //.
   //. ```javascript
-  //. > clamp (0, 100, 42)
+  //. > Z.clamp (0, 100, 42)
   //. 42
   //.
-  //. > clamp (0, 100, -1)
+  //. > Z.clamp (0, 100, -1)
   //. 0
   //.
-  //. > clamp ('A', 'Z', '~')
+  //. > Z.clamp ('A', 'Z', '~')
   //. 'Z'
   //. ```
-  const clamp = (lower, upper, x) => max (lower, min (upper, x));
+  Z.clamp = (lower, upper, x) => Z.max (lower, Z.min (upper, x));
 
   //# compose :: Semigroupoid c => (c j k, c i j) -> c i k
   //.
@@ -1338,10 +1343,10 @@
   //. built-in types: Function.
   //.
   //. ```javascript
-  //. > compose (Math.sqrt, x => x + 1) (99)
+  //. > Z.compose (Math.sqrt, x => x + 1) (99)
   //. 10
   //. ```
-  const compose = (x, y) => Semigroupoid.methods.compose (y) (x);
+  Z.compose = (x, y) => Z.Semigroupoid.methods.compose (y) (x);
 
   //# id :: Category c => TypeRep c -> c
   //.
@@ -1351,10 +1356,10 @@
   //. built-in types: Function.
   //.
   //. ```javascript
-  //. > id (Function) ('foo')
+  //. > Z.id (Function) ('foo')
   //. 'foo'
   //. ```
-  const id = typeRep => Category.methods.id (typeRep) ();
+  Z.id = typeRep => Z.Category.methods.id (typeRep) ();
 
   //# concat :: Semigroup a => (a, a) -> a
   //.
@@ -1364,19 +1369,19 @@
   //. built-in types: String, Array, and Object.
   //.
   //. ```javascript
-  //. > concat ('abc', 'def')
+  //. > Z.concat ('abc', 'def')
   //. 'abcdef'
   //.
-  //. > concat ([1, 2, 3], [4, 5, 6])
+  //. > Z.concat ([1, 2, 3], [4, 5, 6])
   //. [1, 2, 3, 4, 5, 6]
   //.
-  //. > concat ({x: 1, y: 2}, {y: 3, z: 4})
+  //. > Z.concat ({x: 1, y: 2}, {y: 3, z: 4})
   //. {x: 1, y: 3, z: 4}
   //.
-  //. > concat (Cons ('foo', Cons ('bar', Cons ('baz', Nil))), Cons ('quux', Nil))
+  //. > Z.concat (Cons ('foo', Cons ('bar', Cons ('baz', Nil))), Cons ('quux', Nil))
   //. Cons ('foo', Cons ('bar', Cons ('baz', Cons ('quux', Nil))))
   //. ```
-  const concat = (x, y) => Semigroup.methods.concat (x) (y);
+  Z.concat = (x, y) => Z.Semigroup.methods.concat (x) (y);
 
   //# empty :: Monoid m => TypeRep m -> m
   //.
@@ -1386,29 +1391,29 @@
   //. built-in types: String, Array, and Object.
   //.
   //. ```javascript
-  //. > empty (String)
+  //. > Z.empty (String)
   //. ''
   //.
-  //. > empty (Array)
+  //. > Z.empty (Array)
   //. []
   //.
-  //. > empty (Object)
+  //. > Z.empty (Object)
   //. {}
   //.
-  //. > empty (List)
+  //. > Z.empty (List)
   //. Nil
   //. ```
-  const empty = typeRep => Monoid.methods.empty (typeRep) ();
+  Z.empty = typeRep => Z.Monoid.methods.empty (typeRep) ();
 
   //# invert :: Group g => g -> g
   //.
   //. Function wrapper for [`fantasy-land/invert`][].
   //.
   //. ```javascript
-  //. > invert (Sum (5))
+  //. > Z.invert (Sum (5))
   //. Sum (-5)
   //. ```
-  const invert = group => Group.methods.invert (group) ();
+  Z.invert = group => Z.Group.methods.invert (group) ();
 
   //# filter :: Filterable f => (a -> Boolean, f a) -> f a
   //.
@@ -1421,26 +1426,26 @@
   //. See also [`reject`](#reject).
   //.
   //. ```javascript
-  //. > filter (x => x % 2 == 1, [1, 2, 3])
+  //. > Z.filter (x => x % 2 == 1, [1, 2, 3])
   //. [1, 3]
   //.
-  //. > filter (x => x % 2 == 1, {x: 1, y: 2, z: 3})
+  //. > Z.filter (x => x % 2 == 1, {x: 1, y: 2, z: 3})
   //. {x: 1, z: 3}
   //.
-  //. > filter (x => x % 2 == 1, Cons (1, Cons (2, Cons (3, Nil))))
+  //. > Z.filter (x => x % 2 == 1, Cons (1, Cons (2, Cons (3, Nil))))
   //. Cons (1, Cons (3, Nil))
   //.
-  //. > filter (x => x % 2 == 1, Nothing)
+  //. > Z.filter (x => x % 2 == 1, Nothing)
   //. Nothing
   //.
-  //. > filter (x => x % 2 == 1, Just (0))
+  //. > Z.filter (x => x % 2 == 1, Just (0))
   //. Nothing
   //.
-  //. > filter (x => x % 2 == 1, Just (1))
+  //. > Z.filter (x => x % 2 == 1, Just (1))
   //. Just (1)
   //. ```
-  const filter = (pred, filterable) => (
-    Filterable.methods.filter (filterable) (pred)
+  Z.filter = (pred, filterable) => (
+    Z.Filterable.methods.filter (filterable) (pred)
   );
 
   //# reject :: Filterable f => (a -> Boolean, f a) -> f a
@@ -1450,25 +1455,25 @@
   //. This function is derived from [`filter`](#filter).
   //.
   //. ```javascript
-  //. > reject (x => x % 2 == 1, [1, 2, 3])
+  //. > Z.reject (x => x % 2 == 1, [1, 2, 3])
   //. [2]
   //.
-  //. > reject (x => x % 2 == 1, {x: 1, y: 2, z: 3})
+  //. > Z.reject (x => x % 2 == 1, {x: 1, y: 2, z: 3})
   //. {y: 2}
   //.
-  //. > reject (x => x % 2 == 1, Cons (1, Cons (2, Cons (3, Nil))))
+  //. > Z.reject (x => x % 2 == 1, Cons (1, Cons (2, Cons (3, Nil))))
   //. Cons (2, Nil)
   //.
-  //. > reject (x => x % 2 == 1, Nothing)
+  //. > Z.reject (x => x % 2 == 1, Nothing)
   //. Nothing
   //.
-  //. > reject (x => x % 2 == 1, Just (0))
+  //. > Z.reject (x => x % 2 == 1, Just (0))
   //. Just (0)
   //.
-  //. > reject (x => x % 2 == 1, Just (1))
+  //. > Z.reject (x => x % 2 == 1, Just (1))
   //. Nothing
   //. ```
-  const reject = (pred, filterable) => filter (x => !(pred (x)), filterable);
+  Z.reject = (pred, filterable) => Z.filter (x => !(pred (x)), filterable);
 
   //# map :: Functor f => (a -> b, f a) -> f b
   //.
@@ -1478,25 +1483,25 @@
   //. built-in types: Array, Object, and Function.
   //.
   //. ```javascript
-  //. > map (Math.sqrt, [1, 4, 9])
+  //. > Z.map (Math.sqrt, [1, 4, 9])
   //. [1, 2, 3]
   //.
-  //. > map (Math.sqrt, {x: 1, y: 4, z: 9})
+  //. > Z.map (Math.sqrt, {x: 1, y: 4, z: 9})
   //. {x: 1, y: 2, z: 3}
   //.
-  //. > map (Math.sqrt, s => s.length) ('Sanctuary')
+  //. > Z.map (Math.sqrt, s => s.length) ('Sanctuary')
   //. 3
   //.
-  //. > map (Math.sqrt, Pair ('foo') (64))
+  //. > Z.map (Math.sqrt, Pair ('foo') (64))
   //. Pair ('foo') (8)
   //.
-  //. > map (Math.sqrt, Nil)
+  //. > Z.map (Math.sqrt, Nil)
   //. Nil
   //.
-  //. > map (Math.sqrt, Cons (1, Cons (4, Cons (9, Nil))))
+  //. > Z.map (Math.sqrt, Cons (1, Cons (4, Cons (9, Nil))))
   //. Cons (1, Cons (2, Cons (3, Nil)))
   //. ```
-  const map = (f, functor) => Functor.methods.map (functor) (f);
+  Z.map = (f, functor) => Z.Functor.methods.map (functor) (f);
 
   //# flip :: Functor f => (f (a -> b), a) -> f b
   //.
@@ -1505,41 +1510,39 @@
   //. This function is derived from [`map`](#map).
   //.
   //. ```javascript
-  //. > flip (x => y => x + y, '!') ('foo')
+  //. > Z.flip (x => y => x + y, '!') ('foo')
   //. 'foo!'
   //.
-  //. > flip ([Math.floor, Math.ceil], 1.5)
+  //. > Z.flip ([Math.floor, Math.ceil], 1.5)
   //. [1, 2]
   //.
-  //. > flip ({floor: Math.floor, ceil: Math.ceil}, 1.5)
+  //. > Z.flip ({floor: Math.floor, ceil: Math.ceil}, 1.5)
   //. {floor: 1, ceil: 2}
   //.
-  //. > flip (Cons (Math.floor, Cons (Math.ceil, Nil)), 1.5)
+  //. > Z.flip (Cons (Math.floor, Cons (Math.ceil, Nil)), 1.5)
   //. Cons (1, Cons (2, Nil))
   //. ```
-  const flip = (functor, x) => Functor.methods.map (functor) (f => f (x));
+  Z.flip = (functor, x) => Z.Functor.methods.map (functor) (f => f (x));
 
   //# bimap :: Bifunctor f => (a -> b, c -> d, f a c) -> f b d
   //.
   //. Function wrapper for [`fantasy-land/bimap`][].
   //.
   //. ```javascript
-  //. > bimap (s => s.toUpperCase (), Math.sqrt, Pair ('foo') (64))
+  //. > Z.bimap (s => s.toUpperCase (), Math.sqrt, Pair ('foo') (64))
   //. Pair ('FOO') (8)
   //. ```
-  const bimap = (f, g, bifunctor) => (
-    Bifunctor.methods.bimap (bifunctor) (f, g)
-  );
+  Z.bimap = (f, g, bifunctor) => Z.Bifunctor.methods.bimap (bifunctor) (f, g);
 
   //# mapLeft :: Bifunctor f => (a -> b, f a c) -> f b c
   //.
   //. Maps the given function over the left side of a Bifunctor.
   //.
   //. ```javascript
-  //. > mapLeft (Math.sqrt, Pair (64) (9))
+  //. > Z.mapLeft (Math.sqrt, Pair (64) (9))
   //. Pair (8) (9)
   //. ```
-  const mapLeft = (f, bifunctor) => bimap (f, identity, bifunctor);
+  Z.mapLeft = (f, bifunctor) => Z.bimap (f, identity, bifunctor);
 
   //# promap :: Profunctor p => (a -> b, c -> d, p b c) -> p a d
   //.
@@ -1549,11 +1552,11 @@
   //. built-in types: Function.
   //.
   //. ```javascript
-  //. > promap (Math.abs, x => x + 1, Math.sqrt) (-100)
+  //. > Z.promap (Math.abs, x => x + 1, Math.sqrt) (-100)
   //. 11
   //. ```
-  const promap = (f, g, profunctor) => (
-    Profunctor.methods.promap (profunctor) (f, g)
+  Z.promap = (f, g, profunctor) => (
+    Z.Profunctor.methods.promap (profunctor) (f, g)
   );
 
   //# ap :: Apply f => (f (a -> b), f a) -> f b
@@ -1564,22 +1567,22 @@
   //. built-in types: Array, Object, and Function.
   //.
   //. ```javascript
-  //. > ap ([Math.sqrt, x => x * x], [1, 4, 9, 16, 25])
+  //. > Z.ap ([Math.sqrt, x => x * x], [1, 4, 9, 16, 25])
   //. [1, 2, 3, 4, 5, 1, 16, 81, 256, 625]
   //.
-  //. > ap ({a: Math.sqrt, b: x => x * x}, {a: 16, b: 10, c: 1})
+  //. > Z.ap ({a: Math.sqrt, b: x => x * x}, {a: 16, b: 10, c: 1})
   //. {a: 4, b: 100}
   //.
-  //. > ap (s => n => s.slice (0, n), s => Math.ceil (s.length / 2)) ('Haskell')
+  //. > Z.ap (s => n => s.slice (0, n), s => Math.ceil (s.length / 2)) ('Haskell')
   //. 'Hask'
   //.
-  //. > ap (Identity (Math.sqrt), Identity (64))
+  //. > Z.ap (Identity (Math.sqrt), Identity (64))
   //. Identity (8)
   //.
-  //. > ap (Cons (Math.sqrt, Cons (x => x * x, Nil)), Cons (16, Cons (100, Nil)))
+  //. > Z.ap (Cons (Math.sqrt, Cons (x => x * x, Nil)), Cons (16, Cons (100, Nil)))
   //. Cons (4, Cons (10, Cons (256, Cons (10000, Nil))))
   //. ```
-  const ap = (applyF, applyX) => Apply.methods.ap (applyX) (applyF);
+  Z.ap = (applyF, applyX) => Z.Apply.methods.ap (applyX) (applyF);
 
   //# lift2 :: Apply f => (a -> b -> c, f a, f b) -> f c
   //.
@@ -1591,13 +1594,13 @@
   //. See also [`lift3`](#lift3).
   //.
   //. ```javascript
-  //. > lift2 (x => y => Math.pow (x, y), [10], [1, 2, 3])
+  //. > Z.lift2 (x => y => Math.pow (x, y), [10], [1, 2, 3])
   //. [10, 100, 1000]
   //.
-  //. > lift2 (x => y => Math.pow (x, y), Identity (10), Identity (3))
+  //. > Z.lift2 (x => y => Math.pow (x, y), Identity (10), Identity (3))
   //. Identity (1000)
   //. ```
-  const lift2 = (f, x, y) => ap (map (f, x), y);
+  Z.lift2 = (f, x, y) => Z.ap (Z.map (f, x), y);
 
   //# lift3 :: Apply f => (a -> b -> c -> d, f a, f b, f c) -> f d
   //.
@@ -1609,22 +1612,22 @@
   //. See also [`lift2`](#lift2).
   //.
   //. ```javascript
-  //. > lift3 (x => y => z => x + z + y,
-  //. .        ['<', '['],
-  //. .        ['>', ']'],
-  //. .        ['foo', 'bar', 'baz'])
+  //. > Z.lift3 (x => y => z => x + z + y,
+  //. .          ['<', '['],
+  //. .          ['>', ']'],
+  //. .          ['foo', 'bar', 'baz'])
   //. [ '<foo>', '<bar>', '<baz>',
   //. . '<foo]', '<bar]', '<baz]',
   //. . '[foo>', '[bar>', '[baz>',
   //. . '[foo]', '[bar]', '[baz]' ]
   //.
-  //. > lift3 (x => y => z => x + z + y,
-  //. .        Identity ('<'),
-  //. .        Identity ('>'),
-  //. .        Identity ('baz'))
+  //. > Z.lift3 (x => y => z => x + z + y,
+  //. .          Identity ('<'),
+  //. .          Identity ('>'),
+  //. .          Identity ('baz'))
   //. Identity ('<baz>')
   //. ```
-  const lift3 = (f, x, y, z) => ap (ap (map (f, x), y), z);
+  Z.lift3 = (f, x, y, z) => Z.ap (Z.ap (Z.map (f, x), y), z);
 
   //# apFirst :: Apply f => (f a, f b) -> f a
   //.
@@ -1636,13 +1639,13 @@
   //. See also [`apSecond`](#apSecond).
   //.
   //. ```javascript
-  //. > apFirst ([1, 2], [3, 4])
+  //. > Z.apFirst ([1, 2], [3, 4])
   //. [1, 1, 2, 2]
   //.
-  //. > apFirst (Identity (1), Identity (2))
+  //. > Z.apFirst (Identity (1), Identity (2))
   //. Identity (1)
   //. ```
-  const apFirst = (x, y) => lift2 (x => y => x, x, y);
+  Z.apFirst = (x, y) => Z.lift2 (x => y => x, x, y);
 
   //# apSecond :: Apply f => (f a, f b) -> f b
   //.
@@ -1654,13 +1657,13 @@
   //. See also [`apFirst`](#apFirst).
   //.
   //. ```javascript
-  //. > apSecond ([1, 2], [3, 4])
+  //. > Z.apSecond ([1, 2], [3, 4])
   //. [3, 4, 3, 4]
   //.
-  //. > apSecond (Identity (1), Identity (2))
+  //. > Z.apSecond (Identity (1), Identity (2))
   //. Identity (2)
   //. ```
-  const apSecond = (x, y) => lift2 (x => y => y, x, y);
+  Z.apSecond = (x, y) => Z.lift2 (x => y => y, x, y);
 
   //# of :: Applicative f => (TypeRep f, a) -> f a
   //.
@@ -1670,16 +1673,16 @@
   //. built-in types: Array and Function.
   //.
   //. ```javascript
-  //. > of (Array, 42)
+  //. > Z.of (Array, 42)
   //. [42]
   //.
-  //. > of (Function, 42) (null)
+  //. > Z.of (Function, 42) (null)
   //. 42
   //.
-  //. > of (List, 42)
+  //. > Z.of (List, 42)
   //. Cons (42, Nil)
   //. ```
-  const of = (typeRep, x) => Applicative.methods.of (typeRep) (x);
+  Z.of = (typeRep, x) => Z.Applicative.methods.of (typeRep) (x);
 
   //# append :: (Applicative f, Semigroup (f a)) => (a, f a) -> f a
   //.
@@ -1690,13 +1693,13 @@
   //. See also [`prepend`](#prepend).
   //.
   //. ```javascript
-  //. > append (3, [1, 2])
+  //. > Z.append (3, [1, 2])
   //. [1, 2, 3]
   //.
-  //. > append (3, Cons (1, Cons (2, Nil)))
+  //. > Z.append (3, Cons (1, Cons (2, Nil)))
   //. Cons (1, Cons (2, Cons (3, Nil)))
   //. ```
-  const append = (x, xs) => concat (xs, of (xs.constructor, x));
+  Z.append = (x, xs) => Z.concat (xs, Z.of (xs.constructor, x));
 
   //# prepend :: (Applicative f, Semigroup (f a)) => (a, f a) -> f a
   //.
@@ -1707,13 +1710,13 @@
   //. See also [`append`](#append).
   //.
   //. ```javascript
-  //. > prepend (1, [2, 3])
+  //. > Z.prepend (1, [2, 3])
   //. [1, 2, 3]
   //.
-  //. > prepend (1, Cons (2, Cons (3, Nil)))
+  //. > Z.prepend (1, Cons (2, Cons (3, Nil)))
   //. Cons (1, Cons (2, Cons (3, Nil)))
   //. ```
-  const prepend = (x, xs) => concat (of (xs.constructor, x), xs);
+  Z.prepend = (x, xs) => Z.concat (Z.of (xs.constructor, x), xs);
 
   //# chain :: Chain m => (a -> m b, m a) -> m b
   //.
@@ -1723,19 +1726,19 @@
   //. built-in types: Array and Function.
   //.
   //. ```javascript
-  //. > chain (x => [x, x], [1, 2, 3])
+  //. > Z.chain (x => [x, x], [1, 2, 3])
   //. [1, 1, 2, 2, 3, 3]
   //.
-  //. > chain (x => x % 2 == 1 ? of (List, x) : Nil,
-  //. .        Cons (1, Cons (2, Cons (3, Nil))))
+  //. > Z.chain (x => x % 2 == 1 ? Z.of (List, x) : Nil,
+  //. .          Cons (1, Cons (2, Cons (3, Nil))))
   //. Cons (1, Cons (3, Nil))
   //.
-  //. > chain (n => s => s.slice (0, n),
-  //. .        s => Math.ceil (s.length / 2))
-  //. .       ('Haskell')
+  //. > Z.chain (n => s => s.slice (0, n),
+  //. .          s => Math.ceil (s.length / 2))
+  //. .         ('Haskell')
   //. 'Hask'
   //. ```
-  const chain = (f, chain_) => Chain.methods.chain (chain_) (f);
+  Z.chain = (f, chain) => Z.Chain.methods.chain (chain) (f);
 
   //# join :: Chain m => m (m a) -> m a
   //.
@@ -1744,16 +1747,16 @@
   //. This function is derived from [`chain`](#chain).
   //.
   //. ```javascript
-  //. > join ([[1], [2], [3]])
+  //. > Z.join ([[1], [2], [3]])
   //. [1, 2, 3]
   //.
-  //. > join ([[[1, 2, 3]]])
+  //. > Z.join ([[[1, 2, 3]]])
   //. [[1, 2, 3]]
   //.
-  //. > join (Identity (Identity (1)))
+  //. > Z.join (Identity (Identity (1)))
   //. Identity (1)
   //. ```
-  const join = chain_ => chain (identity, chain_);
+  Z.join = chain => Z.chain (identity, chain);
 
   //# chainRec :: ChainRec m => (TypeRep m, (a -> c, b -> c, a) -> m c, a) -> m b
   //.
@@ -1763,7 +1766,7 @@
   //. built-in types: Array.
   //.
   //. ```javascript
-  //. > chainRec (
+  //. > Z.chainRec (
   //. .   Array,
   //. .   (next, done, s) => s.length == 2 ? [s + '!', s + '?'].map (done)
   //. .                                    : [s + 'o', s + 'n'].map (next),
@@ -1771,8 +1774,8 @@
   //. . )
   //. ['oo!', 'oo?', 'on!', 'on?', 'no!', 'no?', 'nn!', 'nn?']
   //. ```
-  const chainRec = (typeRep, f, x) => (
-    ChainRec.methods.chainRec (typeRep) (f, x)
+  Z.chainRec = (typeRep, f, x) => (
+    Z.ChainRec.methods.chainRec (typeRep) (f, x)
   );
 
   //# alt :: Alt f => (f a, f a) -> f a
@@ -1783,19 +1786,19 @@
   //. built-in types: Array and Object.
   //.
   //. ```javascript
-  //. > alt ([1, 2, 3], [4, 5, 6])
+  //. > Z.alt ([1, 2, 3], [4, 5, 6])
   //. [1, 2, 3, 4, 5, 6]
   //.
-  //. > alt (Nothing, Nothing)
+  //. > Z.alt (Nothing, Nothing)
   //. Nothing
   //.
-  //. > alt (Nothing, Just (1))
+  //. > Z.alt (Nothing, Just (1))
   //. Just (1)
   //.
-  //. > alt (Just (2), Just (3))
+  //. > Z.alt (Just (2), Just (3))
   //. Just (2)
   //. ```
-  const alt = (x, y) => Alt.methods.alt (x) (y);
+  Z.alt = (x, y) => Z.Alt.methods.alt (x) (y);
 
   //# zero :: Plus f => TypeRep f -> f a
   //.
@@ -1805,16 +1808,16 @@
   //. built-in types: Array and Object.
   //.
   //. ```javascript
-  //. > zero (Array)
+  //. > Z.zero (Array)
   //. []
   //.
-  //. > zero (Object)
+  //. > Z.zero (Object)
   //. {}
   //.
-  //. > zero (Maybe)
+  //. > Z.zero (Maybe)
   //. Nothing
   //. ```
-  const zero = typeRep => Plus.methods.zero (typeRep) ();
+  Z.zero = typeRep => Z.Plus.methods.zero (typeRep) ();
 
   //# reduce :: Foldable f => ((b, a) -> b, b, f a) -> b
   //.
@@ -1824,16 +1827,16 @@
   //. built-in types: Array and Object.
   //.
   //. ```javascript
-  //. > reduce ((xs, x) => [x].concat (xs), [], [1, 2, 3])
+  //. > Z.reduce ((xs, x) => [x].concat (xs), [], [1, 2, 3])
   //. [3, 2, 1]
   //.
-  //. > reduce (concat, '', Cons ('foo', Cons ('bar', Cons ('baz', Nil))))
+  //. > Z.reduce (Z.concat, '', Cons ('foo', Cons ('bar', Cons ('baz', Nil))))
   //. 'foobarbaz'
   //.
-  //. > reduce (concat, '', {foo: 'x', bar: 'y', baz: 'z'})
+  //. > Z.reduce (Z.concat, '', {foo: 'x', bar: 'y', baz: 'z'})
   //. 'yzx'
   //. ```
-  const reduce = (f, x, foldable) => Foldable.methods.reduce (foldable) (f, x);
+  Z.reduce = (f, x, foldable) => Z.Foldable.methods.reduce (foldable) (f, x);
 
   //# size :: Foldable f => f a -> Integer
   //.
@@ -1842,22 +1845,22 @@
   //. This function is derived from [`reduce`](#reduce).
   //.
   //. ```javascript
-  //. > size ([])
+  //. > Z.size ([])
   //. 0
   //.
-  //. > size (['foo', 'bar', 'baz'])
+  //. > Z.size (['foo', 'bar', 'baz'])
   //. 3
   //.
-  //. > size (Nil)
+  //. > Z.size (Nil)
   //. 0
   //.
-  //. > size (Cons ('foo', Cons ('bar', Cons ('baz', Nil))))
+  //. > Z.size (Cons ('foo', Cons ('bar', Cons ('baz', Nil))))
   //. 3
   //. ```
-  const size = foldable => (
+  Z.size = foldable => (
     Array.isArray (foldable)
     ? foldable.length
-    : reduce ((n, _) => n + 1, 0, foldable)
+    : Z.reduce ((n, _) => n + 1, 0, foldable)
   );
 
   //# all :: Foldable f => (a -> Boolean, f a) -> Boolean
@@ -1870,19 +1873,19 @@
   //. See also [`any`](#any) and [`none`](#none).
   //.
   //. ```javascript
-  //. > all (Number.isInteger, [])
+  //. > Z.all (Number.isInteger, [])
   //. true
   //.
-  //. > all (Number.isInteger, [1, 2, 3])
+  //. > Z.all (Number.isInteger, [1, 2, 3])
   //. true
   //.
-  //. > all (Number.isInteger, [0, 0.25, 0.5, 0.75, 1])
+  //. > Z.all (Number.isInteger, [0, 0.25, 0.5, 0.75, 1])
   //. false
   //. ```
-  const all = (pred, foldable) => (
+  Z.all = (pred, foldable) => (
     Array.isArray (foldable)
     ? foldable.every (x => pred (x))
-    : reduce ((b, x) => b && pred (x), true, foldable)
+    : Z.reduce ((b, x) => b && pred (x), true, foldable)
   );
 
   //# any :: Foldable f => (a -> Boolean, f a) -> Boolean
@@ -1895,19 +1898,19 @@
   //. See also [`all`](#all) and [`none`](#none).
   //.
   //. ```javascript
-  //. > any (Number.isInteger, [])
+  //. > Z.any (Number.isInteger, [])
   //. false
   //.
-  //. > any (Number.isInteger, [1, 2, 3])
+  //. > Z.any (Number.isInteger, [1, 2, 3])
   //. true
   //.
-  //. > any (Number.isInteger, [0, 0.25, 0.5, 0.75, 1])
+  //. > Z.any (Number.isInteger, [0, 0.25, 0.5, 0.75, 1])
   //. true
   //. ```
-  const any = (pred, foldable) => (
+  Z.any = (pred, foldable) => (
     Array.isArray (foldable)
     ? foldable.some (x => pred (x))
-    : reduce ((b, x) => b || pred (x), false, foldable)
+    : Z.reduce ((b, x) => b || pred (x), false, foldable)
   );
 
   //# none :: Foldable f => (a -> Boolean, f a) -> Boolean
@@ -1915,19 +1918,19 @@
   //. Returns `true` if none of the elements of the structure satisfies the
   //. predicate; `false` otherwise.
   //.
-  //. This function is derived from [`any`](#any). `none (pred, foldable)` is
-  //. equivalent to `!(any (pred, foldable))`.
+  //. This function is derived from [`any`](#any). `Z.none (pred, foldable)` is
+  //. equivalent to `!(Z.any (pred, foldable))`.
   //.
   //. See also [`all`](#all).
   //.
   //. ```javascript
-  //. > none (Number.isInteger, [])
+  //. > Z.none (Number.isInteger, [])
   //. true
   //.
-  //. > none (Number.isInteger, [0, 0.25, 0.5, 0.75, 1])
+  //. > Z.none (Number.isInteger, [0, 0.25, 0.5, 0.75, 1])
   //. false
   //. ```
-  const none = (pred, foldable) => !(any (pred, foldable));
+  Z.none = (pred, foldable) => !(Z.any (pred, foldable));
 
   //# elem :: (Setoid a, Foldable f) => (a, f a) -> Boolean
   //.
@@ -1938,28 +1941,28 @@
   //. [`reduce`](#reduce).
   //.
   //. ```javascript
-  //. > elem ('c', ['a', 'b', 'c'])
+  //. > Z.elem ('c', ['a', 'b', 'c'])
   //. true
   //.
-  //. > elem ('x', ['a', 'b', 'c'])
+  //. > Z.elem ('x', ['a', 'b', 'c'])
   //. false
   //.
-  //. > elem (3, {x: 1, y: 2, z: 3})
+  //. > Z.elem (3, {x: 1, y: 2, z: 3})
   //. true
   //.
-  //. > elem (8, {x: 1, y: 2, z: 3})
+  //. > Z.elem (8, {x: 1, y: 2, z: 3})
   //. false
   //.
-  //. > elem (0, Just (0))
+  //. > Z.elem (0, Just (0))
   //. true
   //.
-  //. > elem (0, Just (1))
+  //. > Z.elem (0, Just (1))
   //. false
   //.
-  //. > elem (0, Nothing)
+  //. > Z.elem (0, Nothing)
   //. false
   //. ```
-  const elem = (x, foldable) => any (y => equals (x, y), foldable);
+  Z.elem = (x, foldable) => Z.any (y => Z.equals (x, y), foldable);
 
   //# intercalate :: (Monoid m, Foldable f) => (m, f m) -> m
   //.
@@ -1970,31 +1973,31 @@
   //. and [`reduce`](#reduce).
   //.
   //. ```javascript
-  //. > intercalate (', ', [])
+  //. > Z.intercalate (', ', [])
   //. ''
   //.
-  //. > intercalate (', ', ['foo', 'bar', 'baz'])
+  //. > Z.intercalate (', ', ['foo', 'bar', 'baz'])
   //. 'foo, bar, baz'
   //.
-  //. > intercalate (', ', Nil)
+  //. > Z.intercalate (', ', Nil)
   //. ''
   //.
-  //. > intercalate (', ', Cons ('foo', Cons ('bar', Cons ('baz', Nil))))
+  //. > Z.intercalate (', ', Cons ('foo', Cons ('bar', Cons ('baz', Nil))))
   //. 'foo, bar, baz'
   //.
-  //. > intercalate ([0, 0, 0], [])
+  //. > Z.intercalate ([0, 0, 0], [])
   //. []
   //.
-  //. > intercalate ([0, 0, 0], [[1], [2, 3], [4, 5, 6], [7, 8], [9]])
+  //. > Z.intercalate ([0, 0, 0], [[1], [2, 3], [4, 5, 6], [7, 8], [9]])
   //. [1, 0, 0, 0, 2, 3, 0, 0, 0, 4, 5, 6, 0, 0, 0, 7, 8, 0, 0, 0, 9]
   //. ```
-  const intercalate = (separator, foldable) => (
-    reduce (
+  Z.intercalate = (separator, foldable) => (
+    Z.reduce (
       ({empty, value}, x) => ({
         empty: false,
-        value: concat (value, empty ? x : concat (separator, x)),
+        value: Z.concat (value, empty ? x : Z.concat (separator, x)),
       }),
-      {empty: true, value: empty (separator.constructor)},
+      {empty: true, value: Z.empty (separator.constructor)},
       foldable
     )
     .value
@@ -2009,11 +2012,15 @@
   //. and [`reduce`](#reduce).
   //.
   //. ```javascript
-  //. > foldMap (String, f => f.name, [Math.sin, Math.cos, Math.tan])
+  //. > Z.foldMap (String, f => f.name, [Math.sin, Math.cos, Math.tan])
   //. 'sincostan'
   //. ```
-  const foldMap = (typeRep, f, foldable) => (
-    reduce ((monoid, x) => concat (monoid, f (x)), empty (typeRep), foldable)
+  Z.foldMap = (typeRep, f, foldable) => (
+    Z.reduce (
+      (monoid, x) => Z.concat (monoid, f (x)),
+      Z.empty (typeRep),
+      foldable
+    )
   );
 
   //# reverse :: (Applicative f, Foldable f, Monoid (f a)) => f a -> f a
@@ -2024,17 +2031,21 @@
   //. [`of`](#of), and [`reduce`](#reduce).
   //.
   //. ```javascript
-  //. > reverse ([1, 2, 3])
+  //. > Z.reverse ([1, 2, 3])
   //. [3, 2, 1]
   //.
-  //. > reverse (Cons (1, Cons (2, Cons (3, Nil))))
+  //. > Z.reverse (Cons (1, Cons (2, Cons (3, Nil))))
   //. Cons (3, Cons (2, Cons (1, Nil)))
   //. ```
-  const reverse = foldable => {
+  Z.reverse = foldable => {
     //  Fast path for arrays.
     if (Array.isArray (foldable)) return (foldable.slice ()).reverse ();
     const F = foldable.constructor;
-    return reduce ((xs, x) => concat (of (F, x), xs), empty (F), foldable);
+    return Z.reduce (
+      (xs, x) => Z.concat (Z.of (F, x), xs),
+      Z.empty (F),
+      foldable
+    );
   };
 
   //# sort :: (Ord a, Applicative f, Foldable f, Monoid (f a)) => f a -> f a
@@ -2048,16 +2059,16 @@
   //. See also [`sortBy`](#sortBy).
   //.
   //. ```javascript
-  //. > sort (['foo', 'bar', 'baz'])
+  //. > Z.sort (['foo', 'bar', 'baz'])
   //. ['bar', 'baz', 'foo']
   //.
-  //. > sort ([Just (2), Nothing, Just (1)])
+  //. > Z.sort ([Just (2), Nothing, Just (1)])
   //. [Nothing, Just (1), Just (2)]
   //.
-  //. > sort (Cons ('foo', Cons ('bar', Cons ('baz', Nil))))
+  //. > Z.sort (Cons ('foo', Cons ('bar', Cons ('baz', Nil))))
   //. Cons ('bar', Cons ('baz', Cons ('foo', Nil)))
   //. ```
-  const sort = foldable => sortBy (identity, foldable);
+  Z.sort = foldable => Z.sortBy (identity, foldable);
 
   //# sortBy :: (Ord b, Applicative f, Foldable f, Monoid (f a)) => (a -> b, f a) -> f a
   //.
@@ -2071,34 +2082,34 @@
   //. See also [`sort`](#sort).
   //.
   //. ```javascript
-  //. > sortBy (s => s.length, ['red', 'green', 'blue'])
+  //. > Z.sortBy (s => s.length, ['red', 'green', 'blue'])
   //. ['red', 'blue', 'green']
   //.
-  //. > sortBy (s => s.length, ['black', 'white'])
+  //. > Z.sortBy (s => s.length, ['black', 'white'])
   //. ['black', 'white']
   //.
-  //. > sortBy (s => s.length, ['white', 'black'])
+  //. > Z.sortBy (s => s.length, ['white', 'black'])
   //. ['white', 'black']
   //.
-  //. > sortBy (s => s.length, Cons ('red', Cons ('green', Cons ('blue', Nil))))
+  //. > Z.sortBy (s => s.length, Cons ('red', Cons ('green', Cons ('blue', Nil))))
   //. Cons ('red', Cons ('blue', Cons ('green', Nil)))
   //. ```
-  const sortBy = (f, foldable) => {
-    const rs = reduce ((rs, x) => {
+  Z.sortBy = (f, foldable) => {
+    const rs = Z.reduce ((rs, x) => {
       rs.push ({idx: rs.length, x, fx: f (x)});
       return rs;
     }, [], foldable);
 
-    const lte_ = (r => {
+    const lte = (r => {
       switch (typeof (r && r.fx)) {
         case 'number':  return (x, y) => x <= y || x !== x;
         case 'string':  return (x, y) => x <= y;
-        default:        return lte;
+        default:        return Z.lte;
       }
     }) (rs[0]);
 
     rs.sort ((a, b) => (
-      lte_ (a.fx, b.fx) ? lte_ (b.fx, a.fx) ? a.idx - b.idx : -1 : 1
+      lte (a.fx, b.fx) ? lte (b.fx, a.fx) ? a.idx - b.idx : -1 : 1
     ));
 
     if (Array.isArray (foldable)) {
@@ -2107,9 +2118,9 @@
     }
 
     const F = foldable.constructor;
-    let result = empty (F);
+    let result = Z.empty (F);
     for (let idx = 0; idx < rs.length; idx += 1) {
-      result = concat (result, of (F, rs[idx].x));
+      result = Z.concat (result, Z.of (F, rs[idx].x));
     }
     return result;
   };
@@ -2124,14 +2135,14 @@
   //. See also [`sequence`](#sequence).
   //.
   //. ```javascript
-  //. > traverse (Array, x => x, [[1, 2, 3], [4, 5]])
+  //. > Z.traverse (Array, x => x, [[1, 2, 3], [4, 5]])
   //. [[1, 4], [1, 5], [2, 4], [2, 5], [3, 4], [3, 5]]
   //.
-  //. > traverse (Identity, x => Identity (x + 1), [1, 2, 3])
+  //. > Z.traverse (Identity, x => Identity (x + 1), [1, 2, 3])
   //. Identity ([2, 3, 4])
   //. ```
-  const traverse = (typeRep, f, traversable) => (
-    Traversable.methods.traverse (traversable) (typeRep, f)
+  Z.traverse = (typeRep, f, traversable) => (
+    Z.Traversable.methods.traverse (traversable) (typeRep, f)
   );
 
   //# sequence :: (Applicative f, Traversable t) => (TypeRep f, t (f a)) -> f (t a)
@@ -2141,14 +2152,14 @@
   //. This function is derived from [`traverse`](#traverse).
   //.
   //. ```javascript
-  //. > sequence (Array, Identity ([1, 2, 3]))
+  //. > Z.sequence (Array, Identity ([1, 2, 3]))
   //. [Identity (1), Identity (2), Identity (3)]
   //.
-  //. > sequence (Identity, [Identity (1), Identity (2), Identity (3)])
+  //. > Z.sequence (Identity, [Identity (1), Identity (2), Identity (3)])
   //. Identity ([1, 2, 3])
   //. ```
-  const sequence = (typeRep, traversable) => (
-    traverse (typeRep, identity, traversable)
+  Z.sequence = (typeRep, traversable) => (
+    Z.traverse (typeRep, identity, traversable)
   );
 
   //# extend :: Extend w => (w a -> b, w a) -> w b
@@ -2159,13 +2170,13 @@
   //. built-in types: Array and Function.
   //.
   //. ```javascript
-  //. > extend (ss => ss.join (''), ['x', 'y', 'z'])
+  //. > Z.extend (ss => ss.join (''), ['x', 'y', 'z'])
   //. ['xyz', 'yz', 'z']
   //.
-  //. > extend (f => f ([3, 4]), reverse) ([1, 2])
+  //. > Z.extend (f => f ([3, 4]), Z.reverse) ([1, 2])
   //. [4, 3, 2, 1]
   //. ```
-  const extend = (f, extend_) => Extend.methods.extend (extend_) (f);
+  Z.extend = (f, extend) => Z.Extend.methods.extend (extend) (f);
 
   //# duplicate :: Extend w => w a -> w (w a)
   //.
@@ -2174,29 +2185,29 @@
   //. This function is derived from [`extend`](#extend).
   //.
   //. ```javascript
-  //. > duplicate (Identity (1))
+  //. > Z.duplicate (Identity (1))
   //. Identity (Identity (1))
   //.
-  //. > duplicate ([1])
+  //. > Z.duplicate ([1])
   //. [[1]]
   //.
-  //. > duplicate ([1, 2, 3])
+  //. > Z.duplicate ([1, 2, 3])
   //. [[1, 2, 3], [2, 3], [3]]
   //.
-  //. > duplicate (reverse) ([1, 2]) ([3, 4])
+  //. > Z.duplicate (Z.reverse) ([1, 2]) ([3, 4])
   //. [4, 3, 2, 1]
   //. ```
-  const duplicate = extend_ => extend (identity, extend_);
+  Z.duplicate = extend => Z.extend (identity, extend);
 
   //# extract :: Comonad w => w a -> a
   //.
   //. Function wrapper for [`fantasy-land/extract`][].
   //.
   //. ```javascript
-  //. > extract (Identity (42))
+  //. > Z.extract (Identity (42))
   //. 42
   //. ```
-  const extract = comonad => Comonad.methods.extract (comonad) ();
+  Z.extract = comonad => Z.Comonad.methods.extract (comonad) ();
 
   //# contramap :: Contravariant f => (b -> a, f a) -> f b
   //.
@@ -2206,90 +2217,14 @@
   //. built-in types: Function.
   //.
   //. ```javascript
-  //. > contramap (s => s.length, Math.sqrt) ('Sanctuary')
+  //. > Z.contramap (s => s.length, Math.sqrt) ('Sanctuary')
   //. 3
   //. ```
-  const contramap = (f, contravariant) => (
-    Contravariant.methods.contramap (contravariant) (f)
+  Z.contramap = (f, contravariant) => (
+    Z.Contravariant.methods.contramap (contravariant) (f)
   );
 
-  return {
-    TypeClass,
-    Setoid,
-    Ord,
-    Semigroupoid,
-    Category,
-    Semigroup,
-    Monoid,
-    Group,
-    Filterable,
-    Functor,
-    Bifunctor,
-    Profunctor,
-    Apply,
-    Applicative,
-    Chain,
-    ChainRec,
-    Monad,
-    Alt,
-    Plus,
-    Alternative,
-    Foldable,
-    Traversable,
-    Extend,
-    Comonad,
-    Contravariant,
-    equals,
-    lt,
-    lte,
-    gt,
-    gte,
-    min,
-    max,
-    clamp,
-    compose,
-    id,
-    concat,
-    empty,
-    invert,
-    filter,
-    reject,
-    map,
-    flip,
-    bimap,
-    mapLeft,
-    promap,
-    ap,
-    lift2,
-    lift3,
-    apFirst,
-    apSecond,
-    of,
-    append,
-    prepend,
-    chain,
-    join,
-    chainRec,
-    alt,
-    zero,
-    reduce,
-    size,
-    all,
-    any,
-    none,
-    elem,
-    intercalate,
-    foldMap,
-    reverse,
-    sort,
-    sortBy,
-    traverse,
-    sequence,
-    extend,
-    duplicate,
-    extract,
-    contramap,
-  };
+  return Z;
 
 });
 
