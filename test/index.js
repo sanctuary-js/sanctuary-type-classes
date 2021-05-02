@@ -567,6 +567,33 @@ test ('Contravariant', () => {
 });
 
 test ('equals', () => {
+  const {nestedSetoidArb} = jsc.letrec (tie => ({
+    builtinSetoidArb: jsc.record ({
+      value: tie ('nestedSetoidArb'),
+    }),
+    noSetoidArb: jsc.record ({
+      'value': tie ('nestedSetoidArb'),
+      '@@type': jsc.constant ('sanctuary-type-classes/NoSetoid@1'),
+      '@@show': jsc.constant (function() { return `NoSetoid (${show (this.value)})`; }),
+    }),
+    customSetoidArb: jsc.record ({
+      'value': tie ('nestedSetoidArb'),
+      '@@type': jsc.constant ('sanctuary-type-classes/CustomSetoid@1'),
+      '@@show': jsc.constant (function() { return `CustomSetoid (${show (this.value)})`; }),
+      'fantasy-land/equals': jsc.constant (function(other) {
+        return Z.equals (this.value, other.value);
+      }),
+    }),
+    nestedSetoidArb: jsc.oneof ([
+      tie ('builtinSetoidArb'),
+      tie ('noSetoidArb'),
+      tie ('customSetoidArb'),
+      jsc.nat,
+    ]),
+  }));
+
+  nestedSetoidArb.show = show;
+
   eq (Z.equals.length, 2);
 
   eq (Z.equals (null, null), true);
@@ -686,6 +713,8 @@ test ('equals', () => {
   eq (Z.equals ($0, $0), true);
   eq (Z.equals ($0, $1), false);
   eq (Z.equals ($1, $0), false);
+
+  jsc.assert (jsc.forall (nestedSetoidArb, x => Z.equals (x, x)));
 });
 
 test ('lt', () => {
