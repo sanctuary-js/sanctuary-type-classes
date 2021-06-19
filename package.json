@@ -26,7 +26,7 @@
     "sanctuary-identity": "2.1.x",
     "sanctuary-maybe": "2.1.x",
     "sanctuary-pair": "2.1.x",
-    "sanctuary-scripts": "4.0.x",
+    "sanctuary-scripts": "5.0.x",
     "sanctuary-show": "2.0.x",
     "sanctuary-useless": "2.0.1"
   },
@@ -35,5 +35,9 @@
     "/README.md",
     "/index.js",
     "/package.json"
-  ]
+  ],
+  "mocha": {
+    "timeout": 30000,
+    "ui": "tdd"
+  }
 }
