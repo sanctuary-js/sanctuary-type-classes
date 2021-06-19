@@ -1502,7 +1502,7 @@
   //. > Z.id (Function) ('foo')
   //. 'foo'
   //. ```
-  Z.id = typeRep => Z.Category.methods.id (typeRep);
+  Z.id = Z.Category.methods.id;
 
   //# concat :: Semigroup a => (a, a) -> a
   //.
@@ -1524,7 +1524,7 @@
   //. > Z.concat (Cons ('foo', Cons ('bar', Cons ('baz', Nil))), Cons ('quux', Nil))
   //. Cons ('foo', Cons ('bar', Cons ('baz', Cons ('quux', Nil))))
   //. ```
-  Z.concat = (x, y) => Z.Semigroup.methods.concat (x, y);
+  Z.concat = Z.Semigroup.methods.concat;
 
   //# empty :: Monoid m => TypeRep m -> m
   //.
@@ -1546,7 +1546,7 @@
   //. > Z.empty (List)
   //. Nil
   //. ```
-  Z.empty = typeRep => Z.Monoid.methods.empty (typeRep);
+  Z.empty = Z.Monoid.methods.empty;
 
   //# invert :: Group g => g -> g
   //.
@@ -1556,7 +1556,7 @@
   //. > Z.invert (Sum (5))
   //. Sum (-5)
   //. ```
-  Z.invert = group => Z.Group.methods.invert (group);
+  Z.invert = Z.Group.methods.invert;
 
   //# filter :: Filterable f => (a -> Boolean, f a) -> f a
   //.
@@ -1825,7 +1825,7 @@
   //. > Z.of (List, 42)
   //. Cons (42, Nil)
   //. ```
-  Z.of = (typeRep, x) => Z.Applicative.methods.of (typeRep, x);
+  Z.of = Z.Applicative.methods.of;
 
   //# append :: (Applicative f, Semigroup (f a)) => (a, f a) -> f a
   //.
@@ -1917,9 +1917,7 @@
   //. . )
   //. ['oo!', 'oo?', 'on!', 'on?', 'no!', 'no?', 'nn!', 'nn?']
   //. ```
-  Z.chainRec = (typeRep, f, x) => (
-    Z.ChainRec.methods.chainRec (typeRep, f, x)
-  );
+  Z.chainRec = Z.ChainRec.methods.chainRec;
 
   //# alt :: Alt f => (f a, f a) -> f a
   //.
@@ -1941,7 +1939,7 @@
   //. > Z.alt (Just (2), Just (3))
   //. Just (2)
   //. ```
-  Z.alt = (x, y) => Z.Alt.methods.alt (x, y);
+  Z.alt = Z.Alt.methods.alt;
 
   //# zero :: Plus f => TypeRep f -> f a
   //.
@@ -1960,7 +1958,7 @@
   //. > Z.zero (Maybe)
   //. Nothing
   //. ```
-  Z.zero = typeRep => Z.Plus.methods.zero (typeRep);
+  Z.zero = Z.Plus.methods.zero;
 
   //# reduce :: Foldable f => ((b, a) -> b, b, f a) -> b
   //.
@@ -2350,7 +2348,7 @@
   //. > Z.extract (Identity (42))
   //. 42
   //. ```
-  Z.extract = comonad => Z.Comonad.methods.extract (comonad);
+  Z.extract = Z.Comonad.methods.extract;
 
   //# contramap :: Contravariant f => (b -> a, f a) -> f b
   //.
