@@ -1368,7 +1368,7 @@
 
       $pairs.push ([x, y]);
       try {
-        return Z.Ord.test (x) && Z.Ord.test (y) && Z.Ord.methods.lte (x, y);
+        return Z.Ord.test (x) && Z.Ord.methods.lte (x, y);
       } finally {
         $pairs.pop ();
       }
