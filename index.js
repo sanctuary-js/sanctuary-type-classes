@@ -220,9 +220,7 @@
             staticMethodNames.every (_name => (
               x != null && staticMethod (_name, x.constructor) != null
             )) &&
-            prototypeMethodNames.every (_name => (
-              prototypeMethod (_name, x) != null
-            ))
+            prototypeMethodNames.every (_name => hasPrototypeMethod (_name, x))
           );
         } finally {
           $seen.pop ();
@@ -1161,28 +1159,42 @@
     },
   };
 
-  const getArraySetoid = value => {
-    if (value.every (Z.Setoid.test)) {
-      return prototypeImplementations.Array.equals;
+  const hasPrototypeMethod = (name, value) => {
+    switch (value) {
+      case null: return prototypeImplementations.Null[name] != null;
+      case undefined: return prototypeImplementations.Undefined[name] != null;
     }
-  };
 
-  const getArrayOrd = value => {
-    if (value.every (Z.Ord.test)) {
-      return prototypeImplementations.Array.lte;
+    const prefixedName = 'fantasy-land/' + name;
+    const isPrototype = value.constructor == null ||
+                        value.constructor.prototype !== value;
+    if (isPrototype && typeof value[prefixedName] === 'function') {
+      return true;
     }
-  };
 
-  const getObjectSetoid = value => {
-    if ((Object.values (value)).every (Z.Setoid.test)) {
-      return prototypeImplementations.Object.equals;
-    }
-  };
+    if (typeof value['@@type'] === 'string') return false;
 
-  const getObjectOrd = value => {
-    if ((Object.values (value)).every (Z.Ord.test)) {
-      return prototypeImplementations.Object.lte;
+    if (name === 'equals') {
+      if (value.constructor === Array || type (value) === 'Array') {
+        return value.every (Z.Setoid.test);
+      }
+
+      if (value.constructor === Object || type (value) === 'Object') {
+        return (Object.values (value)).every (Z.Setoid.test);
+      }
     }
+
+    if (name === 'lte') {
+      if (value.constructor === Array || type (value) === 'Array') {
+        return value.every (Z.Ord.test);
+      }
+
+      if (value.constructor === Object || type (value) === 'Object') {
+        return (Object.values (value)).every (Z.Ord.test);
+      }
+    }
+
+    return customPrototypeMethod (name, value) != null;
   };
 
   const prototypeMethod = (name, value) => {
@@ -1212,11 +1224,7 @@
       case Date: return prototypeImplementations.Date[name];
       case RegExp: return prototypeImplementations.RegExp[name];
       case String: return prototypeImplementations.String[name];
-      case Array: switch (name) {
-        case 'equals': return getArraySetoid (value);
-        case 'lte': return getArrayOrd (value);
-        default: return prototypeImplementations.Array[name];
-      }
+      case Array: return prototypeImplementations.Array[name];
       case Function: return prototypeImplementations.Function[name];
     }
 
@@ -1224,11 +1232,7 @@
     switch (type (value)) {
       case 'Arguments': return prototypeImplementations.Arguments[name];
       case 'Error': return prototypeImplementations.Error[name];
-      case 'Object': switch (name) {
-        case 'equals': return getObjectSetoid (value);
-        case 'lte': return getObjectOrd (value);
-        default: return prototypeImplementations.Object[name];
-      }
+      case 'Object': return prototypeImplementations.Object[name];
 
       // A repeat of the constructor-matched values, in case they were created
       // in other contexts (e.g. vm.runInNewContext).
@@ -1237,11 +1241,7 @@
       case 'Date': return prototypeImplementations.Date[name];
       case 'RegExp': return prototypeImplementations.RegExp[name];
       case 'String': return prototypeImplementations.String[name];
-      case 'Array': switch (name) {
-        case 'equals': return getArraySetoid (value);
-        case 'lte': return getArrayOrd (value);
-        default: return prototypeImplementations.Array[name];
-      }
+      case 'Array': return prototypeImplementations.Array[name];
       case 'Function': return prototypeImplementations.Function[name];
     }
   };
