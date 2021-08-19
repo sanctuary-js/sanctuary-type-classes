@@ -1245,22 +1245,14 @@
     },
   }]);
 
-  //# equals :: (a, b) -> Boolean
+  //# equals :: Setoid a => (a, a) -> Boolean
   //.
   //. Returns `true` if its arguments are equal; `false` otherwise.
   //.
-  //. Specifically:
-  //.
-  //.   - Arguments with different [type identities][] are unequal.
-  //.
-  //.   - If the first argument has a [`fantasy-land/equals`][] method,
-  //.     that method is invoked to determine whether the arguments are
-  //.     equal (`fantasy-land/equals` implementations are provided for the
-  //.     following built-in types: Null, Undefined, Boolean, Number, Date,
-  //.     RegExp, String, Array, Arguments, Error, Object, and Function).
-  //.
-  //.   - Otherwise, the arguments are equal if their
-  //.     [entries][`Object.entries`] are equal (according to this algorithm).
+  //. > [!IMPORTANT]
+  //. >
+  //. > Arguments must be Setoids of the same type; providing arguments of
+  //. > differing types, or non-Setoid arguments, has undefined behaviour.
   //.
   //. The algorithm supports circular data structures. Two arrays are equal
   //. if they have the same index paths and for each path have equal values.
@@ -1286,8 +1278,6 @@
     const $pairs = [];
 
     Z.equals = (x, y) => {
-      if (!(sameType (x, y))) return false;
-
       //  This algorithm for comparing circular data structures was
       //  suggested in <http://stackoverflow.com/a/40622794/312785>.
       if ($pairs.some (([xx, yy]) => xx === x && yy === y)) {
@@ -1296,9 +1286,7 @@
 
       $pairs.push ([x, y]);
       try {
-        return Z.Setoid.test (x) ?
-               Z.Setoid.methods.equals (y, x) :
-               Object$prototype$equals.call (x, y);
+        return Z.Setoid.methods.equals (y, x);
       } finally {
         $pairs.pop ();
       }
@@ -2385,7 +2373,6 @@
 //. [Semigroupoid]:             v:fantasyland/fantasy-land#semigroupoid
 //. [Setoid]:                   v:fantasyland/fantasy-land#setoid
 //. [Traversable]:              v:fantasyland/fantasy-land#traversable
-//. [`Object.entries`]:         https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/entries
 //. [`fantasy-land/alt`]:       v:fantasyland/fantasy-land#alt-method
 //. [`fantasy-land/ap`]:        v:fantasyland/fantasy-land#ap-method
 //. [`fantasy-land/bimap`]:     v:fantasyland/fantasy-land#bimap-method
@@ -2395,7 +2382,6 @@
 //. [`fantasy-land/concat`]:    v:fantasyland/fantasy-land#concat-method
 //. [`fantasy-land/contramap`]: v:fantasyland/fantasy-land#contramap-method
 //. [`fantasy-land/empty`]:     v:fantasyland/fantasy-land#empty-method
-//. [`fantasy-land/equals`]:    v:fantasyland/fantasy-land#equals-method
 //. [`fantasy-land/extend`]:    v:fantasyland/fantasy-land#extend-method
 //. [`fantasy-land/extract`]:   v:fantasyland/fantasy-land#extract-method
 //. [`fantasy-land/filter`]:    v:fantasyland/fantasy-land#filter-method
@@ -2409,5 +2395,4 @@
 //. [`fantasy-land/traverse`]:  v:fantasyland/fantasy-land#traverse-method
 //. [`fantasy-land/zero`]:      v:fantasyland/fantasy-land#zero-method
 //. [stable sort]:              https://en.wikipedia.org/wiki/Sorting_algorithm#Stability
-//. [type identities]:          v:sanctuary-js/sanctuary-type-identifiers
 //. [type-classes]:             https://github.com/sanctuary-js/sanctuary-def#type-classes
