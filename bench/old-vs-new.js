@@ -21,7 +21,7 @@ const double = x => [x, x];
 //  inc :: Number -> Number
 const inc = x => x + 1;
 
-//  prep :: StrMap Function -> StrMap (Array2 (StrMap a) Function)
+//  prep :: StrMap f -> StrMap (Array2 (StrMap a) f)
 const prep = specs => newZ.map (f => [{}, f], specs);
 
 const shuffledArray = [];

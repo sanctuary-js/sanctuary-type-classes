@@ -14,7 +14,7 @@ const Vanilla = {
 //  inc :: Number -> Number
 const inc = x => x + 1;
 
-//  prep :: StrMap Function -> StrMap (Array2 (StrMap a) Function)
+//  prep :: StrMap f -> StrMap (Array2 (StrMap a) f)
 const prep = specs => Z.map (f => [{}, f], specs);
 
 module.exports = benchmark (Vanilla, Z, {leftHeader: 'vanilla', rightHeader: 'Z'}, prep ({
