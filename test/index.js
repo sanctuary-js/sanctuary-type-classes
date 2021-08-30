@@ -1,6 +1,7 @@
 'use strict';
 
 const assert = require ('assert');
+const vm = require ('vm');
 
 const laws = require ('fantasy-laws');
 const jsc = require ('jsverify');
@@ -270,6 +271,29 @@ function wrap(before) {
   };
 }
 
+const makeValues = () => ({
+  Array: ['?', '!'],
+  Boolean: new Boolean (true),
+  Date: new Date (0),
+  Function: x => x + 1,
+  Number: new Number (42),
+  Object: {'?': '!'},
+  RegExp: /foo/,
+  String: new String ('?!'),
+});
+
+const domesticValues = makeValues ();
+const alienValues = vm.runInNewContext (String (makeValues)) ();
+
+test ('test assumptions', () => {
+  eq (domesticValues.Array.constructor === alienValues.Array.constructor, false);
+  eq (domesticValues.Boolean.constructor === alienValues.Boolean.constructor, false);
+  eq (domesticValues.Date.constructor === alienValues.Date.constructor, false);
+  eq (domesticValues.Function.constructor === alienValues.Function.constructor, false);
+  eq (domesticValues.Number.constructor === alienValues.Number.constructor, false);
+  eq (domesticValues.RegExp.constructor === alienValues.RegExp.constructor, false);
+  eq (domesticValues.String.constructor === alienValues.String.constructor, false);
+});
 
 test ('TypeClass', () => {
   eq (typeof Z.TypeClass, 'function');
@@ -706,6 +730,13 @@ test ('equals', () => {
   eq (Z.equals ((Just (0)).constructor, Maybe), true);
   eq (Z.equals (Lazy$of (0), Lazy$of (0)), false);
 
+  eq (Z.equals (alienValues.Array, domesticValues.Array), true);
+  eq (Z.equals (alienValues.Boolean, domesticValues.Boolean), true);
+  eq (Z.equals (alienValues.Date, domesticValues.Date), true);
+  eq (Z.equals (alienValues.Number, domesticValues.Number), true);
+  eq (Z.equals (alienValues.RegExp, domesticValues.RegExp), true);
+  eq (Z.equals (alienValues.String, domesticValues.String), true);
+
   const $0 = {z: 0};
   const $1 = {z: 1};
   $0.a = $1;
@@ -830,6 +861,12 @@ test ('lte', () => {
   eq (Z.lte (Lazy$of (0), Lazy$of (0)), false);
   eq (Z.lte ('abc', 123), false);
 
+  eq (Z.lte (alienValues.Array, domesticValues.Array), true);
+  eq (Z.lte (alienValues.Boolean, domesticValues.Boolean), true);
+  eq (Z.lte (alienValues.Date, domesticValues.Date), true);
+  eq (Z.lte (alienValues.Number, domesticValues.Number), true);
+  eq (Z.lte (alienValues.String, domesticValues.String), true);
+
   const $0 = {z: 0};
   const $1 = {z: 1};
   $0.a = $1;
@@ -890,12 +927,16 @@ test ('compose', () => {
   eq (Z.compose.length, 2);
 
   eq (Z.compose (Math.sqrt, inc) (99), 10);
+
+  eq (Z.compose (domesticValues.Function, alienValues.Function) (1), 3);
 });
 
 test ('id', () => {
   eq (Z.id.length, 1);
 
   eq (Z.id (Function) (42), 42);
+
+  eq (Z.id (alienValues.Function.constructor) (42), 42);
 });
 
 test ('concat', () => {
@@ -924,6 +965,9 @@ test ('concat', () => {
   eq (Z.concat (Nil, Cons (1, Cons (2, Cons (3, Nil)))), Cons (1, Cons (2, Cons (3, Nil))));
   eq (Z.concat (Cons (1, Cons (2, Cons (3, Nil))), Nil), Cons (1, Cons (2, Cons (3, Nil))));
   eq (Z.concat (Cons (1, Cons (2, Cons (3, Nil))), Cons (4, Cons (5, Cons (6, Nil)))), Cons (1, Cons (2, Cons (3, Cons (4, Cons (5, Cons (6, Nil)))))));
+
+  eq (Z.concat (alienValues.Array, domesticValues.Array), ['?', '!', '?', '!']);
+  eq (Z.concat (alienValues.String, domesticValues.String), '?!?!');
 });
 
 test ('empty', () => {
@@ -935,9 +979,13 @@ test ('empty', () => {
   eq (Z.empty (List), Nil);
   eq (Z.empty (Maybe), Nothing);
 
+  eq (Z.empty (alienValues.String.constructor), '');
+  eq (Z.empty (alienValues.Array.constructor), []);
+  eq (Z.empty (alienValues.Object.constructor), {});
+
   assert.throws (
     () => Z.empty (null),
-    new TypeError ('Z.Monoid.methods.empty(...) is not a function')
+    new TypeError ("Cannot read property 'fantasy-land/empty' of null")
   );
 });
 
