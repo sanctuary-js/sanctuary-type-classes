@@ -248,14 +248,14 @@
     prototypeMethods.forEach (method => {
       const _name = method.name;
       typeClass.methods[_name] = (
-        method.arity === 0 ? a => (
-          (prototypeMethod (_name, a)).call (a)
+        method.arity === 0 ? context => (
+          (prototypeMethod (_name, context)).call (context)
         ) :
-        method.arity === 1 ? (a, b) => (
-          (prototypeMethod (_name, a)).call (a, b)
+        method.arity === 1 ? (a, context) => (
+          (prototypeMethod (_name, context)).call (context, a)
         ) :
-        (a, b, c) => (
-          (prototypeMethod (_name, a)).call (a, b, c)
+        (a, b, context) => (
+          (prototypeMethod (_name, context)).call (context, a, b)
         )
       );
     });
@@ -1298,7 +1298,7 @@
       $pairs.push ([x, y]);
       try {
         return Z.Setoid.test (x) ?
-               Z.Setoid.methods.equals (x, y) :
+               Z.Setoid.methods.equals (y, x) :
                Object$prototype$equals.call (x, y);
       } finally {
         $pairs.pop ();
@@ -1368,7 +1368,7 @@
 
       $pairs.push ([x, y]);
       try {
-        return Z.Ord.test (x) && Z.Ord.methods.lte (x, y);
+        return Z.Ord.test (x) && Z.Ord.methods.lte (y, x);
       } finally {
         $pairs.pop ();
       }
@@ -1489,7 +1489,7 @@
   //. > Z.compose (Math.sqrt, x => x + 1) (99)
   //. 10
   //. ```
-  Z.compose = (x, y) => Z.Semigroupoid.methods.compose (y, x);
+  Z.compose = Z.Semigroupoid.methods.compose;
 
   //# id :: Category c => TypeRep c -> c
   //.
@@ -1524,7 +1524,7 @@
   //. > Z.concat (Cons ('foo', Cons ('bar', Cons ('baz', Nil))), Cons ('quux', Nil))
   //. Cons ('foo', Cons ('bar', Cons ('baz', Cons ('quux', Nil))))
   //. ```
-  Z.concat = Z.Semigroup.methods.concat;
+  Z.concat = (a, b) => Z.Semigroup.methods.concat (b, a);
 
   //# empty :: Monoid m => TypeRep m -> m
   //.
@@ -1587,9 +1587,7 @@
   //. > Z.filter (x => x % 2 == 1, Just (1))
   //. Just (1)
   //. ```
-  Z.filter = (pred, filterable) => (
-    Z.Filterable.methods.filter (filterable, pred)
-  );
+  Z.filter = Z.Filterable.methods.filter;
 
   //# reject :: Filterable f => (a -> Boolean, f a) -> f a
   //.
@@ -1644,7 +1642,7 @@
   //. > Z.map (Math.sqrt, Cons (1, Cons (4, Cons (9, Nil))))
   //. Cons (1, Cons (2, Cons (3, Nil)))
   //. ```
-  Z.map = (f, functor) => Z.Functor.methods.map (functor, f);
+  Z.map = Z.Functor.methods.map;
 
   //# flip :: Functor f => (f (a -> b), a) -> f b
   //.
@@ -1665,7 +1663,7 @@
   //. > Z.flip (Cons (Math.floor, Cons (Math.ceil, Nil)), 1.5)
   //. Cons (1, Cons (2, Nil))
   //. ```
-  Z.flip = (functor, x) => Z.Functor.methods.map (functor, f => f (x));
+  Z.flip = (functor, x) => Z.map (f => f (x), functor);
 
   //# bimap :: Bifunctor f => (a -> b, c -> d, f a c) -> f b d
   //.
@@ -1675,7 +1673,7 @@
   //. > Z.bimap (s => s.toUpperCase (), Math.sqrt, Pair ('foo') (64))
   //. Pair ('FOO') (8)
   //. ```
-  Z.bimap = (f, g, bifunctor) => Z.Bifunctor.methods.bimap (bifunctor, f, g);
+  Z.bimap = Z.Bifunctor.methods.bimap;
 
   //# mapLeft :: Bifunctor f => (a -> b, f a c) -> f b c
   //.
@@ -1698,9 +1696,7 @@
   //. > Z.promap (Math.abs, x => x + 1, Math.sqrt) (-100)
   //. 11
   //. ```
-  Z.promap = (f, g, profunctor) => (
-    Z.Profunctor.methods.promap (profunctor, f, g)
-  );
+  Z.promap = Z.Profunctor.methods.promap;
 
   //# ap :: Apply f => (f (a -> b), f a) -> f b
   //.
@@ -1725,7 +1721,7 @@
   //. > Z.ap (Cons (Math.sqrt, Cons (x => x * x, Nil)), Cons (16, Cons (100, Nil)))
   //. Cons (4, Cons (10, Cons (256, Cons (10000, Nil))))
   //. ```
-  Z.ap = (applyF, applyX) => Z.Apply.methods.ap (applyX, applyF);
+  Z.ap = Z.Apply.methods.ap;
 
   //# lift2 :: Apply f => (a -> b -> c, f a, f b) -> f c
   //.
@@ -1881,7 +1877,7 @@
   //. .         ('Haskell')
   //. 'Hask'
   //. ```
-  Z.chain = (f, chain) => Z.Chain.methods.chain (chain, f);
+  Z.chain = Z.Chain.methods.chain;
 
   //# join :: Chain m => m (m a) -> m a
   //.
@@ -1939,7 +1935,7 @@
   //. > Z.alt (Just (2), Just (3))
   //. Just (2)
   //. ```
-  Z.alt = Z.Alt.methods.alt;
+  Z.alt = (a, b) => Z.Alt.methods.alt (b, a);
 
   //# zero :: Plus f => TypeRep f -> f a
   //.
@@ -1977,7 +1973,7 @@
   //. > Z.reduce (Z.concat, '', {foo: 'x', bar: 'y', baz: 'z'})
   //. 'yzx'
   //. ```
-  Z.reduce = (f, x, foldable) => Z.Foldable.methods.reduce (foldable, f, x);
+  Z.reduce = Z.Foldable.methods.reduce;
 
   //# size :: Foldable f => f a -> Integer
   //.
@@ -2282,9 +2278,7 @@
   //. > Z.traverse (Identity, x => Identity (x + 1), [1, 2, 3])
   //. Identity ([2, 3, 4])
   //. ```
-  Z.traverse = (typeRep, f, traversable) => (
-    Z.Traversable.methods.traverse (traversable, typeRep, f)
-  );
+  Z.traverse = Z.Traversable.methods.traverse;
 
   //# sequence :: (Applicative f, Traversable t) => (TypeRep f, t (f a)) -> f (t a)
   //.
@@ -2317,7 +2311,7 @@
   //. > Z.extend (f => f ([3, 4]), Z.reverse) ([1, 2])
   //. [4, 3, 2, 1]
   //. ```
-  Z.extend = (f, extend) => Z.Extend.methods.extend (extend, f);
+  Z.extend = Z.Extend.methods.extend;
 
   //# duplicate :: Extend w => w a -> w (w a)
   //.
@@ -2361,9 +2355,7 @@
   //. > Z.contramap (s => s.length, Math.sqrt) ('Sanctuary')
   //. 3
   //. ```
-  Z.contramap = (f, contravariant) => (
-    Z.Contravariant.methods.contramap (contravariant, f)
-  );
+  Z.contramap = Z.Contravariant.methods.contramap;
 
   return Z;
 
