@@ -109,9 +109,6 @@
   //  identity :: a -> a
   const identity = x => x;
 
-  //  nameProp :: { name :: a } -> a
-  const nameProp = x => x.name;
-
   //  pair :: a -> b -> Array2 a b
   const pair = x => y => [x, y];
 
@@ -499,33 +496,12 @@
     return x => this (f (x));
   }
 
-  const staticImplementations = {
-    String: {
-      empty: String$empty,
-    },
-    Array: {
-      empty: Array$empty,
-      of: Array$of,
-      chainRec: Array$chainRec,
-      zero: Array$zero,
-    },
-    Object: {
-      empty: Object$empty,
-      zero: Object$zero,
-    },
-    Function: {
-      id: Function$id,
-      of: Function$of,
-      chainRec: Function$chainRec,
-    },
-  };
-
-  const staticMethod = (name, typeRep) => {
+  const staticMethod = (name, implementations, typeRep) => {
     switch (typeRep) {
-      case String: return staticImplementations.String[name];
-      case Array: return staticImplementations.Array[name];
-      case Object: return staticImplementations.Object[name];
-      case Function: return staticImplementations.Function[name];
+      case String: return implementations.String;
+      case Array: return implementations.Array;
+      case Object: return implementations.Object;
+      case Function: return implementations.Function;
     }
 
     const prefixedName = 'fantasy-land/' + name;
@@ -534,89 +510,17 @@
     }
 
     switch (typeRep.name) {
-      case 'String': return staticImplementations.String[name];
-      case 'Array': return staticImplementations.Array[name];
-      case 'Object': return staticImplementations.Object[name];
-      case 'Function': return staticImplementations.Function[name];
+      case 'String': return implementations.String;
+      case 'Array': return implementations.Array;
+      case 'Object': return implementations.Object;
+      case 'Function': return implementations.Function;
     }
   };
 
-  const prototypeImplementations = {
-    Null: {
-      equals: Null$prototype$equals,
-      lte: Null$prototype$lte,
-    },
-    Undefined: {
-      equals: Undefined$prototype$equals,
-      lte: Undefined$prototype$lte,
-    },
-    Boolean: {
-      equals: Boolean$prototype$equals,
-      lte: Boolean$prototype$lte,
-    },
-    Number: {
-      equals: Number$prototype$equals,
-      lte: Number$prototype$lte,
-    },
-    Date: {
-      equals: Date$prototype$equals,
-      lte: Date$prototype$lte,
-    },
-    RegExp: {
-      equals: RegExp$prototype$equals,
-    },
-    String: {
-      equals: String$prototype$equals,
-      lte: String$prototype$lte,
-      concat: String$prototype$concat,
-    },
-    Array: {
-      equals: Array$prototype$equals,
-      lte: Array$prototype$lte,
-      concat: Array$prototype$concat,
-      filter: Array$prototype$filter,
-      map: Array$prototype$map,
-      ap: Array$prototype$ap,
-      chain: Array$prototype$chain,
-      alt: Array$prototype$alt,
-      reduce: Array$prototype$reduce,
-      traverse: Array$prototype$traverse,
-      extend: Array$prototype$extend,
-    },
-    Arguments: {
-      equals: Arguments$prototype$equals,
-      lte: Arguments$prototype$lte,
-    },
-    Error: {
-      equals: Error$prototype$equals,
-    },
-    Object: {
-      equals: Object$prototype$equals,
-      lte: Object$prototype$lte,
-      concat: Object$prototype$concat,
-      filter: Object$prototype$filter,
-      map: Object$prototype$map,
-      ap: Object$prototype$ap,
-      alt: Object$prototype$alt,
-      reduce: Object$prototype$reduce,
-      traverse: Object$prototype$traverse,
-    },
-    Function: {
-      equals: Function$prototype$equals,
-      compose: Function$prototype$compose,
-      map: Function$prototype$map,
-      promap: Function$prototype$promap,
-      ap: Function$prototype$ap,
-      chain: Function$prototype$chain,
-      extend: Function$prototype$extend,
-      contramap: Function$prototype$contramap,
-    },
-  };
-
-  const hasPrototypeMethod = (name, value) => {
+  const hasPrototypeMethod = (name, implementations, value) => {
     switch (value) {
-      case null: return prototypeImplementations.Null[name] != null;
-      case undefined: return prototypeImplementations.Undefined[name] != null;
+      case null: return implementations.Null != null;
+      case undefined: return implementations.Undefined != null;
     }
 
     const prefixedName = 'fantasy-land/' + name;
@@ -648,14 +552,14 @@
       }
     }
 
-    return customPrototypeMethod (name, value) != null;
+    return customPrototypeMethod (implementations, value) != null;
   };
 
-  const prototypeMethod = (name, value) => {
+  const prototypeMethod = (name, implementations, value) => {
     // Single-member types are identified most quickly.
     switch (value) {
-      case null: return prototypeImplementations.Null[name];
-      case undefined: return prototypeImplementations.Undefined[name];
+      case null: return implementations.Null;
+      case undefined: return implementations.Undefined;
     }
 
     // Check if we can dispatch to a Fantasy Land method.
@@ -667,36 +571,36 @@
     }
 
     // Separate function for performance reasons.
-    return customPrototypeMethod (name, value);
+    return customPrototypeMethod (implementations, value);
   };
 
-  const customPrototypeMethod = (name, value) => {
+  const customPrototypeMethod = (implementations, value) => {
     // Checking constructor reference has the best performance.
     switch (value.constructor) {
-      case Boolean: return prototypeImplementations.Boolean[name];
-      case Number: return prototypeImplementations.Number[name];
-      case Date: return prototypeImplementations.Date[name];
-      case RegExp: return prototypeImplementations.RegExp[name];
-      case String: return prototypeImplementations.String[name];
-      case Array: return prototypeImplementations.Array[name];
-      case Function: return prototypeImplementations.Function[name];
+      case Boolean: return implementations.Boolean;
+      case Number: return implementations.Number;
+      case Date: return implementations.Date;
+      case RegExp: return implementations.RegExp;
+      case String: return implementations.String;
+      case Array: return implementations.Array;
+      case Function: return implementations.Function;
     }
 
     // For all other values we use their type-identity.
     switch (type (value)) {
-      case 'Arguments': return prototypeImplementations.Arguments[name];
-      case 'Error': return prototypeImplementations.Error[name];
-      case 'Object': return prototypeImplementations.Object[name];
+      case 'Arguments': return implementations.Arguments;
+      case 'Error': return implementations.Error;
+      case 'Object': return implementations.Object;
 
       // A repeat of the constructor-matched values, in case they were created
       // in other contexts (e.g. vm.runInNewContext).
-      case 'Boolean': return prototypeImplementations.Boolean[name];
-      case 'Number': return prototypeImplementations.Number[name];
-      case 'Date': return prototypeImplementations.Date[name];
-      case 'RegExp': return prototypeImplementations.RegExp[name];
-      case 'String': return prototypeImplementations.String[name];
-      case 'Array': return prototypeImplementations.Array[name];
-      case 'Function': return prototypeImplementations.Function[name];
+      case 'Boolean': return implementations.Boolean;
+      case 'Number': return implementations.Number;
+      case 'Date': return implementations.Date;
+      case 'RegExp': return implementations.RegExp;
+      case 'String': return implementations.String;
+      case 'Array': return implementations.Array;
+      case 'Function': return implementations.Function;
     }
   };
 
@@ -775,9 +679,6 @@
       req.location === Value
     ));
 
-    const staticMethodNames = staticMethods.map (nameProp);
-    const prototypeMethodNames = prototypeMethods.map (nameProp);
-
     const typeClass = Z.TypeClass (
       `sanctuary-type-classes/${_name}`,
       `https://github.com/sanctuary-js/sanctuary-type-classes/tree/v${version}#${_name}`,
@@ -788,10 +689,13 @@
         $seen.push (x);
         try {
           return (
-            staticMethodNames.every (_name => (
-              x != null && staticMethod (_name, x.constructor) != null
+            staticMethods.every (({name, implementations}) => (
+              x != null &&
+              staticMethod (name, implementations, x.constructor) != null
             )) &&
-            prototypeMethodNames.every (_name => hasPrototypeMethod (_name, x))
+            prototypeMethods.every (({name, implementations}) => (
+              hasPrototypeMethod (name, implementations, x)
+            ))
           );
         } finally {
           $seen.pop ();
@@ -801,32 +705,31 @@
 
     typeClass.methods = {};
 
-    staticMethods.forEach (method => {
-      const _name = method.name;
-      typeClass.methods[_name] = (
-        method.arity === 0 ? typeRep => (
-          staticMethod (_name, typeRep) ()
+    staticMethods.forEach (({name, arity, implementations}) => {
+      typeClass.methods[name] = (
+        arity === 0 ? typeRep => (
+          staticMethod (name, implementations, typeRep) ()
         ) :
-        method.arity === 1 ? (typeRep, a) => (
-          staticMethod (_name, typeRep) (a)
+        arity === 1 ? (typeRep, a) => (
+          staticMethod (name, implementations, typeRep) (a)
         ) :
         (typeRep, a, b) => (
-          staticMethod (_name, typeRep) (a, b)
+          staticMethod (name, implementations, typeRep) (a, b)
         )
       );
     });
 
-    prototypeMethods.forEach (method => {
-      const _name = method.name;
-      typeClass.methods[_name] = (
-        method.arity === 0 ? context => (
-          (prototypeMethod (_name, context)).call (context)
+    prototypeMethods.forEach (({name, arity, implementations}) => {
+      typeClass.methods[name] = (
+        arity === 0 ? context => (
+          (prototypeMethod (name, implementations, context)).call (context)
         ) :
-        method.arity === 1 ? (a, context) => (
-          (prototypeMethod (_name, context)).call (context, a)
+        arity === 1 ? (a, context) => (
+          (prototypeMethod (name, implementations, context)).call (context, a)
         ) :
         (a, b, context) => (
-          (prototypeMethod (_name, context)).call (context, a, b)
+          (prototypeMethod (name, implementations, context))
+          .call (context, a, b)
         )
       );
     });
@@ -855,6 +758,20 @@
     name: 'equals',
     location: Value,
     arity: 1,
+    implementations: {
+      Arguments: Arguments$prototype$equals,
+      Array: Array$prototype$equals,
+      Boolean: Boolean$prototype$equals,
+      Date: Date$prototype$equals,
+      Error: Error$prototype$equals,
+      Function: Function$prototype$equals,
+      Null: Null$prototype$equals,
+      Number: Number$prototype$equals,
+      Object: Object$prototype$equals,
+      RegExp: RegExp$prototype$equals,
+      String: String$prototype$equals,
+      Undefined: Undefined$prototype$equals,
+    },
   }]);
 
   //# Ord :: TypeClass
@@ -878,6 +795,17 @@
     name: 'lte',
     location: Value,
     arity: 1,
+    implementations: {
+      Arguments: Arguments$prototype$lte,
+      Array: Array$prototype$lte,
+      Boolean: Boolean$prototype$lte,
+      Date: Date$prototype$lte,
+      Null: Null$prototype$lte,
+      Number: Number$prototype$lte,
+      Object: Object$prototype$lte,
+      String: String$prototype$lte,
+      Undefined: Undefined$prototype$lte,
+    },
   }]);
 
   //# Semigroupoid :: TypeClass
@@ -895,6 +823,9 @@
     name: 'compose',
     location: Value,
     arity: 1,
+    implementations: {
+      Function: Function$prototype$compose,
+    },
   }]);
 
   //# Category :: TypeClass
@@ -912,6 +843,9 @@
     name: 'id',
     location: Constructor,
     arity: 0,
+    implementations: {
+      Function: Function$id,
+    },
   }]);
 
   //# Semigroup :: TypeClass
@@ -929,6 +863,11 @@
     name: 'concat',
     location: Value,
     arity: 1,
+    implementations: {
+      Array: Array$prototype$concat,
+      Object: Object$prototype$concat,
+      String: String$prototype$concat,
+    },
   }]);
 
   //# Monoid :: TypeClass
@@ -946,6 +885,11 @@
     name: 'empty',
     location: Constructor,
     arity: 0,
+    implementations: {
+      Array: Array$empty,
+      Object: Object$empty,
+      String: String$empty,
+    },
   }]);
 
   //# Group :: TypeClass
@@ -963,6 +907,7 @@
     name: 'invert',
     location: Value,
     arity: 0,
+    implementations: {},
   }]);
 
   //# Filterable :: TypeClass
@@ -980,6 +925,10 @@
     name: 'filter',
     location: Value,
     arity: 1,
+    implementations: {
+      Array: Array$prototype$filter,
+      Object: Object$prototype$filter,
+    },
   }]);
 
   //# Functor :: TypeClass
@@ -997,6 +946,11 @@
     name: 'map',
     location: Value,
     arity: 1,
+    implementations: {
+      Array: Array$prototype$map,
+      Function: Function$prototype$map,
+      Object: Object$prototype$map,
+    },
   }]);
 
   //# Bifunctor :: TypeClass
@@ -1014,6 +968,7 @@
     name: 'bimap',
     location: Value,
     arity: 2,
+    implementations: {},
   }]);
 
   //# Profunctor :: TypeClass
@@ -1031,6 +986,9 @@
     name: 'promap',
     location: Value,
     arity: 2,
+    implementations: {
+      Function: Function$prototype$promap,
+    },
   }]);
 
   //# Apply :: TypeClass
@@ -1048,6 +1006,11 @@
     name: 'ap',
     location: Value,
     arity: 1,
+    implementations: {
+      Array: Array$prototype$ap,
+      Function: Function$prototype$ap,
+      Object: Object$prototype$ap,
+    },
   }]);
 
   //# Applicative :: TypeClass
@@ -1065,6 +1028,10 @@
     name: 'of',
     location: Constructor,
     arity: 1,
+    implementations: {
+      Array: Array$of,
+      Function: Function$of,
+    },
   }]);
 
   //# Chain :: TypeClass
@@ -1082,6 +1049,10 @@
     name: 'chain',
     location: Value,
     arity: 1,
+    implementations: {
+      Array: Array$prototype$chain,
+      Function: Function$prototype$chain,
+    },
   }]);
 
   //# ChainRec :: TypeClass
@@ -1099,6 +1070,10 @@
     name: 'chainRec',
     location: Constructor,
     arity: 2,
+    implementations: {
+      Array: Array$chainRec,
+      Function: Function$chainRec,
+    },
   }]);
 
   //# Monad :: TypeClass
@@ -1129,6 +1104,10 @@
     name: 'alt',
     location: Value,
     arity: 1,
+    implementations: {
+      Array: Array$prototype$alt,
+      Object: Object$prototype$alt,
+    },
   }]);
 
   //# Plus :: TypeClass
@@ -1146,6 +1125,10 @@
     name: 'zero',
     location: Constructor,
     arity: 0,
+    implementations: {
+      Array: Array$zero,
+      Object: Object$zero,
+    },
   }]);
 
   //# Alternative :: TypeClass
@@ -1176,6 +1159,10 @@
     name: 'reduce',
     location: Value,
     arity: 2,
+    implementations: {
+      Array: Array$prototype$reduce,
+      Object: Object$prototype$reduce,
+    },
   }]);
 
   //# Traversable :: TypeClass
@@ -1193,6 +1180,10 @@
     name: 'traverse',
     location: Value,
     arity: 2,
+    implementations: {
+      Array: Array$prototype$traverse,
+      Object: Object$prototype$traverse,
+    },
   }]);
 
   //# Extend :: TypeClass
@@ -1210,6 +1201,10 @@
     name: 'extend',
     location: Value,
     arity: 1,
+    implementations: {
+      Array: Array$prototype$extend,
+      Function: Function$prototype$extend,
+    },
   }]);
 
   //# Comonad :: TypeClass
@@ -1227,6 +1222,7 @@
     name: 'extract',
     location: Value,
     arity: 0,
+    implementations: {},
   }]);
 
   //# Contravariant :: TypeClass
@@ -1244,6 +1240,9 @@
     name: 'contramap',
     location: Value,
     arity: 1,
+    implementations: {
+      Function: Function$prototype$contramap,
+    },
   }]);
 
   //# equals :: (a, b) -> Boolean
