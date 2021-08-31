@@ -18,6 +18,7 @@ const inc = x => x + 1;
 const prep = specs => Z.map (f => [{}, f], specs);
 
 module.exports = benchmark (Vanilla, Z, {leftHeader: 'vanilla', rightHeader: 'Z'}, prep ({
+  'functions.of': Z => { Z.of (Array, 42); },
   'methods.map': Z => { Z.map (inc, [1, 2, 3]); },
   'methods.chain.of': Z => { Z.chain (x => Z.of (Array, x), [1, 2, 3]); },
 }));

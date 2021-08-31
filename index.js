@@ -109,9 +109,6 @@
   //  identity :: a -> a
   const identity = x => x;
 
-  //  nameProp :: { name :: a } -> a
-  const nameProp = x => x.name;
-
   //  pair :: a -> b -> Array2 a b
   const pair = x => y => [x, y];
 
@@ -128,552 +125,6 @@
 
   //  iterationDone :: a -> Iteration a
   const iterationDone = x => ({value: x, done: true});
-
-  const Z = {};
-
-  //# TypeClass :: (String, String, Array TypeClass, a -> Boolean) -> TypeClass
-  //.
-  //. The arguments are:
-  //.
-  //.   - the name of the type class, prefixed by its npm package name;
-  //.   - the documentation URL of the type class;
-  //.   - an array of dependencies; and
-  //.   - a predicate which accepts any JavaScript value and returns `true`
-  //.     if the value satisfies the requirements of the type class; `false`
-  //.     otherwise.
-  //.
-  //. Example:
-  //.
-  //. ```javascript
-  //. //    hasMethod :: String -> a -> Boolean
-  //. const hasMethod = name => x => x != null && typeof x[name] == 'function';
-  //.
-  //. //    Foo :: TypeClass
-  //. const Foo = Z.TypeClass (
-  //.   'my-package/Foo',
-  //.   'http://example.com/my-package#Foo',
-  //.   [],
-  //.   hasMethod ('foo')
-  //. );
-  //.
-  //. //    Bar :: TypeClass
-  //. const Bar = Z.TypeClass (
-  //.   'my-package/Bar',
-  //.   'http://example.com/my-package#Bar',
-  //.   [Foo],
-  //.   hasMethod ('bar')
-  //. );
-  //. ```
-  //.
-  //. Types whose values have a `foo` method are members of the Foo type class.
-  //. Members of the Foo type class whose values have a `bar` method are also
-  //. members of the Bar type class.
-  //.
-  //. Each `TypeClass` value has a `test` field: a function which accepts
-  //. any JavaScript value and returns `true` if the value satisfies the
-  //. type class's predicate and the predicates of all the type class's
-  //. dependencies; `false` otherwise.
-  //.
-  //. `TypeClass` values may be used with [sanctuary-def][type-classes]
-  //. to define parametrically polymorphic functions which verify their
-  //. type-class constraints at run time.
-  Z.TypeClass = (name, url, dependencies, test) => ({
-    '@@type': 'sanctuary-type-classes/TypeClass@1',
-    'name': name,
-    'url': url,
-    'test': x => dependencies.every (d => d.test (x)) && test (x),
-  });
-
-  //  data Location = Constructor | Value
-
-  //  Constructor :: Location
-  const Constructor = 'Constructor';
-
-  //  Value :: Location
-  const Value = 'Value';
-
-  //  $ :: (String, Array TypeClass, StrMap (Array Location)) -> TypeClass
-  const $ = (_name, dependencies, requirements) => {
-    const version = '12.1.0';  // updated programmatically
-
-    const staticMethods = requirements.filter (req => (
-      req.location === Constructor
-    ));
-
-    const prototypeMethods = requirements.filter (req => (
-      req.location === Value
-    ));
-
-    const staticMethodNames = staticMethods.map (nameProp);
-    const prototypeMethodNames = prototypeMethods.map (nameProp);
-
-    const typeClass = Z.TypeClass (
-      `sanctuary-type-classes/${_name}`,
-      `https://github.com/sanctuary-js/sanctuary-type-classes/tree/v${version}#${_name}`,
-      dependencies,
-      ($seen => x => {
-        if ($seen.includes (x)) return true;
-
-        $seen.push (x);
-        try {
-          return (
-            staticMethodNames.every (_name => (
-              x != null && staticMethod (_name, x.constructor) != null
-            )) &&
-            prototypeMethodNames.every (_name => hasPrototypeMethod (_name, x))
-          );
-        } finally {
-          $seen.pop ();
-        }
-      }) ([])
-    );
-
-    typeClass.methods = {};
-
-    staticMethods.forEach (method => {
-      const _name = method.name;
-      typeClass.methods[_name] = (
-        method.arity === 0 ? typeRep => (
-          staticMethod (_name, typeRep) ()
-        ) :
-        method.arity === 1 ? (typeRep, a) => (
-          staticMethod (_name, typeRep) (a)
-        ) :
-        (typeRep, a, b) => (
-          staticMethod (_name, typeRep) (a, b)
-        )
-      );
-    });
-
-    prototypeMethods.forEach (method => {
-      const _name = method.name;
-      typeClass.methods[_name] = (
-        method.arity === 0 ? a => (
-          (prototypeMethod (_name, a)).call (a)
-        ) :
-        method.arity === 1 ? (a, b) => (
-          (prototypeMethod (_name, a)).call (a, b)
-        ) :
-        (a, b, c) => (
-          (prototypeMethod (_name, a)).call (a, b, c)
-        )
-      );
-    });
-
-    return typeClass;
-  };
-
-  //# Setoid :: TypeClass
-  //.
-  //. `TypeClass` value for [Setoid][].
-  //.
-  //. ```javascript
-  //. > Z.Setoid.test (null)
-  //. true
-  //.
-  //. > Z.Setoid.test (Useless)
-  //. false
-  //.
-  //. > Z.Setoid.test ([1, 2, 3])
-  //. true
-  //.
-  //. > Z.Setoid.test ([Useless])
-  //. false
-  //. ```
-  Z.Setoid = $ ('Setoid', [], [{
-    name: 'equals',
-    location: Value,
-    arity: 1,
-  }]);
-
-  //# Ord :: TypeClass
-  //.
-  //. `TypeClass` value for [Ord][].
-  //.
-  //. ```javascript
-  //. > Z.Ord.test (0)
-  //. true
-  //.
-  //. > Z.Ord.test (Math.sqrt)
-  //. false
-  //.
-  //. > Z.Ord.test ([1, 2, 3])
-  //. true
-  //.
-  //. > Z.Ord.test ([Math.sqrt])
-  //. false
-  //. ```
-  Z.Ord = $ ('Ord', [Z.Setoid], [{
-    name: 'lte',
-    location: Value,
-    arity: 1,
-  }]);
-
-  //# Semigroupoid :: TypeClass
-  //.
-  //. `TypeClass` value for [Semigroupoid][].
-  //.
-  //. ```javascript
-  //. > Z.Semigroupoid.test (Math.sqrt)
-  //. true
-  //.
-  //. > Z.Semigroupoid.test (0)
-  //. false
-  //. ```
-  Z.Semigroupoid = $ ('Semigroupoid', [], [{
-    name: 'compose',
-    location: Value,
-    arity: 1,
-  }]);
-
-  //# Category :: TypeClass
-  //.
-  //. `TypeClass` value for [Category][].
-  //.
-  //. ```javascript
-  //. > Z.Category.test (Math.sqrt)
-  //. true
-  //.
-  //. > Z.Category.test (0)
-  //. false
-  //. ```
-  Z.Category = $ ('Category', [Z.Semigroupoid], [{
-    name: 'id',
-    location: Constructor,
-    arity: 0,
-  }]);
-
-  //# Semigroup :: TypeClass
-  //.
-  //. `TypeClass` value for [Semigroup][].
-  //.
-  //. ```javascript
-  //. > Z.Semigroup.test ('')
-  //. true
-  //.
-  //. > Z.Semigroup.test (0)
-  //. false
-  //. ```
-  Z.Semigroup = $ ('Semigroup', [], [{
-    name: 'concat',
-    location: Value,
-    arity: 1,
-  }]);
-
-  //# Monoid :: TypeClass
-  //.
-  //. `TypeClass` value for [Monoid][].
-  //.
-  //. ```javascript
-  //. > Z.Monoid.test ('')
-  //. true
-  //.
-  //. > Z.Monoid.test (0)
-  //. false
-  //. ```
-  Z.Monoid = $ ('Monoid', [Z.Semigroup], [{
-    name: 'empty',
-    location: Constructor,
-    arity: 0,
-  }]);
-
-  //# Group :: TypeClass
-  //.
-  //. `TypeClass` value for [Group][].
-  //.
-  //. ```javascript
-  //. > Z.Group.test (Sum (0))
-  //. true
-  //.
-  //. > Z.Group.test ('')
-  //. false
-  //. ```
-  Z.Group = $ ('Group', [Z.Monoid], [{
-    name: 'invert',
-    location: Value,
-    arity: 0,
-  }]);
-
-  //# Filterable :: TypeClass
-  //.
-  //. `TypeClass` value for [Filterable][].
-  //.
-  //. ```javascript
-  //. > Z.Filterable.test ({})
-  //. true
-  //.
-  //. > Z.Filterable.test ('')
-  //. false
-  //. ```
-  Z.Filterable = $ ('Filterable', [], [{
-    name: 'filter',
-    location: Value,
-    arity: 1,
-  }]);
-
-  //# Functor :: TypeClass
-  //.
-  //. `TypeClass` value for [Functor][].
-  //.
-  //. ```javascript
-  //. > Z.Functor.test ([])
-  //. true
-  //.
-  //. > Z.Functor.test ('')
-  //. false
-  //. ```
-  Z.Functor = $ ('Functor', [], [{
-    name: 'map',
-    location: Value,
-    arity: 1,
-  }]);
-
-  //# Bifunctor :: TypeClass
-  //.
-  //. `TypeClass` value for [Bifunctor][].
-  //.
-  //. ```javascript
-  //. > Z.Bifunctor.test (Pair ('foo') (64))
-  //. true
-  //.
-  //. > Z.Bifunctor.test ([])
-  //. false
-  //. ```
-  Z.Bifunctor = $ ('Bifunctor', [Z.Functor], [{
-    name: 'bimap',
-    location: Value,
-    arity: 2,
-  }]);
-
-  //# Profunctor :: TypeClass
-  //.
-  //. `TypeClass` value for [Profunctor][].
-  //.
-  //. ```javascript
-  //. > Z.Profunctor.test (Math.sqrt)
-  //. true
-  //.
-  //. > Z.Profunctor.test ([])
-  //. false
-  //. ```
-  Z.Profunctor = $ ('Profunctor', [Z.Functor], [{
-    name: 'promap',
-    location: Value,
-    arity: 2,
-  }]);
-
-  //# Apply :: TypeClass
-  //.
-  //. `TypeClass` value for [Apply][].
-  //.
-  //. ```javascript
-  //. > Z.Apply.test ([])
-  //. true
-  //.
-  //. > Z.Apply.test ('')
-  //. false
-  //. ```
-  Z.Apply = $ ('Apply', [Z.Functor], [{
-    name: 'ap',
-    location: Value,
-    arity: 1,
-  }]);
-
-  //# Applicative :: TypeClass
-  //.
-  //. `TypeClass` value for [Applicative][].
-  //.
-  //. ```javascript
-  //. > Z.Applicative.test ([])
-  //. true
-  //.
-  //. > Z.Applicative.test ({})
-  //. false
-  //. ```
-  Z.Applicative = $ ('Applicative', [Z.Apply], [{
-    name: 'of',
-    location: Constructor,
-    arity: 1,
-  }]);
-
-  //# Chain :: TypeClass
-  //.
-  //. `TypeClass` value for [Chain][].
-  //.
-  //. ```javascript
-  //. > Z.Chain.test ([])
-  //. true
-  //.
-  //. > Z.Chain.test ({})
-  //. false
-  //. ```
-  Z.Chain = $ ('Chain', [Z.Apply], [{
-    name: 'chain',
-    location: Value,
-    arity: 1,
-  }]);
-
-  //# ChainRec :: TypeClass
-  //.
-  //. `TypeClass` value for [ChainRec][].
-  //.
-  //. ```javascript
-  //. > Z.ChainRec.test ([])
-  //. true
-  //.
-  //. > Z.ChainRec.test ({})
-  //. false
-  //. ```
-  Z.ChainRec = $ ('ChainRec', [Z.Chain], [{
-    name: 'chainRec',
-    location: Constructor,
-    arity: 2,
-  }]);
-
-  //# Monad :: TypeClass
-  //.
-  //. `TypeClass` value for [Monad][].
-  //.
-  //. ```javascript
-  //. > Z.Monad.test ([])
-  //. true
-  //.
-  //. > Z.Monad.test ({})
-  //. false
-  //. ```
-  Z.Monad = $ ('Monad', [Z.Applicative, Z.Chain], []);
-
-  //# Alt :: TypeClass
-  //.
-  //. `TypeClass` value for [Alt][].
-  //.
-  //. ```javascript
-  //. > Z.Alt.test ({})
-  //. true
-  //.
-  //. > Z.Alt.test ('')
-  //. false
-  //. ```
-  Z.Alt = $ ('Alt', [Z.Functor], [{
-    name: 'alt',
-    location: Value,
-    arity: 1,
-  }]);
-
-  //# Plus :: TypeClass
-  //.
-  //. `TypeClass` value for [Plus][].
-  //.
-  //. ```javascript
-  //. > Z.Plus.test ({})
-  //. true
-  //.
-  //. > Z.Plus.test ('')
-  //. false
-  //. ```
-  Z.Plus = $ ('Plus', [Z.Alt], [{
-    name: 'zero',
-    location: Constructor,
-    arity: 0,
-  }]);
-
-  //# Alternative :: TypeClass
-  //.
-  //. `TypeClass` value for [Alternative][].
-  //.
-  //. ```javascript
-  //. > Z.Alternative.test ([])
-  //. true
-  //.
-  //. > Z.Alternative.test ({})
-  //. false
-  //. ```
-  Z.Alternative = $ ('Alternative', [Z.Applicative, Z.Plus], []);
-
-  //# Foldable :: TypeClass
-  //.
-  //. `TypeClass` value for [Foldable][].
-  //.
-  //. ```javascript
-  //. > Z.Foldable.test ({})
-  //. true
-  //.
-  //. > Z.Foldable.test ('')
-  //. false
-  //. ```
-  Z.Foldable = $ ('Foldable', [], [{
-    name: 'reduce',
-    location: Value,
-    arity: 2,
-  }]);
-
-  //# Traversable :: TypeClass
-  //.
-  //. `TypeClass` value for [Traversable][].
-  //.
-  //. ```javascript
-  //. > Z.Traversable.test ([])
-  //. true
-  //.
-  //. > Z.Traversable.test ('')
-  //. false
-  //. ```
-  Z.Traversable = $ ('Traversable', [Z.Functor, Z.Foldable], [{
-    name: 'traverse',
-    location: Value,
-    arity: 2,
-  }]);
-
-  //# Extend :: TypeClass
-  //.
-  //. `TypeClass` value for [Extend][].
-  //.
-  //. ```javascript
-  //. > Z.Extend.test ([])
-  //. true
-  //.
-  //. > Z.Extend.test ({})
-  //. false
-  //. ```
-  Z.Extend = $ ('Extend', [Z.Functor], [{
-    name: 'extend',
-    location: Value,
-    arity: 1,
-  }]);
-
-  //# Comonad :: TypeClass
-  //.
-  //. `TypeClass` value for [Comonad][].
-  //.
-  //. ```javascript
-  //. > Z.Comonad.test (Identity (0))
-  //. true
-  //.
-  //. > Z.Comonad.test ([])
-  //. false
-  //. ```
-  Z.Comonad = $ ('Comonad', [Z.Extend], [{
-    name: 'extract',
-    location: Value,
-    arity: 0,
-  }]);
-
-  //# Contravariant :: TypeClass
-  //.
-  //. `TypeClass` value for [Contravariant][].
-  //.
-  //. ```javascript
-  //. > Z.Contravariant.test (Math.sqrt)
-  //. true
-  //.
-  //. > Z.Contravariant.test ([])
-  //. false
-  //. ```
-  Z.Contravariant = $ ('Contravariant', [], [{
-    name: 'contramap',
-    location: Value,
-    arity: 1,
-  }]);
 
   //  Null$prototype$equals :: Null ~> Null -> Boolean
   function Null$prototype$equals(other) {
@@ -1045,33 +496,12 @@
     return x => this (f (x));
   }
 
-  const staticImplementations = {
-    String: {
-      empty: String$empty,
-    },
-    Array: {
-      empty: Array$empty,
-      of: Array$of,
-      chainRec: Array$chainRec,
-      zero: Array$zero,
-    },
-    Object: {
-      empty: Object$empty,
-      zero: Object$zero,
-    },
-    Function: {
-      id: Function$id,
-      of: Function$of,
-      chainRec: Function$chainRec,
-    },
-  };
-
-  const staticMethod = (name, typeRep) => {
+  const staticMethod = (name, implementations, typeRep) => {
     switch (typeRep) {
-      case String: return staticImplementations.String[name];
-      case Array: return staticImplementations.Array[name];
-      case Object: return staticImplementations.Object[name];
-      case Function: return staticImplementations.Function[name];
+      case String: return implementations.String;
+      case Array: return implementations.Array;
+      case Object: return implementations.Object;
+      case Function: return implementations.Function;
     }
 
     const prefixedName = 'fantasy-land/' + name;
@@ -1080,89 +510,17 @@
     }
 
     switch (typeRep.name) {
-      case 'String': return staticImplementations.String[name];
-      case 'Array': return staticImplementations.Array[name];
-      case 'Object': return staticImplementations.Object[name];
-      case 'Function': return staticImplementations.Function[name];
+      case 'String': return implementations.String;
+      case 'Array': return implementations.Array;
+      case 'Object': return implementations.Object;
+      case 'Function': return implementations.Function;
     }
   };
 
-  const prototypeImplementations = {
-    Null: {
-      equals: Null$prototype$equals,
-      lte: Null$prototype$lte,
-    },
-    Undefined: {
-      equals: Undefined$prototype$equals,
-      lte: Undefined$prototype$lte,
-    },
-    Boolean: {
-      equals: Boolean$prototype$equals,
-      lte: Boolean$prototype$lte,
-    },
-    Number: {
-      equals: Number$prototype$equals,
-      lte: Number$prototype$lte,
-    },
-    Date: {
-      equals: Date$prototype$equals,
-      lte: Date$prototype$lte,
-    },
-    RegExp: {
-      equals: RegExp$prototype$equals,
-    },
-    String: {
-      equals: String$prototype$equals,
-      lte: String$prototype$lte,
-      concat: String$prototype$concat,
-    },
-    Array: {
-      equals: Array$prototype$equals,
-      lte: Array$prototype$lte,
-      concat: Array$prototype$concat,
-      filter: Array$prototype$filter,
-      map: Array$prototype$map,
-      ap: Array$prototype$ap,
-      chain: Array$prototype$chain,
-      alt: Array$prototype$alt,
-      reduce: Array$prototype$reduce,
-      traverse: Array$prototype$traverse,
-      extend: Array$prototype$extend,
-    },
-    Arguments: {
-      equals: Arguments$prototype$equals,
-      lte: Arguments$prototype$lte,
-    },
-    Error: {
-      equals: Error$prototype$equals,
-    },
-    Object: {
-      equals: Object$prototype$equals,
-      lte: Object$prototype$lte,
-      concat: Object$prototype$concat,
-      filter: Object$prototype$filter,
-      map: Object$prototype$map,
-      ap: Object$prototype$ap,
-      alt: Object$prototype$alt,
-      reduce: Object$prototype$reduce,
-      traverse: Object$prototype$traverse,
-    },
-    Function: {
-      equals: Function$prototype$equals,
-      compose: Function$prototype$compose,
-      map: Function$prototype$map,
-      promap: Function$prototype$promap,
-      ap: Function$prototype$ap,
-      chain: Function$prototype$chain,
-      extend: Function$prototype$extend,
-      contramap: Function$prototype$contramap,
-    },
-  };
-
-  const hasPrototypeMethod = (name, value) => {
+  const hasPrototypeMethod = (name, implementations, value) => {
     switch (value) {
-      case null: return prototypeImplementations.Null[name] != null;
-      case undefined: return prototypeImplementations.Undefined[name] != null;
+      case null: return implementations.Null != null;
+      case undefined: return implementations.Undefined != null;
     }
 
     const prefixedName = 'fantasy-land/' + name;
@@ -1194,14 +552,14 @@
       }
     }
 
-    return customPrototypeMethod (name, value) != null;
+    return customPrototypeMethod (implementations, value) != null;
   };
 
-  const prototypeMethod = (name, value) => {
+  const prototypeMethod = (name, implementations, value) => {
     // Single-member types are identified most quickly.
     switch (value) {
-      case null: return prototypeImplementations.Null[name];
-      case undefined: return prototypeImplementations.Undefined[name];
+      case null: return implementations.Null;
+      case undefined: return implementations.Undefined;
     }
 
     // Check if we can dispatch to a Fantasy Land method.
@@ -1213,38 +571,679 @@
     }
 
     // Separate function for performance reasons.
-    return customPrototypeMethod (name, value);
+    return customPrototypeMethod (implementations, value);
   };
 
-  const customPrototypeMethod = (name, value) => {
+  const customPrototypeMethod = (implementations, value) => {
     // Checking constructor reference has the best performance.
     switch (value.constructor) {
-      case Boolean: return prototypeImplementations.Boolean[name];
-      case Number: return prototypeImplementations.Number[name];
-      case Date: return prototypeImplementations.Date[name];
-      case RegExp: return prototypeImplementations.RegExp[name];
-      case String: return prototypeImplementations.String[name];
-      case Array: return prototypeImplementations.Array[name];
-      case Function: return prototypeImplementations.Function[name];
+      case Boolean: return implementations.Boolean;
+      case Number: return implementations.Number;
+      case Date: return implementations.Date;
+      case RegExp: return implementations.RegExp;
+      case String: return implementations.String;
+      case Array: return implementations.Array;
+      case Function: return implementations.Function;
     }
 
     // For all other values we use their type-identity.
     switch (type (value)) {
-      case 'Arguments': return prototypeImplementations.Arguments[name];
-      case 'Error': return prototypeImplementations.Error[name];
-      case 'Object': return prototypeImplementations.Object[name];
+      case 'Arguments': return implementations.Arguments;
+      case 'Error': return implementations.Error;
+      case 'Object': return implementations.Object;
 
       // A repeat of the constructor-matched values, in case they were created
       // in other contexts (e.g. vm.runInNewContext).
-      case 'Boolean': return prototypeImplementations.Boolean[name];
-      case 'Number': return prototypeImplementations.Number[name];
-      case 'Date': return prototypeImplementations.Date[name];
-      case 'RegExp': return prototypeImplementations.RegExp[name];
-      case 'String': return prototypeImplementations.String[name];
-      case 'Array': return prototypeImplementations.Array[name];
-      case 'Function': return prototypeImplementations.Function[name];
+      case 'Boolean': return implementations.Boolean;
+      case 'Number': return implementations.Number;
+      case 'Date': return implementations.Date;
+      case 'RegExp': return implementations.RegExp;
+      case 'String': return implementations.String;
+      case 'Array': return implementations.Array;
+      case 'Function': return implementations.Function;
     }
   };
+
+  const Z = {};
+
+  //# TypeClass :: (String, String, Array TypeClass, a -> Boolean) -> TypeClass
+  //.
+  //. The arguments are:
+  //.
+  //.   - the name of the type class, prefixed by its npm package name;
+  //.   - the documentation URL of the type class;
+  //.   - an array of dependencies; and
+  //.   - a predicate which accepts any JavaScript value and returns `true`
+  //.     if the value satisfies the requirements of the type class; `false`
+  //.     otherwise.
+  //.
+  //. Example:
+  //.
+  //. ```javascript
+  //. //    hasMethod :: String -> a -> Boolean
+  //. const hasMethod = name => x => x != null && typeof x[name] == 'function';
+  //.
+  //. //    Foo :: TypeClass
+  //. const Foo = Z.TypeClass (
+  //.   'my-package/Foo',
+  //.   'http://example.com/my-package#Foo',
+  //.   [],
+  //.   hasMethod ('foo')
+  //. );
+  //.
+  //. //    Bar :: TypeClass
+  //. const Bar = Z.TypeClass (
+  //.   'my-package/Bar',
+  //.   'http://example.com/my-package#Bar',
+  //.   [Foo],
+  //.   hasMethod ('bar')
+  //. );
+  //. ```
+  //.
+  //. Types whose values have a `foo` method are members of the Foo type class.
+  //. Members of the Foo type class whose values have a `bar` method are also
+  //. members of the Bar type class.
+  //.
+  //. Each `TypeClass` value has a `test` field: a function which accepts
+  //. any JavaScript value and returns `true` if the value satisfies the
+  //. type class's predicate and the predicates of all the type class's
+  //. dependencies; `false` otherwise.
+  //.
+  //. `TypeClass` values may be used with [sanctuary-def][type-classes]
+  //. to define parametrically polymorphic functions which verify their
+  //. type-class constraints at run time.
+  Z.TypeClass = (name, url, dependencies, test) => ({
+    '@@type': 'sanctuary-type-classes/TypeClass@1',
+    'name': name,
+    'url': url,
+    'test': x => dependencies.every (d => d.test (x)) && test (x),
+  });
+
+  //  data Location = Constructor | Value
+
+  //  Constructor :: Location
+  const Constructor = 'Constructor';
+
+  //  Value :: Location
+  const Value = 'Value';
+
+  //  $ :: (String, Array TypeClass, StrMap (Array Location)) -> TypeClass
+  const $ = (_name, dependencies, requirements) => {
+    const version = '12.1.0';  // updated programmatically
+
+    const staticMethods = requirements.filter (req => (
+      req.location === Constructor
+    ));
+
+    const prototypeMethods = requirements.filter (req => (
+      req.location === Value
+    ));
+
+    const typeClass = Z.TypeClass (
+      `sanctuary-type-classes/${_name}`,
+      `https://github.com/sanctuary-js/sanctuary-type-classes/tree/v${version}#${_name}`,
+      dependencies,
+      ($seen => x => {
+        if ($seen.includes (x)) return true;
+
+        $seen.push (x);
+        try {
+          return (
+            staticMethods.every (({name, implementations}) => (
+              x != null &&
+              staticMethod (name, implementations, x.constructor) != null
+            )) &&
+            prototypeMethods.every (({name, implementations}) => (
+              hasPrototypeMethod (name, implementations, x)
+            ))
+          );
+        } finally {
+          $seen.pop ();
+        }
+      }) ([])
+    );
+
+    typeClass.methods = {};
+
+    staticMethods.forEach (({name, arity, implementations}) => {
+      typeClass.methods[name] = (
+        arity === 0 ? typeRep => (
+          staticMethod (name, implementations, typeRep) ()
+        ) :
+        arity === 1 ? (typeRep, a) => (
+          staticMethod (name, implementations, typeRep) (a)
+        ) :
+        (typeRep, a, b) => (
+          staticMethod (name, implementations, typeRep) (a, b)
+        )
+      );
+    });
+
+    prototypeMethods.forEach (({name, arity, implementations}) => {
+      typeClass.methods[name] = (
+        arity === 0 ? context => (
+          (prototypeMethod (name, implementations, context)).call (context)
+        ) :
+        arity === 1 ? (a, context) => (
+          (prototypeMethod (name, implementations, context)).call (context, a)
+        ) :
+        (a, b, context) => (
+          (prototypeMethod (name, implementations, context))
+          .call (context, a, b)
+        )
+      );
+    });
+
+    return typeClass;
+  };
+
+  //# Setoid :: TypeClass
+  //.
+  //. `TypeClass` value for [Setoid][].
+  //.
+  //. ```javascript
+  //. > Z.Setoid.test (null)
+  //. true
+  //.
+  //. > Z.Setoid.test (Useless)
+  //. false
+  //.
+  //. > Z.Setoid.test ([1, 2, 3])
+  //. true
+  //.
+  //. > Z.Setoid.test ([Useless])
+  //. false
+  //. ```
+  Z.Setoid = $ ('Setoid', [], [{
+    name: 'equals',
+    location: Value,
+    arity: 1,
+    implementations: {
+      Arguments: Arguments$prototype$equals,
+      Array: Array$prototype$equals,
+      Boolean: Boolean$prototype$equals,
+      Date: Date$prototype$equals,
+      Error: Error$prototype$equals,
+      Function: Function$prototype$equals,
+      Null: Null$prototype$equals,
+      Number: Number$prototype$equals,
+      Object: Object$prototype$equals,
+      RegExp: RegExp$prototype$equals,
+      String: String$prototype$equals,
+      Undefined: Undefined$prototype$equals,
+    },
+  }]);
+
+  //# Ord :: TypeClass
+  //.
+  //. `TypeClass` value for [Ord][].
+  //.
+  //. ```javascript
+  //. > Z.Ord.test (0)
+  //. true
+  //.
+  //. > Z.Ord.test (Math.sqrt)
+  //. false
+  //.
+  //. > Z.Ord.test ([1, 2, 3])
+  //. true
+  //.
+  //. > Z.Ord.test ([Math.sqrt])
+  //. false
+  //. ```
+  Z.Ord = $ ('Ord', [Z.Setoid], [{
+    name: 'lte',
+    location: Value,
+    arity: 1,
+    implementations: {
+      Arguments: Arguments$prototype$lte,
+      Array: Array$prototype$lte,
+      Boolean: Boolean$prototype$lte,
+      Date: Date$prototype$lte,
+      Null: Null$prototype$lte,
+      Number: Number$prototype$lte,
+      Object: Object$prototype$lte,
+      String: String$prototype$lte,
+      Undefined: Undefined$prototype$lte,
+    },
+  }]);
+
+  //# Semigroupoid :: TypeClass
+  //.
+  //. `TypeClass` value for [Semigroupoid][].
+  //.
+  //. ```javascript
+  //. > Z.Semigroupoid.test (Math.sqrt)
+  //. true
+  //.
+  //. > Z.Semigroupoid.test (0)
+  //. false
+  //. ```
+  Z.Semigroupoid = $ ('Semigroupoid', [], [{
+    name: 'compose',
+    location: Value,
+    arity: 1,
+    implementations: {
+      Function: Function$prototype$compose,
+    },
+  }]);
+
+  //# Category :: TypeClass
+  //.
+  //. `TypeClass` value for [Category][].
+  //.
+  //. ```javascript
+  //. > Z.Category.test (Math.sqrt)
+  //. true
+  //.
+  //. > Z.Category.test (0)
+  //. false
+  //. ```
+  Z.Category = $ ('Category', [Z.Semigroupoid], [{
+    name: 'id',
+    location: Constructor,
+    arity: 0,
+    implementations: {
+      Function: Function$id,
+    },
+  }]);
+
+  //# Semigroup :: TypeClass
+  //.
+  //. `TypeClass` value for [Semigroup][].
+  //.
+  //. ```javascript
+  //. > Z.Semigroup.test ('')
+  //. true
+  //.
+  //. > Z.Semigroup.test (0)
+  //. false
+  //. ```
+  Z.Semigroup = $ ('Semigroup', [], [{
+    name: 'concat',
+    location: Value,
+    arity: 1,
+    implementations: {
+      Array: Array$prototype$concat,
+      Object: Object$prototype$concat,
+      String: String$prototype$concat,
+    },
+  }]);
+
+  //# Monoid :: TypeClass
+  //.
+  //. `TypeClass` value for [Monoid][].
+  //.
+  //. ```javascript
+  //. > Z.Monoid.test ('')
+  //. true
+  //.
+  //. > Z.Monoid.test (0)
+  //. false
+  //. ```
+  Z.Monoid = $ ('Monoid', [Z.Semigroup], [{
+    name: 'empty',
+    location: Constructor,
+    arity: 0,
+    implementations: {
+      Array: Array$empty,
+      Object: Object$empty,
+      String: String$empty,
+    },
+  }]);
+
+  //# Group :: TypeClass
+  //.
+  //. `TypeClass` value for [Group][].
+  //.
+  //. ```javascript
+  //. > Z.Group.test (Sum (0))
+  //. true
+  //.
+  //. > Z.Group.test ('')
+  //. false
+  //. ```
+  Z.Group = $ ('Group', [Z.Monoid], [{
+    name: 'invert',
+    location: Value,
+    arity: 0,
+    implementations: {},
+  }]);
+
+  //# Filterable :: TypeClass
+  //.
+  //. `TypeClass` value for [Filterable][].
+  //.
+  //. ```javascript
+  //. > Z.Filterable.test ({})
+  //. true
+  //.
+  //. > Z.Filterable.test ('')
+  //. false
+  //. ```
+  Z.Filterable = $ ('Filterable', [], [{
+    name: 'filter',
+    location: Value,
+    arity: 1,
+    implementations: {
+      Array: Array$prototype$filter,
+      Object: Object$prototype$filter,
+    },
+  }]);
+
+  //# Functor :: TypeClass
+  //.
+  //. `TypeClass` value for [Functor][].
+  //.
+  //. ```javascript
+  //. > Z.Functor.test ([])
+  //. true
+  //.
+  //. > Z.Functor.test ('')
+  //. false
+  //. ```
+  Z.Functor = $ ('Functor', [], [{
+    name: 'map',
+    location: Value,
+    arity: 1,
+    implementations: {
+      Array: Array$prototype$map,
+      Function: Function$prototype$map,
+      Object: Object$prototype$map,
+    },
+  }]);
+
+  //# Bifunctor :: TypeClass
+  //.
+  //. `TypeClass` value for [Bifunctor][].
+  //.
+  //. ```javascript
+  //. > Z.Bifunctor.test (Pair ('foo') (64))
+  //. true
+  //.
+  //. > Z.Bifunctor.test ([])
+  //. false
+  //. ```
+  Z.Bifunctor = $ ('Bifunctor', [Z.Functor], [{
+    name: 'bimap',
+    location: Value,
+    arity: 2,
+    implementations: {},
+  }]);
+
+  //# Profunctor :: TypeClass
+  //.
+  //. `TypeClass` value for [Profunctor][].
+  //.
+  //. ```javascript
+  //. > Z.Profunctor.test (Math.sqrt)
+  //. true
+  //.
+  //. > Z.Profunctor.test ([])
+  //. false
+  //. ```
+  Z.Profunctor = $ ('Profunctor', [Z.Functor], [{
+    name: 'promap',
+    location: Value,
+    arity: 2,
+    implementations: {
+      Function: Function$prototype$promap,
+    },
+  }]);
+
+  //# Apply :: TypeClass
+  //.
+  //. `TypeClass` value for [Apply][].
+  //.
+  //. ```javascript
+  //. > Z.Apply.test ([])
+  //. true
+  //.
+  //. > Z.Apply.test ('')
+  //. false
+  //. ```
+  Z.Apply = $ ('Apply', [Z.Functor], [{
+    name: 'ap',
+    location: Value,
+    arity: 1,
+    implementations: {
+      Array: Array$prototype$ap,
+      Function: Function$prototype$ap,
+      Object: Object$prototype$ap,
+    },
+  }]);
+
+  //# Applicative :: TypeClass
+  //.
+  //. `TypeClass` value for [Applicative][].
+  //.
+  //. ```javascript
+  //. > Z.Applicative.test ([])
+  //. true
+  //.
+  //. > Z.Applicative.test ({})
+  //. false
+  //. ```
+  Z.Applicative = $ ('Applicative', [Z.Apply], [{
+    name: 'of',
+    location: Constructor,
+    arity: 1,
+    implementations: {
+      Array: Array$of,
+      Function: Function$of,
+    },
+  }]);
+
+  //# Chain :: TypeClass
+  //.
+  //. `TypeClass` value for [Chain][].
+  //.
+  //. ```javascript
+  //. > Z.Chain.test ([])
+  //. true
+  //.
+  //. > Z.Chain.test ({})
+  //. false
+  //. ```
+  Z.Chain = $ ('Chain', [Z.Apply], [{
+    name: 'chain',
+    location: Value,
+    arity: 1,
+    implementations: {
+      Array: Array$prototype$chain,
+      Function: Function$prototype$chain,
+    },
+  }]);
+
+  //# ChainRec :: TypeClass
+  //.
+  //. `TypeClass` value for [ChainRec][].
+  //.
+  //. ```javascript
+  //. > Z.ChainRec.test ([])
+  //. true
+  //.
+  //. > Z.ChainRec.test ({})
+  //. false
+  //. ```
+  Z.ChainRec = $ ('ChainRec', [Z.Chain], [{
+    name: 'chainRec',
+    location: Constructor,
+    arity: 2,
+    implementations: {
+      Array: Array$chainRec,
+      Function: Function$chainRec,
+    },
+  }]);
+
+  //# Monad :: TypeClass
+  //.
+  //. `TypeClass` value for [Monad][].
+  //.
+  //. ```javascript
+  //. > Z.Monad.test ([])
+  //. true
+  //.
+  //. > Z.Monad.test ({})
+  //. false
+  //. ```
+  Z.Monad = $ ('Monad', [Z.Applicative, Z.Chain], []);
+
+  //# Alt :: TypeClass
+  //.
+  //. `TypeClass` value for [Alt][].
+  //.
+  //. ```javascript
+  //. > Z.Alt.test ({})
+  //. true
+  //.
+  //. > Z.Alt.test ('')
+  //. false
+  //. ```
+  Z.Alt = $ ('Alt', [Z.Functor], [{
+    name: 'alt',
+    location: Value,
+    arity: 1,
+    implementations: {
+      Array: Array$prototype$alt,
+      Object: Object$prototype$alt,
+    },
+  }]);
+
+  //# Plus :: TypeClass
+  //.
+  //. `TypeClass` value for [Plus][].
+  //.
+  //. ```javascript
+  //. > Z.Plus.test ({})
+  //. true
+  //.
+  //. > Z.Plus.test ('')
+  //. false
+  //. ```
+  Z.Plus = $ ('Plus', [Z.Alt], [{
+    name: 'zero',
+    location: Constructor,
+    arity: 0,
+    implementations: {
+      Array: Array$zero,
+      Object: Object$zero,
+    },
+  }]);
+
+  //# Alternative :: TypeClass
+  //.
+  //. `TypeClass` value for [Alternative][].
+  //.
+  //. ```javascript
+  //. > Z.Alternative.test ([])
+  //. true
+  //.
+  //. > Z.Alternative.test ({})
+  //. false
+  //. ```
+  Z.Alternative = $ ('Alternative', [Z.Applicative, Z.Plus], []);
+
+  //# Foldable :: TypeClass
+  //.
+  //. `TypeClass` value for [Foldable][].
+  //.
+  //. ```javascript
+  //. > Z.Foldable.test ({})
+  //. true
+  //.
+  //. > Z.Foldable.test ('')
+  //. false
+  //. ```
+  Z.Foldable = $ ('Foldable', [], [{
+    name: 'reduce',
+    location: Value,
+    arity: 2,
+    implementations: {
+      Array: Array$prototype$reduce,
+      Object: Object$prototype$reduce,
+    },
+  }]);
+
+  //# Traversable :: TypeClass
+  //.
+  //. `TypeClass` value for [Traversable][].
+  //.
+  //. ```javascript
+  //. > Z.Traversable.test ([])
+  //. true
+  //.
+  //. > Z.Traversable.test ('')
+  //. false
+  //. ```
+  Z.Traversable = $ ('Traversable', [Z.Functor, Z.Foldable], [{
+    name: 'traverse',
+    location: Value,
+    arity: 2,
+    implementations: {
+      Array: Array$prototype$traverse,
+      Object: Object$prototype$traverse,
+    },
+  }]);
+
+  //# Extend :: TypeClass
+  //.
+  //. `TypeClass` value for [Extend][].
+  //.
+  //. ```javascript
+  //. > Z.Extend.test ([])
+  //. true
+  //.
+  //. > Z.Extend.test ({})
+  //. false
+  //. ```
+  Z.Extend = $ ('Extend', [Z.Functor], [{
+    name: 'extend',
+    location: Value,
+    arity: 1,
+    implementations: {
+      Array: Array$prototype$extend,
+      Function: Function$prototype$extend,
+    },
+  }]);
+
+  //# Comonad :: TypeClass
+  //.
+  //. `TypeClass` value for [Comonad][].
+  //.
+  //. ```javascript
+  //. > Z.Comonad.test (Identity (0))
+  //. true
+  //.
+  //. > Z.Comonad.test ([])
+  //. false
+  //. ```
+  Z.Comonad = $ ('Comonad', [Z.Extend], [{
+    name: 'extract',
+    location: Value,
+    arity: 0,
+    implementations: {},
+  }]);
+
+  //# Contravariant :: TypeClass
+  //.
+  //. `TypeClass` value for [Contravariant][].
+  //.
+  //. ```javascript
+  //. > Z.Contravariant.test (Math.sqrt)
+  //. true
+  //.
+  //. > Z.Contravariant.test ([])
+  //. false
+  //. ```
+  Z.Contravariant = $ ('Contravariant', [], [{
+    name: 'contramap',
+    location: Value,
+    arity: 1,
+    implementations: {
+      Function: Function$prototype$contramap,
+    },
+  }]);
 
   //# equals :: (a, b) -> Boolean
   //.
@@ -1298,7 +1297,7 @@
       $pairs.push ([x, y]);
       try {
         return Z.Setoid.test (x) ?
-               Z.Setoid.methods.equals (x, y) :
+               Z.Setoid.methods.equals (y, x) :
                Object$prototype$equals.call (x, y);
       } finally {
         $pairs.pop ();
@@ -1368,7 +1367,7 @@
 
       $pairs.push ([x, y]);
       try {
-        return Z.Ord.test (x) && Z.Ord.methods.lte (x, y);
+        return Z.Ord.test (x) && Z.Ord.methods.lte (y, x);
       } finally {
         $pairs.pop ();
       }
@@ -1489,7 +1488,7 @@
   //. > Z.compose (Math.sqrt, x => x + 1) (99)
   //. 10
   //. ```
-  Z.compose = (x, y) => Z.Semigroupoid.methods.compose (y, x);
+  Z.compose = Z.Semigroupoid.methods.compose;
 
   //# id :: Category c => TypeRep c -> c
   //.
@@ -1524,7 +1523,7 @@
   //. > Z.concat (Cons ('foo', Cons ('bar', Cons ('baz', Nil))), Cons ('quux', Nil))
   //. Cons ('foo', Cons ('bar', Cons ('baz', Cons ('quux', Nil))))
   //. ```
-  Z.concat = Z.Semigroup.methods.concat;
+  Z.concat = (a, b) => Z.Semigroup.methods.concat (b, a);
 
   //# empty :: Monoid m => TypeRep m -> m
   //.
@@ -1587,9 +1586,7 @@
   //. > Z.filter (x => x % 2 == 1, Just (1))
   //. Just (1)
   //. ```
-  Z.filter = (pred, filterable) => (
-    Z.Filterable.methods.filter (filterable, pred)
-  );
+  Z.filter = Z.Filterable.methods.filter;
 
   //# reject :: Filterable f => (a -> Boolean, f a) -> f a
   //.
@@ -1644,7 +1641,7 @@
   //. > Z.map (Math.sqrt, Cons (1, Cons (4, Cons (9, Nil))))
   //. Cons (1, Cons (2, Cons (3, Nil)))
   //. ```
-  Z.map = (f, functor) => Z.Functor.methods.map (functor, f);
+  Z.map = Z.Functor.methods.map;
 
   //# flip :: Functor f => (f (a -> b), a) -> f b
   //.
@@ -1665,7 +1662,7 @@
   //. > Z.flip (Cons (Math.floor, Cons (Math.ceil, Nil)), 1.5)
   //. Cons (1, Cons (2, Nil))
   //. ```
-  Z.flip = (functor, x) => Z.Functor.methods.map (functor, f => f (x));
+  Z.flip = (functor, x) => Z.map (f => f (x), functor);
 
   //# bimap :: Bifunctor f => (a -> b, c -> d, f a c) -> f b d
   //.
@@ -1675,7 +1672,7 @@
   //. > Z.bimap (s => s.toUpperCase (), Math.sqrt, Pair ('foo') (64))
   //. Pair ('FOO') (8)
   //. ```
-  Z.bimap = (f, g, bifunctor) => Z.Bifunctor.methods.bimap (bifunctor, f, g);
+  Z.bimap = Z.Bifunctor.methods.bimap;
 
   //# mapLeft :: Bifunctor f => (a -> b, f a c) -> f b c
   //.
@@ -1698,9 +1695,7 @@
   //. > Z.promap (Math.abs, x => x + 1, Math.sqrt) (-100)
   //. 11
   //. ```
-  Z.promap = (f, g, profunctor) => (
-    Z.Profunctor.methods.promap (profunctor, f, g)
-  );
+  Z.promap = Z.Profunctor.methods.promap;
 
   //# ap :: Apply f => (f (a -> b), f a) -> f b
   //.
@@ -1725,7 +1720,7 @@
   //. > Z.ap (Cons (Math.sqrt, Cons (x => x * x, Nil)), Cons (16, Cons (100, Nil)))
   //. Cons (4, Cons (10, Cons (256, Cons (10000, Nil))))
   //. ```
-  Z.ap = (applyF, applyX) => Z.Apply.methods.ap (applyX, applyF);
+  Z.ap = Z.Apply.methods.ap;
 
   //# lift2 :: Apply f => (a -> b -> c, f a, f b) -> f c
   //.
@@ -1881,7 +1876,7 @@
   //. .         ('Haskell')
   //. 'Hask'
   //. ```
-  Z.chain = (f, chain) => Z.Chain.methods.chain (chain, f);
+  Z.chain = Z.Chain.methods.chain;
 
   //# join :: Chain m => m (m a) -> m a
   //.
@@ -1939,7 +1934,7 @@
   //. > Z.alt (Just (2), Just (3))
   //. Just (2)
   //. ```
-  Z.alt = Z.Alt.methods.alt;
+  Z.alt = (a, b) => Z.Alt.methods.alt (b, a);
 
   //# zero :: Plus f => TypeRep f -> f a
   //.
@@ -1977,7 +1972,7 @@
   //. > Z.reduce (Z.concat, '', {foo: 'x', bar: 'y', baz: 'z'})
   //. 'yzx'
   //. ```
-  Z.reduce = (f, x, foldable) => Z.Foldable.methods.reduce (foldable, f, x);
+  Z.reduce = Z.Foldable.methods.reduce;
 
   //# size :: Foldable f => f a -> Integer
   //.
@@ -2282,9 +2277,7 @@
   //. > Z.traverse (Identity, x => Identity (x + 1), [1, 2, 3])
   //. Identity ([2, 3, 4])
   //. ```
-  Z.traverse = (typeRep, f, traversable) => (
-    Z.Traversable.methods.traverse (traversable, typeRep, f)
-  );
+  Z.traverse = Z.Traversable.methods.traverse;
 
   //# sequence :: (Applicative f, Traversable t) => (TypeRep f, t (f a)) -> f (t a)
   //.
@@ -2317,7 +2310,7 @@
   //. > Z.extend (f => f ([3, 4]), Z.reverse) ([1, 2])
   //. [4, 3, 2, 1]
   //. ```
-  Z.extend = (f, extend) => Z.Extend.methods.extend (extend, f);
+  Z.extend = Z.Extend.methods.extend;
 
   //# duplicate :: Extend w => w a -> w (w a)
   //.
@@ -2361,9 +2354,7 @@
   //. > Z.contramap (s => s.length, Math.sqrt) ('Sanctuary')
   //. 3
   //. ```
-  Z.contramap = (f, contravariant) => (
-    Z.Contravariant.methods.contramap (contravariant, f)
-  );
+  Z.contramap = Z.Contravariant.methods.contramap;
 
   return Z;
 
