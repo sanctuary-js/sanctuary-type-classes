@@ -27,7 +27,7 @@
     "sanctuary-maybe": "2.1.x",
     "sanctuary-pair": "2.1.x",
     "sanctuary-scripts": "5.0.x",
-    "sanctuary-show": "2.0.x",
+    "sanctuary-show": "3.0.x",
     "sanctuary-useless": "2.0.1"
   },
   "files": [
