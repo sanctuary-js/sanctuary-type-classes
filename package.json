@@ -15,7 +15,7 @@
     "test": "npm run lint && sanctuary-test && npm run doctest"
   },
   "dependencies": {
-    "sanctuary-type-identifiers": "3.0.0"
+    "sanctuary-type-identifiers": "4.0.0"
   },
   "devDependencies": {
     "fantasy-land": "5.0.0",
