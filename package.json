@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "fantasy-land": "5.0.0",
-    "fantasy-laws": "1.2.x",
+    "fantasy-laws": "1.3.x",
     "jsverify": "0.8.x",
     "list": "2.0.11",
     "sanctuary-benchmark": "1.0.x",
