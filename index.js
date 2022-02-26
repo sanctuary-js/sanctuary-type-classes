@@ -112,9 +112,6 @@
   //  pair :: a -> b -> Array2 a b
   const pair = x => y => [x, y];
 
-  //  sameType :: (a, b) -> Boolean
-  const sameType = (x, y) => typeof x === typeof y && type (x) === type (y);
-
   //  sortedKeys :: Object -> Array String
   const sortedKeys = o => (Object.keys (o)).sort ();
 
@@ -1293,7 +1290,7 @@
     };
   }
 
-  //# lt :: (a, b) -> Boolean
+  //# lt :: Ord a => (a, a) -> Boolean
   //.
   //. Returns `true` if its arguments are of the same type and the first is
   //. less than the second according to the type's [`fantasy-land/lte`][]
@@ -1313,9 +1310,9 @@
   //. > Z.lt (1, 0)
   //. false
   //. ```
-  Z.lt = (x, y) => sameType (x, y) && !(Z.lte (y, x));
+  Z.lt = (x, y) => !(Z.lte (y, x));
 
-  //# lte :: (a, b) -> Boolean
+  //# lte :: Ord a => (a, a) -> Boolean
   //.
   //. Returns `true` if its arguments are of the same type and the first
   //. is less than or equal to the second according to the type's
@@ -1345,8 +1342,6 @@
     const $pairs = [];
 
     Z.lte = (x, y) => {
-      if (!(sameType (x, y))) return false;
-
       //  This algorithm for comparing circular data structures was
       //  suggested in <http://stackoverflow.com/a/40622794/312785>.
       if ($pairs.some (([xx, yy]) => xx === x && yy === y)) {
@@ -1355,14 +1350,14 @@
 
       $pairs.push ([x, y]);
       try {
-        return Z.Ord.test (x) && Z.Ord.methods.lte (y, x);
+        return Z.Ord.methods.lte (y, x);
       } finally {
         $pairs.pop ();
       }
     };
   }
 
-  //# gt :: (a, b) -> Boolean
+  //# gt :: Ord a => (a, a) -> Boolean
   //.
   //. Returns `true` if its arguments are of the same type and the first is
   //. greater than the second according to the type's [`fantasy-land/lte`][]
@@ -1384,7 +1379,7 @@
   //. ```
   Z.gt = (x, y) => Z.lt (y, x);
 
-  //# gte :: (a, b) -> Boolean
+  //# gte :: Ord a => (a, a) -> Boolean
   //.
   //. Returns `true` if its arguments are of the same type and the first
   //. is greater than or equal to the second according to the type's
