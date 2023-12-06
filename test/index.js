@@ -985,7 +985,7 @@ test ('empty', () => {
 
   assert.throws (
     () => Z.empty (null),
-    new TypeError ("Cannot read property 'fantasy-land/empty' of null")
+    new TypeError ("Cannot read properties of null (reading 'fantasy-land/empty')")
   );
 });
 

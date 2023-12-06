@@ -1,35 +1,23 @@
 version: 2.1
 
 orbs:
-  node: circleci/node@4.3.0
-
-jobs:
-  test:
-    executor:
-      name: node/default
-      tag: <<parameters.version>>
-    parameters:
-      version:
-        type: string
-      gawk:
-        type: string
-        default: gawk-5.1.0
-    steps:
-      - checkout
-      - run: wget https://ftp.gnu.org/gnu/gawk/<<parameters.gawk>>.tar.gz
-      - run: tar -xvpzf <<parameters.gawk>>.tar.gz
-      - run: cd <<parameters.gawk>> && ./configure && make
-      - run: npm install
-      - run: PATH=$PATH:<<parameters.gawk>> npm test
+  node: circleci/node@5.1.0
 
 workflows:
   test:
     jobs:
-      - test:
-          version: 10.14.2
-      - test:
-          version: 12.0.0
-      - test:
-          version: 14.0.0
-      - test:
-          version: 16.0.0
+      - node/test:
+          setup:
+            - run: wget https://ftp.gnu.org/gnu/gawk/gawk-5.1.0.tar.gz
+            - run: tar -xvpzf gawk-5.1.0.tar.gz
+            - run: cd gawk-5.1.0 && ./configure && make
+            - run: echo 'export PATH="$PATH:gawk-5.1.0"' >>"$BASH_ENV"
+            # derive cache key from package.json
+            - run: cp package.json package-lock.json
+          override-ci-command: rm package-lock.json && npm install && git checkout -- package.json
+          matrix:
+            parameters:
+              version:
+                - 18.0.0
+                - 20.0.0
+                - 21.0.0
