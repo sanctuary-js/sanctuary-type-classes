@@ -85,19 +85,19 @@
 
   'use strict';
 
+  let Cons, Identity, Just, List, Maybe, Nil, Nothing, Pair, Sum, Useless;
   /* istanbul ignore if */
   if (typeof __doctest !== 'undefined') {
-    /* eslint-disable no-unused-vars, no-var */
-    var Identity = __doctest.require ('sanctuary-identity');
-    var List = __doctest.require ('./test/List');
-    var Maybe = __doctest.require ('sanctuary-maybe');
-    var Pair = __doctest.require ('sanctuary-pair');
-    var Sum = __doctest.require ('./test/Sum');
-    var Useless = __doctest.require ('sanctuary-useless');
-
-    var {Nil, Cons} = List;
-    var {Nothing, Just} = Maybe;
-    /* eslint-enable no-unused-vars, no-var */
+    const dirname = __dirname;  // eslint-disable-line no-undef
+    Identity = __doctest.require ('sanctuary-identity');
+    List = __doctest.require (`${dirname}/test/List`);
+    Maybe = __doctest.require ('sanctuary-maybe');
+    Pair = __doctest.require ('sanctuary-pair');
+    Sum = __doctest.require (`${dirname}/test/Sum`);
+    Useless = __doctest.require ('sanctuary-useless');
+    ({Nil, Cons} = List);
+    ({Nothing, Just} = Maybe);
+    [Cons, Identity, Just, List, Maybe, Nil, Nothing, Pair, Sum, Useless];
   }
 
   //  concat :: Array a -> Array a -> Array a
