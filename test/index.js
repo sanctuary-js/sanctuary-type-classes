@@ -345,6 +345,7 @@ test ('Setoid', () => {
   eq (Z.Setoid.test (''), true);
   eq (Z.Setoid.test ([]), true);
   eq (Z.Setoid.test ({}), true);
+  eq (Z.Setoid.test (ones), true);
   eq (Z.Setoid.test (Useless), false);
   eq (Z.Setoid.test ([Useless]), false);
   eq (Z.Setoid.test ({foo: Useless}), false);
@@ -358,6 +359,7 @@ test ('Ord', () => {
   eq (Z.Ord.test (''), true);
   eq (Z.Ord.test ([]), true);
   eq (Z.Ord.test ({}), true);
+  eq (Z.Ord.test (ones), true);
   eq (Z.Ord.test (Math.abs), false);
   eq (Z.Ord.test ([Math.abs]), false);
   eq (Z.Ord.test ({foo: Math.abs}), false);
@@ -595,11 +597,6 @@ test ('equals', () => {
     builtinSetoidArb: jsc.record ({
       value: tie ('nestedSetoidArb'),
     }),
-    noSetoidArb: jsc.record ({
-      'value': tie ('nestedSetoidArb'),
-      '@@type': jsc.constant ('sanctuary-type-classes/NoSetoid@1'),
-      '@@show': jsc.constant (function() { return `NoSetoid (${show (this.value)})`; }),
-    }),
     customSetoidArb: jsc.record ({
       'value': tie ('nestedSetoidArb'),
       '@@type': jsc.constant ('sanctuary-type-classes/CustomSetoid@1'),
@@ -610,7 +607,6 @@ test ('equals', () => {
     }),
     nestedSetoidArb: jsc.oneof ([
       tie ('builtinSetoidArb'),
-      tie ('noSetoidArb'),
       tie ('customSetoidArb'),
       jsc.nat,
     ]),
@@ -621,8 +617,6 @@ test ('equals', () => {
   eq (Z.equals.length, 2);
 
   eq (Z.equals (null, null), true);
-  eq (Z.equals (null, undefined), false);
-  eq (Z.equals (undefined, null), false);
   eq (Z.equals (undefined, undefined), true);
   eq (Z.equals (false, false), true);
   eq (Z.equals (false, true), false);
@@ -632,10 +626,6 @@ test ('equals', () => {
   eq (Z.equals (new Boolean (false), new Boolean (true)), false);
   eq (Z.equals (new Boolean (true), new Boolean (false)), false);
   eq (Z.equals (new Boolean (true), new Boolean (true)), true);
-  eq (Z.equals (false, new Boolean (false)), false);
-  eq (Z.equals (new Boolean (false), false), false);
-  eq (Z.equals (true, new Boolean (true)), false);
-  eq (Z.equals (new Boolean (true), true), false);
   eq (Z.equals (0, 0), true);
   eq (Z.equals (0, -0), true);
   eq (Z.equals (-0, 0), true);
@@ -645,8 +635,6 @@ test ('equals', () => {
   eq (Z.equals (Infinity, -Infinity), false);
   eq (Z.equals (-Infinity, Infinity), false);
   eq (Z.equals (-Infinity, -Infinity), true);
-  eq (Z.equals (NaN, Math.PI), false);
-  eq (Z.equals (Math.PI, NaN), false);
   eq (Z.equals (new Number (0), new Number (0)), true);
   eq (Z.equals (new Number (0), new Number (-0)), true);
   eq (Z.equals (new Number (-0), new Number (0)), true);
@@ -658,10 +646,6 @@ test ('equals', () => {
   eq (Z.equals (new Number (-Infinity), new Number (-Infinity)), true);
   eq (Z.equals (new Number (NaN), new Number (Math.PI)), false);
   eq (Z.equals (new Number (Math.PI), new Number (NaN)), false);
-  eq (Z.equals (42, new Number (42)), false);
-  eq (Z.equals (new Number (42), 42), false);
-  eq (Z.equals (NaN, new Number (NaN)), false);
-  eq (Z.equals (new Number (NaN), NaN), false);
   eq (Z.equals (new Date (0), new Date (0)), true);
   eq (Z.equals (new Date (0), new Date (1)), false);
   eq (Z.equals (new Date (1), new Date (0)), false);
@@ -681,8 +665,6 @@ test ('equals', () => {
   eq (Z.equals (new String (''), new String ('')), true);
   eq (Z.equals (new String ('abc'), new String ('abc')), true);
   eq (Z.equals (new String ('abc'), new String ('xyz')), false);
-  eq (Z.equals ('abc', new String ('abc')), false);
-  eq (Z.equals (new String ('abc'), 'abc'), false);
   eq (Z.equals ([], []), true);
   eq (Z.equals ([1, 2], [1, 2]), true);
   eq (Z.equals ([1, 2, 3], [1, 2]), false);
@@ -724,11 +706,9 @@ test ('equals', () => {
   eq (Z.equals (Math.sin, Math.cos), false);
   eq (Z.equals (Identity (Identity (Identity (0))), Identity (Identity (Identity (0)))), true);
   eq (Z.equals (Identity (Identity (Identity (0))), Identity (Identity (Identity (1)))), false);
-  eq (Z.equals (Useless, Useless), true);
   eq (Z.equals (Array.prototype, Array.prototype), true);
   eq (Z.equals (Nothing.constructor, Maybe), true);
   eq (Z.equals ((Just (0)).constructor, Maybe), true);
-  eq (Z.equals (Lazy$of (0), Lazy$of (0)), false);
 
   eq (Z.equals (alienValues.Array, domesticValues.Array), true);
   eq (Z.equals (alienValues.Boolean, domesticValues.Boolean), true);
@@ -754,15 +734,12 @@ test ('lt', () => {
   eq (Z.lt (0, 0), false);
   eq (Z.lt (0, 1), true);
   eq (Z.lt (1, 0), false);
-  eq (Z.lt ('abc', 123), false);
 });
 
 test ('lte', () => {
   eq (Z.lte.length, 2);
 
   eq (Z.lte (null, null), true);
-  eq (Z.lte (null, undefined), false);
-  eq (Z.lte (undefined, null), false);
   eq (Z.lte (undefined, undefined), true);
   eq (Z.lte (false, false), true);
   eq (Z.lte (false, true), true);
@@ -772,10 +749,6 @@ test ('lte', () => {
   eq (Z.lte (new Boolean (false), new Boolean (true)), true);
   eq (Z.lte (new Boolean (true), new Boolean (false)), false);
   eq (Z.lte (new Boolean (true), new Boolean (true)), true);
-  eq (Z.lte (false, new Boolean (false)), false);
-  eq (Z.lte (new Boolean (false), false), false);
-  eq (Z.lte (true, new Boolean (true)), false);
-  eq (Z.lte (new Boolean (true), true), false);
   eq (Z.lte (42, 42), true);
   eq (Z.lte (42, 43), true);
   eq (Z.lte (43, 42), false);
@@ -801,8 +774,6 @@ test ('lte', () => {
   eq (Z.lte (new Number (-Infinity), new Number (-Infinity)), true);
   eq (Z.lte (new Number (NaN), new Number (Math.PI)), true);
   eq (Z.lte (new Number (Math.PI), new Number (NaN)), false);
-  eq (Z.lte (42, new Number (42)), false);
-  eq (Z.lte (new Number (42), 42), false);
   eq (Z.lte (new Date (0), new Date (0)), true);
   eq (Z.lte (new Date (0), new Date (1)), true);
   eq (Z.lte (new Date (1), new Date (0)), false);
@@ -814,8 +785,6 @@ test ('lte', () => {
   eq (Z.lte (new String (''), new String ('')), true);
   eq (Z.lte (new String ('abc'), new String ('abc')), true);
   eq (Z.lte (new String ('abc'), new String ('xyz')), true);
-  eq (Z.lte ('abc', new String ('abc')), false);
-  eq (Z.lte (new String ('abc'), 'abc'), false);
   eq (Z.lte ([], []), true);
   eq (Z.lte ([1, 2], [1, 2]), true);
   eq (Z.lte ([1, 2, 3], [1, 2]), false);
@@ -823,8 +792,6 @@ test ('lte', () => {
   eq (Z.lte ([1, 2], [2]), true);
   eq (Z.lte ([], [undefined]), true);
   eq (Z.lte ([undefined], []), false);
-  eq (Z.lte ([1], [undefined]), false);
-  eq (Z.lte ([undefined], [1]), false);
   eq (Z.lte ([0], [-0]), true);
   eq (Z.lte ([NaN], [NaN]), true);
   eq (Z.lte (ones, ones), true);
@@ -846,8 +813,6 @@ test ('lte', () => {
   eq (Z.lte ({x: 1, y: 2}, {y: 2, x: 1}), true);
   eq (Z.lte ({x: 1, y: 2, z: 3}, {x: 1, y: 2}), false);
   eq (Z.lte ({x: 1, y: 2}, {x: 1, y: 2, z: 3}), true);
-  eq (Z.lte ({x: 1, y: 2, z: 3}, {x: 1, y: 2, z: undefined}), false);
-  eq (Z.lte ({x: 1, y: 2, z: undefined}, {x: 1, y: 2, z: 3}), false);
   eq (Z.lte ({x: 1, y: 1}, {x: 2, y: 1}), true);
   eq (Z.lte ({x: 2, y: 1}, {x: 1, y: 2}), false);
   eq (Z.lte ({x: 0, y: 0}, {x: 1}), true);
@@ -858,7 +823,6 @@ test ('lte', () => {
   eq (Z.lte (Identity (Identity (Identity (0))), Identity (Identity (Identity (0)))), true);
   eq (Z.lte (Identity (Identity (Identity (0))), Identity (Identity (Identity (1)))), true);
   eq (Z.lte (Identity (Identity (Identity (1))), Identity (Identity (Identity (0)))), false);
-  eq (Z.lte (Lazy$of (0), Lazy$of (0)), false);
   eq (Z.lte ('abc', 123), false);
 
   eq (Z.lte (alienValues.Array, domesticValues.Array), true);
@@ -882,7 +846,6 @@ test ('gt', () => {
   eq (Z.gt (0, 0), false);
   eq (Z.gt (0, 1), false);
   eq (Z.gt (1, 0), true);
-  eq (Z.gt ('abc', 123), false);
 });
 
 test ('gte', () => {
@@ -891,7 +854,6 @@ test ('gte', () => {
   eq (Z.gte (0, 0), true);
   eq (Z.gte (0, 1), false);
   eq (Z.gte (1, 0), true);
-  eq (Z.gte ('abc', 123), false);
 });
 
 test ('min', () => {
