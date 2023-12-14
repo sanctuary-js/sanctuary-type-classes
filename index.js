@@ -681,9 +681,9 @@
       `https://github.com/sanctuary-js/sanctuary-type-classes/tree/v${version}#${_name}`,
       dependencies,
       ($seen => x => {
-        if ($seen.includes (x)) return true;
+        if ($seen.has (x)) return true;
 
-        $seen.push (x);
+        $seen.add (x);
         try {
           return (
             staticMethods.every (({name, implementations}) => (
@@ -695,9 +695,9 @@
             ))
           );
         } finally {
-          $seen.pop ();
+          $seen.delete (x);
         }
-      }) ([])
+      }) (new WeakSet ())
     );
 
     typeClass.methods = {};
