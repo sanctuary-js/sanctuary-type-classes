@@ -51,5 +51,7 @@ module.exports = benchmark (oldZ, newZ, {leftHeader: 'old', rightHeader: 'new'},
   'methods.sort.List':              Z => { Z.sort (shuffledList); },
   'test.Comonad.Identity.flat':     Z => { Z.Comonad.test (Identity (0)); },
   'test.Comonad.Identity.nested':   Z => { Z.Comonad.test (nestedIdentity); },
+  'test.Monoid.Identity.flat':      Z => { Z.Monoid.test (Identity (0)); },
+  'test.Monoid.Identity.nested':    Z => { Z.Monoid.test (nestedIdentity); },
   'test.Contravariant.Function':    Z => { Z.Contravariant.test (Math.abs); },
 }));
