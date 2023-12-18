@@ -646,7 +646,7 @@ const Value = 'Value';
 
 //  $ :: (String, Array TypeClass, StrMap (Array Location)) -> TypeClass
 const $ = (_name, dependencies, requirements) => {
-  const version = '13.0.0';  // updated programmatically
+  const version = '14.0.0';  // updated programmatically
 
   const staticMethods = requirements.filter (req => (
     req.location === Constructor
