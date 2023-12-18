@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euf -o pipefail
+
+if ! git diff --quiet index.js ; then
+  echo 'index.js contains unstaged changes' >&2
+  exit 1
+fi
+
+cp index.js index.js.orig
+trap 'mv index.js.orig index.js' EXIT
+sed s,'$(pwd)',"$(pwd)",g index.js.orig >index.js
+node_modules/.bin/sanctuary-doctest "$@"
