@@ -1,6 +1,6 @@
 import * as FL from 'fantasy-land';
 
-import Z from '../index.js';
+import {ap, of} from '../index.js';
 
 export {Lazy};
 
@@ -16,7 +16,7 @@ Lazy[FL.of] = a => Lazy (() => a);
 Lazy.prototype['@@type'] = 'sanctuary-type-classes/Lazy@1';
 
 Lazy.prototype[FL.map] = function(f) {
-  return Z.ap (Z.of (Lazy, f), this);
+  return ap (of (Lazy, f), this);
 };
 
 Lazy.prototype[FL.ap] = function(other) {

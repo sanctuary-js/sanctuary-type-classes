@@ -7,6 +7,11 @@
     "type": "git",
     "url": "git://github.com/sanctuary-js/sanctuary-type-classes.git"
   },
+  "type": "module",
+  "exports": {
+    ".": "./index.js",
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "bench": "sanctuary-benchmark",
     "doctest": "sanctuary-doctest",
@@ -15,16 +20,18 @@
     "test": "npm run lint && sanctuary-test && npm run doctest"
   },
   "dependencies": {
-    "sanctuary-type-identifiers": "4.0.0"
+    "sanctuary-type-identifiers": "sanctuary-js/sanctuary-type-identifiers#2d8b18192100cc940c74d8b10aa1162cf925ef78"
   },
   "devDependencies": {
+    "c8": "8.0.x",
     "fantasy-land": "5.0.0",
-    "fantasy-laws": "1.3.x",
+    "fantasy-laws": "2.0.x",
     "jsverify": "0.8.x",
     "list": "2.0.11",
+    "oletus": "4.0.x",
     "sanctuary-benchmark": "1.0.x",
     "sanctuary-identity": "2.1.x",
-    "sanctuary-maybe": "2.1.x",
+    "sanctuary-maybe": "sanctuary-js/sanctuary-maybe#6917bef726fb416f4a376c022ec694686d2ef1f5",
     "sanctuary-pair": "2.1.x",
     "sanctuary-scripts": "7.0.x",
     "sanctuary-show": "3.0.x",

@@ -1,14 +1,22 @@
-'use strict';
+import {deepStrictEqual as eq} from 'node:assert';
 
-const {deepStrictEqual: eq} = require ('node:assert');
+import * as FL from 'fantasy-land';
+import show from 'sanctuary-show';
 
-const FL = require ('fantasy-land');
-const show = require ('sanctuary-show');
+import {
+  ap,
+  chain,
+  concat,
+  equals,
+  filter,
+  map,
+  of,
+  reduce,
+  traverse,
+} from '../index.js';
 
-const Z = require ('..');
 
-
-const List = {prototype: _List.prototype};
+export const List = {prototype: _List.prototype};
 
 List.prototype.constructor = List;
 
@@ -22,10 +30,10 @@ function _List(tag, head, tail) {
 }
 
 //  Nil :: List a
-const Nil = List.Nil = new _List ('Nil');
+export const Nil = List.Nil = new _List ('Nil');
 
 //  Cons :: (a, List a) -> List a
-const Cons = List.Cons = function Cons(head, tail) {
+export const Cons = List.Cons = function Cons(head, tail) {
   eq (arguments.length, Cons.length);
   return new _List ('Cons', head, tail);
 };
@@ -42,40 +50,40 @@ List.prototype[FL.equals] = function(other) {
   return this.isNil ?
     other.isNil :
     other.isCons &&
-      Z.equals (other.head, this.head) &&
-      Z.equals (other.tail, this.tail);
+      equals (other.head, this.head) &&
+      equals (other.tail, this.tail);
 };
 
 List.prototype[FL.concat] = function(other) {
   return this.isNil ?
     other :
-    Cons (this.head, Z.concat (this.tail, other));
+    Cons (this.head, concat (this.tail, other));
 };
 
 List.prototype[FL.filter] = function(pred) {
   return this.isNil ?
     Nil :
     pred (this.head) ?
-      Cons (this.head, Z.filter (pred, this.tail)) :
-      Z.filter (pred, this.tail);
+      Cons (this.head, filter (pred, this.tail)) :
+      filter (pred, this.tail);
 };
 
 List.prototype[FL.map] = function(f) {
   return this.isNil ?
     Nil :
-    Cons (f (this.head), Z.map (f, this.tail));
+    Cons (f (this.head), map (f, this.tail));
 };
 
 List.prototype[FL.ap] = function(other) {
   return this.isNil || other.isNil ?
     Nil :
-    Z.concat (Z.map (other.head, this), Z.ap (other.tail, this));
+    concat (map (other.head, this), ap (other.tail, this));
 };
 
 List.prototype[FL.chain] = function(f) {
   return this.isNil ?
     Nil :
-    Z.concat (f (this.head), Z.chain (f, this.tail));
+    concat (f (this.head), chain (f, this.tail));
 };
 
 List.prototype[FL.alt] = List.prototype[FL.concat];
@@ -83,14 +91,14 @@ List.prototype[FL.alt] = List.prototype[FL.concat];
 List.prototype[FL.reduce] = function(f, x) {
   return this.isNil ?
     x :
-    Z.reduce (f, f (x, this.head), this.tail);
+    reduce (f, f (x, this.head), this.tail);
 };
 
 List.prototype[FL.traverse] = function(typeRep, f) {
   return this.isNil ?
-    Z.of (typeRep, Nil) :
-    Z.ap (Z.map (head => tail => Cons (head, tail), f (this.head)),
-          Z.traverse (typeRep, f, this.tail));
+    of (typeRep, Nil) :
+    ap (map (head => tail => Cons (head, tail), f (this.head)),
+        traverse (typeRep, f, this.tail));
 };
 
 List.prototype.inspect =
@@ -99,5 +107,3 @@ List.prototype['@@show'] = function() {
     'Nil' :
     'Cons (' + show (this.head) + ', ' + show (this.tail) + ')';
 };
-
-module.exports = List;
