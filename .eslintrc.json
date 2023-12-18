@@ -1,14 +1,10 @@
 {
   "root": true,
   "extends": ["./node_modules/sanctuary-style/eslint.json"],
+  "parserOptions": {"ecmaVersion": 2020, "sourceType": "module"},
   "overrides": [
     {
-      "files": ["index.js"],
-      "globals": {"__doctest": "readonly", "define": "readonly", "module": "readonly", "require": "readonly", "self": "readonly"}
-    },
-    {
       "files": ["test/**/*.js"],
-      "parserOptions": {"ecmaVersion": 2020, "sourceType": "module"},
       "rules": {
         "max-len": ["off"]
       }

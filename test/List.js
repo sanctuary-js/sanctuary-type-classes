@@ -1,14 +1,12 @@
-'use strict';
+import {deepStrictEqual as eq} from 'node:assert';
 
-const {deepStrictEqual: eq} = require ('node:assert');
+import * as FL from 'fantasy-land';
+import show from 'sanctuary-show';
 
-const FL = require ('fantasy-land');
-const show = require ('sanctuary-show');
-
-const Z = require ('..');
+import * as Z from '../index.js';
 
 
-const List = {prototype: _List.prototype};
+export const List = {prototype: _List.prototype};
 
 List.prototype.constructor = List;
 
@@ -22,13 +20,13 @@ function _List(tag, head, tail) {
 }
 
 //  Nil :: List a
-const Nil = List.Nil = new _List ('Nil');
+export const Nil = new _List ('Nil');
 
 //  Cons :: (a, List a) -> List a
-const Cons = List.Cons = function Cons(head, tail) {
+export function Cons(head, tail) {
   eq (arguments.length, Cons.length);
   return new _List ('Cons', head, tail);
-};
+}
 
 List[FL.empty] = () => Nil;
 
@@ -99,5 +97,3 @@ List.prototype['@@show'] = function() {
     'Nil' :
     'Cons (' + show (this.head) + ', ' + show (this.tail) + ')';
 };
-
-module.exports = List;

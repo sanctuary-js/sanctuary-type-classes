@@ -7,11 +7,19 @@
     "type": "git",
     "url": "git://github.com/sanctuary-js/sanctuary-type-classes.git"
   },
+  "type": "module",
+  "exports": {
+    ".": "./index.js",
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "doctest": "sanctuary-doctest",
     "lint": "sanctuary-lint",
     "release": "sanctuary-release",
     "test": "npm run lint && sanctuary-test && npm run doctest"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   },
   "dependencies": {
     "sanctuary-type-identifiers": "4.0.0"

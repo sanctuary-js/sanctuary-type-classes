@@ -12,11 +12,11 @@ import show from 'sanctuary-show';
 import type from 'sanctuary-type-identifiers';
 import Useless from 'sanctuary-useless';
 
-import Z from '../index.js';
+import * as Z from '../index.js';
 
 import {Lazy} from './Lazy.js';
-import {List, Nil, Cons} from './List.mjs';
-import {Sum} from './Sum.mjs';
+import {List, Nil, Cons} from './List.js';
+import {Sum} from './Sum.js';
 import {withUnstableArraySort} from './quicksort.js';
 
 
@@ -341,6 +341,7 @@ test ('Setoid', () => {
   eq (Z.Setoid.name, 'sanctuary-type-classes/Setoid');
   eq (Z.Setoid.url, `https://github.com/sanctuary-js/sanctuary-type-classes/tree/v${version}#Setoid`);
   eq (Z.Setoid.test (null), true);
+  eq (Z.Setoid.test (undefined), true);
   eq (Z.Setoid.test (''), true);
   eq (Z.Setoid.test ([]), true);
   eq (Z.Setoid.test ({}), true);

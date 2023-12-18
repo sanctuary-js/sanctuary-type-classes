@@ -1,9 +1,9 @@
-'use strict';
+import * as FL from 'fantasy-land';
+import show from 'sanctuary-show';
 
-const FL = require ('fantasy-land');
-const show = require ('sanctuary-show');
+import * as Z from '../index.js';
 
-const Z = require ('..');
+export {Sum};
 
 
 //  Sum :: Number -> Sum
@@ -32,5 +32,3 @@ Sum.prototype.inspect =
 Sum.prototype['@@show'] = function() {
   return 'Sum (' + show (this.value) + ')';
 };
-
-module.exports = Sum;

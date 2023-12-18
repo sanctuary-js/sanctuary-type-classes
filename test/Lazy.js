@@ -1,6 +1,6 @@
 import * as FL from 'fantasy-land';
 
-import Z from '../index.js';
+import * as Z from '../index.js';
 
 export {Lazy};
 
