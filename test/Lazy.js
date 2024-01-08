@@ -1,8 +1,8 @@
-'use strict';
+import * as FL from 'fantasy-land';
 
-const FL = require ('fantasy-land');
+import Z from '../index.js';
 
-const Z = require ('..');
+export {Lazy};
 
 
 //  Lazy :: (() -> a) -> Lazy a
@@ -22,5 +22,3 @@ Lazy.prototype[FL.map] = function(f) {
 Lazy.prototype[FL.ap] = function(other) {
   return Lazy (() => other.run () (this.run ()));
 };
-
-module.exports = Lazy;

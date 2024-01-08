@@ -1,5 +1,3 @@
-'use strict';
-
 //  https://en.wikipedia.org/wiki/Quicksort#Hoare_partition_scheme
 
 //  quicksort :: (Array a, (a, a) -> Number, Integer, Integer) -> Undefined
@@ -30,7 +28,7 @@ const partition = (xs, cmp, lo, hi) => {
 const defaultComparator = (x, y) => x < y ? -1 : x > y ? 1 : 0;
 
 //  withUnstableArraySort :: (() -> Undefined) -> Undefined
-exports.withUnstableArraySort = thunk => {
+export const withUnstableArraySort = thunk => {
   const Array$prototype$sort = Array.prototype.sort;
   Array.prototype.sort = function(_cmp) {
     const cmp = arguments.length < 1 ? defaultComparator : _cmp;

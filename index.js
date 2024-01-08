@@ -90,10 +90,10 @@
   if (typeof __doctest !== 'undefined') {
     const dirname = __dirname;  // eslint-disable-line no-undef
     Identity = __doctest.require ('sanctuary-identity');
-    List = __doctest.require (`${dirname}/test/List`);
+    List = __doctest.require (`${dirname}/test/List.cjs`);
     Maybe = __doctest.require ('sanctuary-maybe');
     Pair = __doctest.require ('sanctuary-pair');
-    Sum = __doctest.require (`${dirname}/test/Sum`);
+    Sum = __doctest.require (`${dirname}/test/Sum.cjs`);
     Useless = __doctest.require ('sanctuary-useless');
     ({Nil, Cons} = List);
     ({Nothing, Just} = Maybe);
