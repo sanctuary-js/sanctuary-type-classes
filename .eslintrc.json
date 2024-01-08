@@ -24,6 +24,10 @@
         "key-spacing": ["off"],
         "max-len": ["off"]
       }
+    },
+    {
+      "files": ["test/**/*.js"],
+      "parserOptions": {"ecmaVersion": 2020, "sourceType": "module"}
     }
   ]
 }

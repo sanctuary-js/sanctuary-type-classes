@@ -1,27 +1,26 @@
-'use strict';
+import {deepStrictEqual as eq, throws} from 'assert';
+import module from 'module';
+import vm from 'vm';
 
-const {deepStrictEqual: eq, throws} = require ('assert');
-const vm = require ('vm');
+import laws from 'fantasy-laws';
+import jsc from 'jsverify';
+import Identity from 'sanctuary-identity';
+import Maybe from 'sanctuary-maybe';
+import Pair from 'sanctuary-pair';
+import show from 'sanctuary-show';
+import type from 'sanctuary-type-identifiers';
+import Useless from 'sanctuary-useless';
 
-const laws = require ('fantasy-laws');
-const jsc = require ('jsverify');
-const Identity = require ('sanctuary-identity');
-const Maybe = require ('sanctuary-maybe');
-const Pair = require ('sanctuary-pair');
-const show = require ('sanctuary-show');
-const type = require ('sanctuary-type-identifiers');
-const Useless = require ('sanctuary-useless');
+import Z from '../index.js';
 
-const Z = require ('..');
-const {version} = require ('../package.json');
-
-const Lazy = require ('./Lazy');
-const List = require ('./List');
-const Sum = require ('./Sum');
-const {withUnstableArraySort} = require ('./quicksort');
+import {Lazy} from './Lazy.js';
+import {List, Nil, Cons} from './List.mjs';
+import {Sum} from './Sum.mjs';
+import {withUnstableArraySort} from './quicksort.js';
 
 
-const {Nil, Cons} = List;
+const {version} = module.createRequire (import.meta.url) ('../package.json');
+
 const {Nothing, Just} = Maybe;
 
 //  mapArb :: (a -> b) -> Arbitrary a -> Arbitrary b
