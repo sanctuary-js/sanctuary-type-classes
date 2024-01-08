@@ -1,12 +1,11 @@
 'use strict';
 
+const {deepStrictEqual: eq} = require ('assert');
+
 const FL = require ('fantasy-land');
 const show = require ('sanctuary-show');
 
 const Z = require ('..');
-
-const curry2 = require ('./curry2');
-const eq = require ('./eq');
 
 
 const List = {prototype: _List.prototype};
@@ -90,7 +89,7 @@ List.prototype[FL.reduce] = function(f, x) {
 List.prototype[FL.traverse] = function(typeRep, f) {
   return this.isNil ?
     Z.of (typeRep, Nil) :
-    Z.ap (Z.map (curry2 (Cons), f (this.head)),
+    Z.ap (Z.map (head => tail => Cons (head, tail), f (this.head)),
           Z.traverse (typeRep, f, this.tail));
 };
 

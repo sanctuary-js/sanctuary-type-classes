@@ -1,6 +1,6 @@
 'use strict';
 
-const assert = require ('assert');
+const {deepStrictEqual: eq, throws} = require ('assert');
 const vm = require ('vm');
 
 const laws = require ('fantasy-laws');
@@ -18,7 +18,6 @@ const {version} = require ('../package.json');
 const Lazy = require ('./Lazy');
 const List = require ('./List');
 const Sum = require ('./Sum');
-const eq = require ('./eq');
 const {withUnstableArraySort} = require ('./quicksort');
 
 
@@ -928,7 +927,7 @@ test ('concat', () => {
   eq (Z.concat (Cons (1, Cons (2, Cons (3, Nil))), Nil), Cons (1, Cons (2, Cons (3, Nil))));
   eq (Z.concat (Cons (1, Cons (2, Cons (3, Nil))), Cons (4, Cons (5, Cons (6, Nil)))), Cons (1, Cons (2, Cons (3, Cons (4, Cons (5, Cons (6, Nil)))))));
 
-  eq (Z.concat (alienValues.Array, domesticValues.Array), ['?', '!', '?', '!']);
+  eq (Z.concat (domesticValues.Array, alienValues.Array), ['?', '!', '?', '!']);
   eq (Z.concat (alienValues.String, domesticValues.String), '?!?!');
 });
 
@@ -945,7 +944,7 @@ test ('empty', () => {
   eq (Z.empty (alienValues.Array.constructor), []);
   eq (Z.empty (alienValues.Object.constructor), {});
 
-  assert.throws (
+  throws (
     () => Z.empty (null),
     new TypeError ("Cannot read properties of null (reading 'fantasy-land/empty')")
   );
