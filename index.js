@@ -72,7 +72,7 @@
 
   'use strict';
 
-  /* istanbul ignore else */
+  /* c8 ignore start */
   if (typeof module === 'object' && typeof module.exports === 'object') {
     module.exports = f (require ('sanctuary-type-identifiers'));
   } else if (typeof define === 'function' && define.amd != null) {
@@ -80,13 +80,14 @@
   } else {
     self.sanctuaryTypeClasses = f (self.sanctuaryTypeIdentifiers);
   }
+  /* c8 ignore stop */
 
 }) (type => {
 
   'use strict';
 
+  /* c8 ignore start */
   let Cons, Identity, Just, List, Maybe, Nil, Nothing, Pair, Sum, Useless;
-  /* istanbul ignore if */
   if (typeof __doctest !== 'undefined') {
     const dirname = __dirname;  // eslint-disable-line no-undef
     Identity = __doctest.require ('sanctuary-identity');
@@ -99,6 +100,7 @@
     ({Nothing, Just} = Maybe);
     [Cons, Identity, Just, List, Maybe, Nil, Nothing, Pair, Sum, Useless];
   }
+  /* c8 ignore stop */
 
   //  concat :: Array a -> Array a -> Array a
   const concat = xs => ys => xs.concat (ys);
@@ -259,12 +261,13 @@
   //  Array$prototype$lte :: Ord a => Array a ~> Array a -> Boolean
   function Array$prototype$lte(other) {
     for (let idx = 0; true; idx += 1) {
-      if (idx === this.length) return true;
+      if (idx === this.length) break;
       if (idx === other.length) return false;
       if (!(Z.equals (this[idx], other[idx]))) {
         return Z.lte (this[idx], other[idx]);
       }
     }
+    return true;
   }
 
   //  Array$prototype$concat :: Array a ~> Array a -> Array a

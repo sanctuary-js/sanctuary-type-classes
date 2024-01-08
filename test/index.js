@@ -4,6 +4,7 @@ import vm from 'node:vm';
 
 import laws from 'fantasy-laws';
 import jsc from 'jsverify';
+import test from 'oletus';
 import Identity from 'sanctuary-identity';
 import Maybe from 'sanctuary-maybe';
 import Pair from 'sanctuary-pair';
@@ -1476,933 +1477,928 @@ test ('contramap', () => {
   eq (Z.contramap (length, inc) ('abc'), 4);
 });
 
-const testLaws = specs => {
-  (Object.keys (specs)).forEach (typeClassName => {
-    suite (typeClassName, () => {
-      const spec = specs[typeClassName];
-      (Object.keys (spec.module)).forEach (name => {
-        test (name.replace (/[A-Z]/g, c => ' ' + c.toLowerCase ()),
-              spec.module[name] (...spec.laws[name]));
-      });
+const testLaws = type => specs => {
+  (Object.keys (specs)).forEach (typeClass => {
+    const spec = specs[typeClass];
+    (Object.keys (spec.module)).forEach (name => {
+      const prettyName = name.replace (/[A-Z]/g, c => ' ' + c.toLowerCase ());
+      test (`${type} \x1B[2m›\x1B[0m ${typeClass} laws \x1B[2m›\x1B[0m ${prettyName}`,
+            spec.module[name] (...spec.laws[name]));
     });
   });
 };
 
-suite ('laws', () => {
+{
+  testLaws ('Null') ({
+    Setoid: {
+      module: laws.Setoid,
+      laws: {
+        reflexivity: [
+          jsc.constant (null),
+        ],
+        symmetry: [
+          jsc.constant (null),
+          jsc.constant (null),
+        ],
+        transitivity: [
+          jsc.constant (null),
+          jsc.constant (null),
+          jsc.constant (null),
+        ],
+      },
+    },
+    Ord: {
+      module: laws.Ord,
+      laws: {
+        totality: [
+          jsc.constant (null),
+          jsc.constant (null),
+        ],
+        antisymmetry: [
+          jsc.constant (null),
+          jsc.constant (null),
+          jsc.constant (null),
+        ],
+        transitivity: [
+          jsc.constant (null),
+          jsc.constant (null),
+          jsc.constant (null),
+        ],
+      },
+    },
+  });
+}
 
-  suite ('Null', () => {
-    testLaws ({
-      Setoid: {
-        module: laws.Setoid,
-        laws: {
-          reflexivity: [
-            jsc.constant (null),
-          ],
-          symmetry: [
-            jsc.constant (null),
-            jsc.constant (null),
-          ],
-          transitivity: [
-            jsc.constant (null),
-            jsc.constant (null),
-            jsc.constant (null),
-          ],
-        },
+{
+  testLaws ('Undefined') ({
+    Setoid: {
+      module: laws.Setoid,
+      laws: {
+        reflexivity: [
+          jsc.constant (undefined),
+        ],
+        symmetry: [
+          jsc.constant (undefined),
+          jsc.constant (undefined),
+        ],
+        transitivity: [
+          jsc.constant (undefined),
+          jsc.constant (undefined),
+          jsc.constant (undefined),
+        ],
       },
-      Ord: {
-        module: laws.Ord,
-        laws: {
-          totality: [
-            jsc.constant (null),
-            jsc.constant (null),
-          ],
-          antisymmetry: [
-            jsc.constant (null),
-            jsc.constant (null),
-            jsc.constant (null),
-          ],
-          transitivity: [
-            jsc.constant (null),
-            jsc.constant (null),
-            jsc.constant (null),
-          ],
-        },
+    },
+    Ord: {
+      module: laws.Ord,
+      laws: {
+        totality: [
+          jsc.constant (undefined),
+          jsc.constant (undefined),
+        ],
+        antisymmetry: [
+          jsc.constant (undefined),
+          jsc.constant (undefined),
+          jsc.constant (undefined),
+        ],
+        transitivity: [
+          jsc.constant (undefined),
+          jsc.constant (undefined),
+          jsc.constant (undefined),
+        ],
       },
-    });
+    },
+  });
+}
+
+{
+  testLaws ('Boolean') ({
+    Setoid: {
+      module: laws.Setoid,
+      laws: {
+        reflexivity: [
+          jsc.bool,
+        ],
+        symmetry: [
+          jsc.bool,
+          jsc.bool,
+        ],
+        transitivity: [
+          jsc.bool,
+          jsc.bool,
+          jsc.bool,
+        ],
+      },
+    },
+    Ord: {
+      module: laws.Ord,
+      laws: {
+        totality: [
+          jsc.bool,
+          jsc.bool,
+        ],
+        antisymmetry: [
+          jsc.bool,
+          jsc.bool,
+          jsc.bool,
+        ],
+        transitivity: [
+          jsc.bool,
+          jsc.bool,
+          jsc.bool,
+        ],
+      },
+    },
+  });
+}
+
+{
+  const arb = jsc.oneof (jsc.number, jsc.number, jsc.number, jsc.constant (Infinity), jsc.constant (-Infinity), jsc.constant (NaN));
+  testLaws ('Number') ({
+    Setoid: {
+      module: laws.Setoid,
+      laws: {
+        reflexivity: [
+          arb,
+        ],
+        symmetry: [
+          arb,
+          arb,
+        ],
+        transitivity: [
+          arb,
+          arb,
+          arb,
+        ],
+      },
+    },
+    Ord: {
+      module: laws.Ord,
+      laws: {
+        totality: [
+          arb,
+          arb,
+        ],
+        antisymmetry: [
+          arb,
+          arb,
+        ],
+        transitivity: [
+          arb,
+          arb,
+          arb,
+        ],
+      },
+    },
+  });
+}
+
+{
+  const arb = jsc.oneof (jsc.datetime, jsc.datetime, jsc.constant (new Date (NaN)));
+  testLaws ('Date') ({
+    Setoid: {
+      module: laws.Setoid,
+      laws: {
+        reflexivity: [
+          arb,
+        ],
+        symmetry: [
+          arb,
+          arb,
+        ],
+        transitivity: [
+          arb,
+          arb,
+          arb,
+        ],
+      },
+    },
+    Ord: {
+      module: laws.Ord,
+      laws: {
+        totality: [
+          arb,
+          arb,
+        ],
+        antisymmetry: [
+          arb,
+          arb,
+        ],
+        transitivity: [
+          arb,
+          arb,
+          arb,
+        ],
+      },
+    },
+  });
+}
+
+{
+  const flagsArb = jsc.oneof (['', 'g', 'i', 'm', 'gi', 'gm', 'im', 'gim'].map (jsc.constant));
+  const patternArb = jsc.suchthat (jsc.string, s => {
+    try {
+      new RegExp (s);
+      return true;
+    } catch (e) {
+      return false;
+    }
   });
 
-  suite ('Undefined', () => {
-    testLaws ({
-      Setoid: {
-        module: laws.Setoid,
-        laws: {
-          reflexivity: [
-            jsc.constant (undefined),
-          ],
-          symmetry: [
-            jsc.constant (undefined),
-            jsc.constant (undefined),
-          ],
-          transitivity: [
-            jsc.constant (undefined),
-            jsc.constant (undefined),
-            jsc.constant (undefined),
-          ],
-        },
+  const arb = mapArb (({flags, pattern}) => new RegExp (pattern, flags))
+                     (jsc.record ({flags: flagsArb, pattern: patternArb}));
+
+  testLaws ('RegExp') ({
+    Setoid: {
+      module: laws.Setoid,
+      laws: {
+        reflexivity: [
+          arb,
+        ],
+        symmetry: [
+          arb,
+          arb,
+        ],
+        transitivity: [
+          arb,
+          arb,
+          arb,
+        ],
       },
-      Ord: {
-        module: laws.Ord,
-        laws: {
-          totality: [
-            jsc.constant (undefined),
-            jsc.constant (undefined),
-          ],
-          antisymmetry: [
-            jsc.constant (undefined),
-            jsc.constant (undefined),
-            jsc.constant (undefined),
-          ],
-          transitivity: [
-            jsc.constant (undefined),
-            jsc.constant (undefined),
-            jsc.constant (undefined),
-          ],
-        },
-      },
-    });
+    },
   });
+}
 
-  suite ('Boolean', () => {
-    testLaws ({
-      Setoid: {
-        module: laws.Setoid,
-        laws: {
-          reflexivity: [
-            jsc.bool,
-          ],
-          symmetry: [
-            jsc.bool,
-            jsc.bool,
-          ],
-          transitivity: [
-            jsc.bool,
-            jsc.bool,
-            jsc.bool,
-          ],
-        },
+{
+  testLaws ('String') ({
+    Setoid: {
+      module: laws.Setoid,
+      laws: {
+        reflexivity: [
+          jsc.string,
+        ],
+        symmetry: [
+          jsc.string,
+          jsc.string,
+        ],
+        transitivity: [
+          jsc.string,
+          jsc.string,
+          jsc.string,
+        ],
       },
-      Ord: {
-        module: laws.Ord,
-        laws: {
-          totality: [
-            jsc.bool,
-            jsc.bool,
-          ],
-          antisymmetry: [
-            jsc.bool,
-            jsc.bool,
-            jsc.bool,
-          ],
-          transitivity: [
-            jsc.bool,
-            jsc.bool,
-            jsc.bool,
-          ],
-        },
+    },
+    Ord: {
+      module: laws.Ord,
+      laws: {
+        totality: [
+          jsc.string,
+          jsc.string,
+        ],
+        antisymmetry: [
+          jsc.string,
+          jsc.string,
+        ],
+        transitivity: [
+          jsc.string,
+          jsc.string,
+          jsc.string,
+        ],
       },
-    });
+    },
+    Semigroup: {
+      module: laws.Semigroup (Z.equals),
+      laws: {
+        associativity: [
+          jsc.string,
+          jsc.string,
+          jsc.string,
+        ],
+      },
+    },
+    Monoid: {
+      module: laws.Monoid (Z.equals, String),
+      laws: {
+        leftIdentity: [
+          jsc.string,
+        ],
+        rightIdentity: [
+          jsc.string,
+        ],
+      },
+    },
   });
+}
 
-  suite ('Number', () => {
-    const arb = jsc.oneof (jsc.number, jsc.number, jsc.number, jsc.constant (Infinity), jsc.constant (-Infinity), jsc.constant (NaN));
-    testLaws ({
-      Setoid: {
-        module: laws.Setoid,
-        laws: {
-          reflexivity: [
-            arb,
-          ],
-          symmetry: [
-            arb,
-            arb,
-          ],
-          transitivity: [
-            arb,
-            arb,
-            arb,
-          ],
-        },
+{
+  testLaws ('Array') ({
+    Setoid: {
+      module: laws.Setoid,
+      laws: {
+        reflexivity: [
+          jsc.array (jsc.number),
+        ],
+        symmetry: [
+          jsc.array (jsc.number),
+          jsc.array (jsc.number),
+        ],
+        transitivity: [
+          jsc.array (jsc.number),
+          jsc.array (jsc.number),
+          jsc.array (jsc.number),
+        ],
       },
-      Ord: {
-        module: laws.Ord,
-        laws: {
-          totality: [
-            arb,
-            arb,
-          ],
-          antisymmetry: [
-            arb,
-            arb,
-          ],
-          transitivity: [
-            arb,
-            arb,
-            arb,
-          ],
-        },
+    },
+    Ord: {
+      module: laws.Ord,
+      laws: {
+        totality: [
+          jsc.array (jsc.number),
+          jsc.array (jsc.number),
+        ],
+        antisymmetry: [
+          jsc.array (jsc.number),
+          jsc.array (jsc.number),
+        ],
+        transitivity: [
+          jsc.array (jsc.number),
+          jsc.array (jsc.number),
+          jsc.array (jsc.number),
+        ],
       },
-    });
+    },
+    Semigroup: {
+      module: laws.Semigroup (Z.equals),
+      laws: {
+        associativity: [
+          jsc.array (jsc.number),
+          jsc.array (jsc.number),
+          jsc.array (jsc.number),
+        ],
+      },
+    },
+    Monoid: {
+      module: laws.Monoid (Z.equals, Array),
+      laws: {
+        leftIdentity: [
+          jsc.array (jsc.number),
+        ],
+        rightIdentity: [
+          jsc.array (jsc.number),
+        ],
+      },
+    },
+    Filterable: {
+      module: laws.Filterable (Z.equals),
+      laws: {
+        distributivity: [
+          jsc.array (jsc.number),
+          jsc.constant (gt (-10)),
+          jsc.constant (lt (10)),
+        ],
+        identity: [
+          jsc.array (jsc.number),
+        ],
+        annihilation: [
+          jsc.array (jsc.number),
+          jsc.array (jsc.number),
+        ],
+      },
+    },
+    Functor: {
+      module: laws.Functor (Z.equals),
+      laws: {
+        identity: [
+          jsc.array (jsc.number),
+        ],
+        composition: [
+          jsc.array (jsc.number),
+          jsc.constant (Math.sqrt),
+          jsc.constant (Math.abs),
+        ],
+      },
+    },
+    Apply: {
+      module: laws.Apply (Z.equals),
+      laws: {
+        composition: [
+          jsc.constant ([Math.sqrt, square]),
+          jsc.constant ([Math.abs]),
+          jsc.array (jsc.number),
+        ],
+      },
+    },
+    Applicative: {
+      module: laws.Applicative (Z.equals, Array),
+      laws: {
+        identity: [
+          jsc.array (jsc.number),
+        ],
+        homomorphism: [
+          jsc.constant (square),
+          jsc.number,
+        ],
+        interchange: [
+          jsc.constant ([Math.abs, square]),
+          jsc.number,
+        ],
+      },
+    },
+    Chain: {
+      module: laws.Chain (Z.equals),
+      laws: {
+        associativity: [
+          jsc.array (jsc.number),
+          jsc.constant (x => x > 0 ? [x] : []),
+          jsc.constant (x => [-x, x]),
+        ],
+      },
+    },
+    ChainRec: {
+      module: laws.ChainRec (Z.equals, Array),
+      laws: {
+        equivalence: [
+          jsc.constant (s => s.length === 2),
+          jsc.constant (s => [s + 'o', s + 'n']),
+          jsc.constant (s => [s + '!', s + '?']),
+          jsc.constant (''),
+        ],
+      },
+    },
+    Monad: {
+      module: laws.Monad (Z.equals, Array),
+      laws: {
+        leftIdentity: [
+          jsc.constant (double),
+          jsc.number,
+        ],
+        rightIdentity: [
+          jsc.array (jsc.number),
+        ],
+      },
+    },
+    Alt: {
+      module: laws.Alt (Z.equals),
+      laws: {
+        associativity: [
+          jsc.array (jsc.number),
+          jsc.array (jsc.number),
+          jsc.array (jsc.number),
+        ],
+        distributivity: [
+          jsc.array (jsc.number),
+          jsc.array (jsc.number),
+          jsc.constant (square),
+        ],
+      },
+    },
+    Plus: {
+      module: laws.Plus (Z.equals, Array),
+      laws: {
+        leftIdentity: [
+          jsc.array (jsc.number),
+        ],
+        rightIdentity: [
+          jsc.array (jsc.number),
+        ],
+        annihilation: [
+          jsc.constant (square),
+        ],
+      },
+    },
+    Alternative: {
+      module: laws.Alternative (Z.equals, Array),
+      laws: {
+        distributivity: [
+          jsc.array (jsc.number),
+          jsc.constant ([Math.abs, Math.sqrt]),
+          jsc.constant ([square]),
+        ],
+        annihilation: [
+          jsc.array (jsc.number),
+        ],
+      },
+    },
+    Foldable: {
+      module: laws.Foldable (Z.equals),
+      laws: {
+        associativity: [
+          jsc.constant ((x, y) => x - y),
+          jsc.number,
+          jsc.array (jsc.number),
+        ],
+      },
+    },
+    Traversable: {
+      module: laws.Traversable (Z.equals),
+      laws: {
+        naturality: [
+          jsc.constant (List),
+          jsc.constant (Array),
+          jsc.constant (listToArray),
+          jsc.array (ListArb (jsc.number)),
+        ],
+        identity: [
+          jsc.constant (Identity),
+          jsc.array (jsc.number),
+        ],
+        composition: [
+          jsc.constant (Maybe),
+          jsc.constant (List),
+          jsc.array (MaybeArb (ListArb (jsc.number))),
+        ],
+      },
+    },
+    Extend: {
+      module: laws.Extend (Z.equals),
+      laws: {
+        associativity: [
+          jsc.array (jsc.number),
+          jsc.constant (product),
+          jsc.constant (sum),
+        ],
+      },
+    },
   });
+}
 
-  suite ('Date', () => {
-    const arb = jsc.oneof (jsc.datetime, jsc.datetime, jsc.constant (new Date (NaN)));
-    testLaws ({
-      Setoid: {
-        module: laws.Setoid,
-        laws: {
-          reflexivity: [
-            arb,
-          ],
-          symmetry: [
-            arb,
-            arb,
-          ],
-          transitivity: [
-            arb,
-            arb,
-            arb,
-          ],
-        },
+{
+  const arb = mapArb (Function.prototype.apply.bind (args))
+                     (jsc.array (jsc.oneof (jsc.number, jsc.string)));
+  testLaws ('Arguments') ({
+    Setoid: {
+      module: laws.Setoid,
+      laws: {
+        reflexivity: [
+          arb,
+        ],
+        symmetry: [
+          arb,
+          arb,
+        ],
+        transitivity: [
+          arb,
+          arb,
+          arb,
+        ],
       },
-      Ord: {
-        module: laws.Ord,
-        laws: {
-          totality: [
-            arb,
-            arb,
-          ],
-          antisymmetry: [
-            arb,
-            arb,
-          ],
-          transitivity: [
-            arb,
-            arb,
-            arb,
-          ],
-        },
+    },
+    Ord: {
+      module: laws.Ord,
+      laws: {
+        totality: [
+          arb,
+          arb,
+        ],
+        antisymmetry: [
+          arb,
+          arb,
+        ],
+        transitivity: [
+          arb,
+          arb,
+          arb,
+        ],
       },
-    });
+    },
   });
+}
 
-  suite ('RegExp', () => {
-    const flagsArb = jsc.oneof (['', 'g', 'i', 'm', 'gi', 'gm', 'im', 'gim'].map (jsc.constant));
-    const patternArb = jsc.suchthat (jsc.string, s => {
-      try {
-        new RegExp (s);
-        return true;
-      } catch (e) {
-        return false;
-      }
-    });
-
-    const arb = mapArb (({flags, pattern}) => new RegExp (pattern, flags))
-                       (jsc.record ({flags: flagsArb, pattern: patternArb}));
-
-    testLaws ({
-      Setoid: {
-        module: laws.Setoid,
-        laws: {
-          reflexivity: [
-            arb,
-          ],
-          symmetry: [
-            arb,
-            arb,
-          ],
-          transitivity: [
-            arb,
-            arb,
-            arb,
-          ],
-        },
+{
+  const arb = smapArb (s => new Error (s)) (e => e.message) (jsc.string);
+  testLaws ('Error') ({
+    Setoid: {
+      module: laws.Setoid,
+      laws: {
+        reflexivity: [
+          arb,
+        ],
+        symmetry: [
+          arb,
+          arb,
+        ],
+        transitivity: [
+          arb,
+          arb,
+          arb,
+        ],
       },
-    });
+    },
   });
+}
 
-  suite ('String', () => {
-    testLaws ({
-      Setoid: {
-        module: laws.Setoid,
-        laws: {
-          reflexivity: [
-            jsc.string,
-          ],
-          symmetry: [
-            jsc.string,
-            jsc.string,
-          ],
-          transitivity: [
-            jsc.string,
-            jsc.string,
-            jsc.string,
-          ],
-        },
+{
+  testLaws ('Object') ({
+    Setoid: {
+      module: laws.Setoid,
+      laws: {
+        reflexivity: [
+          jsc.dict (jsc.array (jsc.number)),
+        ],
+        symmetry: [
+          jsc.dict (jsc.array (jsc.number)),
+          jsc.dict (jsc.array (jsc.number)),
+        ],
+        transitivity: [
+          jsc.dict (jsc.array (jsc.number)),
+          jsc.dict (jsc.array (jsc.number)),
+          jsc.dict (jsc.array (jsc.number)),
+        ],
       },
-      Ord: {
-        module: laws.Ord,
-        laws: {
-          totality: [
-            jsc.string,
-            jsc.string,
-          ],
-          antisymmetry: [
-            jsc.string,
-            jsc.string,
-          ],
-          transitivity: [
-            jsc.string,
-            jsc.string,
-            jsc.string,
-          ],
-        },
+    },
+    Ord: {
+      module: laws.Ord,
+      laws: {
+        totality: [
+          jsc.dict (jsc.array (jsc.number)),
+          jsc.dict (jsc.array (jsc.number)),
+        ],
+        antisymmetry: [
+          jsc.dict (jsc.array (jsc.number)),
+          jsc.dict (jsc.array (jsc.number)),
+        ],
+        transitivity: [
+          jsc.dict (jsc.array (jsc.number)),
+          jsc.dict (jsc.array (jsc.number)),
+          jsc.dict (jsc.array (jsc.number)),
+        ],
       },
-      Semigroup: {
-        module: laws.Semigroup (Z.equals),
-        laws: {
-          associativity: [
-            jsc.string,
-            jsc.string,
-            jsc.string,
-          ],
-        },
+    },
+    Semigroup: {
+      module: laws.Semigroup (Z.equals),
+      laws: {
+        associativity: [
+          jsc.dict (jsc.array (jsc.number)),
+          jsc.dict (jsc.array (jsc.number)),
+          jsc.dict (jsc.array (jsc.number)),
+        ],
       },
-      Monoid: {
-        module: laws.Monoid (Z.equals, String),
-        laws: {
-          leftIdentity: [
-            jsc.string,
-          ],
-          rightIdentity: [
-            jsc.string,
-          ],
-        },
+    },
+    Monoid: {
+      module: laws.Monoid (Z.equals, Object),
+      laws: {
+        leftIdentity: [
+          jsc.dict (jsc.array (jsc.number)),
+        ],
+        rightIdentity: [
+          jsc.dict (jsc.array (jsc.number)),
+        ],
       },
-    });
+    },
+    Filterable: {
+      module: laws.Filterable (Z.equals),
+      laws: {
+        distributivity: [
+          jsc.dict (jsc.array (jsc.number)),
+          jsc.constant (xs => xs.length % 2 === 0),
+          jsc.constant (compose (gt (0)) (sum)),
+        ],
+        identity: [
+          jsc.dict (jsc.array (jsc.number)),
+        ],
+        annihilation: [
+          jsc.dict (jsc.array (jsc.number)),
+          jsc.dict (jsc.array (jsc.number)),
+        ],
+      },
+    },
+    Functor: {
+      module: laws.Functor (Z.equals),
+      laws: {
+        identity: [
+          jsc.dict (jsc.array (jsc.number)),
+        ],
+        composition: [
+          jsc.dict (jsc.array (jsc.number)),
+          jsc.constant (Math.round),
+          jsc.constant (sum),
+        ],
+      },
+    },
+    Apply: {
+      module: laws.Apply (Z.equals),
+      laws: {
+        composition: [
+          jsc.dict (jsc.constant (Math.round)),
+          jsc.dict (jsc.constant (sum)),
+          jsc.dict (jsc.array (jsc.number)),
+        ],
+      },
+    },
+    Alt: {
+      module: laws.Alt (Z.equals),
+      laws: {
+        associativity: [
+          jsc.dict (jsc.array (jsc.number)),
+          jsc.dict (jsc.array (jsc.number)),
+          jsc.dict (jsc.array (jsc.number)),
+        ],
+        distributivity: [
+          jsc.dict (jsc.array (jsc.number)),
+          jsc.dict (jsc.array (jsc.number)),
+          jsc.constant (sum),
+        ],
+      },
+    },
+    Plus: {
+      module: laws.Plus (Z.equals, Object),
+      laws: {
+        leftIdentity: [
+          jsc.dict (jsc.array (jsc.number)),
+        ],
+        rightIdentity: [
+          jsc.dict (jsc.array (jsc.number)),
+        ],
+        annihilation: [
+          jsc.constant (sum),
+        ],
+      },
+    },
+    Foldable: {
+      module: laws.Foldable (Z.equals),
+      laws: {
+        associativity: [
+          jsc.constant (Z.concat),
+          jsc.array (jsc.number),
+          jsc.dict (jsc.array (jsc.number)),
+        ],
+      },
+    },
+    Traversable: {
+      module: laws.Traversable (Z.equals),
+      laws: {
+        naturality: [
+          jsc.constant (List),
+          jsc.constant (Array),
+          jsc.constant (listToArray),
+          jsc.dict (ListArb (jsc.number)),
+        ],
+        identity: [
+          jsc.constant (Identity),
+          jsc.dict (jsc.array (jsc.number)),
+        ],
+        composition: [
+          jsc.constant (Maybe),
+          jsc.constant (List),
+          jsc.dict (MaybeArb (ListArb (jsc.number))),
+        ],
+      },
+    },
   });
+}
 
-  suite ('Array', () => {
-    testLaws ({
-      Setoid: {
-        module: laws.Setoid,
-        laws: {
-          reflexivity: [
-            jsc.array (jsc.number),
-          ],
-          symmetry: [
-            jsc.array (jsc.number),
-            jsc.array (jsc.number),
-          ],
-          transitivity: [
-            jsc.array (jsc.number),
-            jsc.array (jsc.number),
-            jsc.array (jsc.number),
-          ],
-        },
+{
+  const resultsEqual = x => (f, g) => Z.equals (f (x), g (x));
+  const arb = jsc.oneof (jsc.constant (abs), jsc.constant (square));
+  testLaws ('Function') ({
+    Setoid: {
+      module: laws.Setoid,
+      laws: {
+        reflexivity: [
+          arb,
+        ],
+        symmetry: [
+          arb,
+          arb,
+        ],
+        transitivity: [
+          arb,
+          arb,
+          arb,
+        ],
       },
-      Ord: {
-        module: laws.Ord,
-        laws: {
-          totality: [
-            jsc.array (jsc.number),
-            jsc.array (jsc.number),
-          ],
-          antisymmetry: [
-            jsc.array (jsc.number),
-            jsc.array (jsc.number),
-          ],
-          transitivity: [
-            jsc.array (jsc.number),
-            jsc.array (jsc.number),
-            jsc.array (jsc.number),
-          ],
-        },
+    },
+    Semigroupoid: {
+      module: laws.Semigroupoid (resultsEqual (['foo', 'bar', 'baz'])),
+      laws: {
+        associativity: [
+          jsc.constant (square),
+          jsc.constant (length),
+          jsc.constant (joinWith ('')),
+        ],
       },
-      Semigroup: {
-        module: laws.Semigroup (Z.equals),
-        laws: {
-          associativity: [
-            jsc.array (jsc.number),
-            jsc.array (jsc.number),
-            jsc.array (jsc.number),
-          ],
-        },
+    },
+    Category: {
+      module: laws.Category (resultsEqual (['foo', 'bar', 'baz'])),
+      laws: {
+        leftIdentity: [
+          jsc.constant (Function),
+          jsc.constant (joinWith ('')),
+        ],
+        rightIdentity: [
+          jsc.constant (Function),
+          jsc.constant (joinWith ('')),
+        ],
       },
-      Monoid: {
-        module: laws.Monoid (Z.equals, Array),
-        laws: {
-          leftIdentity: [
-            jsc.array (jsc.number),
-          ],
-          rightIdentity: [
-            jsc.array (jsc.number),
-          ],
-        },
+    },
+    Functor: {
+      module: laws.Functor (resultsEqual (['foo', 'bar', 'baz'])),
+      laws: {
+        identity: [
+          jsc.constant (Z.reverse),
+        ],
+        composition: [
+          jsc.constant (Z.reverse),
+          jsc.constant (splitOn ('a')),
+          jsc.constant (joinWith ('-')),
+        ],
       },
-      Filterable: {
-        module: laws.Filterable (Z.equals),
-        laws: {
-          distributivity: [
-            jsc.array (jsc.number),
-            jsc.constant (gt (-10)),
-            jsc.constant (lt (10)),
-          ],
-          identity: [
-            jsc.array (jsc.number),
-          ],
-          annihilation: [
-            jsc.array (jsc.number),
-            jsc.array (jsc.number),
-          ],
-        },
+    },
+    Profunctor: {
+      module: laws.Profunctor (resultsEqual (['foo', 'bar', 'baz'])),
+      laws: {
+        identity: [
+          jsc.constant (append ('3')),
+        ],
+        composition: [
+          jsc.constant (append ('3')),
+          jsc.constant (append ('2')),
+          jsc.constant (append ('1')),
+          jsc.constant (append ('5')),
+          jsc.constant (append ('4')),
+        ],
       },
-      Functor: {
-        module: laws.Functor (Z.equals),
-        laws: {
-          identity: [
-            jsc.array (jsc.number),
-          ],
-          composition: [
-            jsc.array (jsc.number),
-            jsc.constant (Math.sqrt),
-            jsc.constant (Math.abs),
-          ],
-        },
+    },
+    Apply: {
+      module: laws.Apply (resultsEqual (['foo', 'bar', 'baz'])),
+      laws: {
+        composition: [
+          jsc.constant (xs => x => [x].concat (xs)),
+          jsc.constant (xs => n => xs[n - 1]),
+          jsc.constant (length),
+        ],
       },
-      Apply: {
-        module: laws.Apply (Z.equals),
-        laws: {
-          composition: [
-            jsc.constant ([Math.sqrt, square]),
-            jsc.constant ([Math.abs]),
-            jsc.array (jsc.number),
-          ],
-        },
+    },
+    Applicative: {
+      module: laws.Applicative (resultsEqual (['foo', 'bar', 'baz']), Function),
+      laws: {
+        identity: [
+          jsc.constant (length),
+        ],
+        homomorphism: [
+          jsc.constant (joinWith ('')),
+          jsc.array (jsc.string),
+        ],
+        interchange: [
+          jsc.constant (concat),
+          jsc.array (jsc.string),
+        ],
       },
-      Applicative: {
-        module: laws.Applicative (Z.equals, Array),
-        laws: {
-          identity: [
-            jsc.array (jsc.number),
-          ],
-          homomorphism: [
-            jsc.constant (square),
-            jsc.number,
-          ],
-          interchange: [
-            jsc.constant ([Math.abs, square]),
-            jsc.number,
-          ],
-        },
+    },
+    Chain: {
+      module: laws.Chain (resultsEqual (['foo', 'bar', 'baz'])),
+      laws: {
+        associativity: [
+          jsc.constant (length),
+          jsc.constant (n => xs => xs[n - 1]),
+          jsc.constant (x => xs => [x].concat (xs)),
+        ],
       },
-      Chain: {
-        module: laws.Chain (Z.equals),
-        laws: {
-          associativity: [
-            jsc.array (jsc.number),
-            jsc.constant (x => x > 0 ? [x] : []),
-            jsc.constant (x => [-x, x]),
-          ],
-        },
+    },
+    ChainRec: {
+      module: laws.ChainRec (resultsEqual ({step: 2, inc: 100}), Function),
+      laws: {
+        equivalence: [
+          jsc.constant (n => n === 3000),
+          jsc.constant (n => env => n + env.step),
+          jsc.constant (n => env => n + env.inc),
+          jsc.constant (0),
+        ],
       },
-      ChainRec: {
-        module: laws.ChainRec (Z.equals, Array),
-        laws: {
-          equivalence: [
-            jsc.constant (s => s.length === 2),
-            jsc.constant (s => [s + 'o', s + 'n']),
-            jsc.constant (s => [s + '!', s + '?']),
-            jsc.constant (''),
-          ],
-        },
+    },
+    Monad: {
+      module: laws.Monad (resultsEqual (['foo', 'bar', 'baz']), Function),
+      laws: {
+        leftIdentity: [
+          jsc.constant (compose (joinWith ('-'))),
+          jsc.constant (Z.reverse),
+        ],
+        rightIdentity: [
+          jsc.constant (Z.reverse),
+        ],
       },
-      Monad: {
-        module: laws.Monad (Z.equals, Array),
-        laws: {
-          leftIdentity: [
-            jsc.constant (double),
-            jsc.number,
-          ],
-          rightIdentity: [
-            jsc.array (jsc.number),
-          ],
-        },
+    },
+    Extend: {
+      module: laws.Extend (resultsEqual (['foo', 'bar', 'baz'])),
+      laws: {
+        associativity: [
+          jsc.constant (Z.reverse),
+          jsc.constant (f => f (['(w b) -> c'])),
+          jsc.constant (f => f (['(w a) -> b'])),
+        ],
       },
-      Alt: {
-        module: laws.Alt (Z.equals),
-        laws: {
-          associativity: [
-            jsc.array (jsc.number),
-            jsc.array (jsc.number),
-            jsc.array (jsc.number),
-          ],
-          distributivity: [
-            jsc.array (jsc.number),
-            jsc.array (jsc.number),
-            jsc.constant (square),
-          ],
-        },
+    },
+    Contravariant: {
+      module: laws.Contravariant (resultsEqual (['foo', 'bar', 'baz'])),
+      laws: {
+        identity: [
+          jsc.constant (Z.reverse),
+        ],
+        composition: [
+          jsc.constant (Z.reverse),
+          jsc.constant (splitOn ('a')),
+          jsc.constant (joinWith ('-')),
+        ],
       },
-      Plus: {
-        module: laws.Plus (Z.equals, Array),
-        laws: {
-          leftIdentity: [
-            jsc.array (jsc.number),
-          ],
-          rightIdentity: [
-            jsc.array (jsc.number),
-          ],
-          annihilation: [
-            jsc.constant (square),
-          ],
-        },
-      },
-      Alternative: {
-        module: laws.Alternative (Z.equals, Array),
-        laws: {
-          distributivity: [
-            jsc.array (jsc.number),
-            jsc.constant ([Math.abs, Math.sqrt]),
-            jsc.constant ([square]),
-          ],
-          annihilation: [
-            jsc.array (jsc.number),
-          ],
-        },
-      },
-      Foldable: {
-        module: laws.Foldable (Z.equals),
-        laws: {
-          associativity: [
-            jsc.constant ((x, y) => x - y),
-            jsc.number,
-            jsc.array (jsc.number),
-          ],
-        },
-      },
-      Traversable: {
-        module: laws.Traversable (Z.equals),
-        laws: {
-          naturality: [
-            jsc.constant (List),
-            jsc.constant (Array),
-            jsc.constant (listToArray),
-            jsc.array (ListArb (jsc.number)),
-          ],
-          identity: [
-            jsc.constant (Identity),
-            jsc.array (jsc.number),
-          ],
-          composition: [
-            jsc.constant (Maybe),
-            jsc.constant (List),
-            jsc.array (MaybeArb (ListArb (jsc.number))),
-          ],
-        },
-      },
-      Extend: {
-        module: laws.Extend (Z.equals),
-        laws: {
-          associativity: [
-            jsc.array (jsc.number),
-            jsc.constant (product),
-            jsc.constant (sum),
-          ],
-        },
-      },
-    });
+    },
   });
-
-  suite ('Arguments', () => {
-    const arb = mapArb (Function.prototype.apply.bind (args))
-                       (jsc.array (jsc.oneof (jsc.number, jsc.string)));
-    testLaws ({
-      Setoid: {
-        module: laws.Setoid,
-        laws: {
-          reflexivity: [
-            arb,
-          ],
-          symmetry: [
-            arb,
-            arb,
-          ],
-          transitivity: [
-            arb,
-            arb,
-            arb,
-          ],
-        },
-      },
-      Ord: {
-        module: laws.Ord,
-        laws: {
-          totality: [
-            arb,
-            arb,
-          ],
-          antisymmetry: [
-            arb,
-            arb,
-          ],
-          transitivity: [
-            arb,
-            arb,
-            arb,
-          ],
-        },
-      },
-    });
-  });
-
-  suite ('Error', () => {
-    const arb = smapArb (s => new Error (s)) (e => e.message) (jsc.string);
-    testLaws ({
-      Setoid: {
-        module: laws.Setoid,
-        laws: {
-          reflexivity: [
-            arb,
-          ],
-          symmetry: [
-            arb,
-            arb,
-          ],
-          transitivity: [
-            arb,
-            arb,
-            arb,
-          ],
-        },
-      },
-    });
-  });
-
-  suite ('Object', () => {
-    testLaws ({
-      Setoid: {
-        module: laws.Setoid,
-        laws: {
-          reflexivity: [
-            jsc.dict (jsc.array (jsc.number)),
-          ],
-          symmetry: [
-            jsc.dict (jsc.array (jsc.number)),
-            jsc.dict (jsc.array (jsc.number)),
-          ],
-          transitivity: [
-            jsc.dict (jsc.array (jsc.number)),
-            jsc.dict (jsc.array (jsc.number)),
-            jsc.dict (jsc.array (jsc.number)),
-          ],
-        },
-      },
-      Ord: {
-        module: laws.Ord,
-        laws: {
-          totality: [
-            jsc.dict (jsc.array (jsc.number)),
-            jsc.dict (jsc.array (jsc.number)),
-          ],
-          antisymmetry: [
-            jsc.dict (jsc.array (jsc.number)),
-            jsc.dict (jsc.array (jsc.number)),
-          ],
-          transitivity: [
-            jsc.dict (jsc.array (jsc.number)),
-            jsc.dict (jsc.array (jsc.number)),
-            jsc.dict (jsc.array (jsc.number)),
-          ],
-        },
-      },
-      Semigroup: {
-        module: laws.Semigroup (Z.equals),
-        laws: {
-          associativity: [
-            jsc.dict (jsc.array (jsc.number)),
-            jsc.dict (jsc.array (jsc.number)),
-            jsc.dict (jsc.array (jsc.number)),
-          ],
-        },
-      },
-      Monoid: {
-        module: laws.Monoid (Z.equals, Object),
-        laws: {
-          leftIdentity: [
-            jsc.dict (jsc.array (jsc.number)),
-          ],
-          rightIdentity: [
-            jsc.dict (jsc.array (jsc.number)),
-          ],
-        },
-      },
-      Filterable: {
-        module: laws.Filterable (Z.equals),
-        laws: {
-          distributivity: [
-            jsc.dict (jsc.array (jsc.number)),
-            jsc.constant (xs => xs.length % 2 === 0),
-            jsc.constant (compose (gt (0)) (sum)),
-          ],
-          identity: [
-            jsc.dict (jsc.array (jsc.number)),
-          ],
-          annihilation: [
-            jsc.dict (jsc.array (jsc.number)),
-            jsc.dict (jsc.array (jsc.number)),
-          ],
-        },
-      },
-      Functor: {
-        module: laws.Functor (Z.equals),
-        laws: {
-          identity: [
-            jsc.dict (jsc.array (jsc.number)),
-          ],
-          composition: [
-            jsc.dict (jsc.array (jsc.number)),
-            jsc.constant (Math.round),
-            jsc.constant (sum),
-          ],
-        },
-      },
-      Apply: {
-        module: laws.Apply (Z.equals),
-        laws: {
-          composition: [
-            jsc.dict (jsc.constant (Math.round)),
-            jsc.dict (jsc.constant (sum)),
-            jsc.dict (jsc.array (jsc.number)),
-          ],
-        },
-      },
-      Alt: {
-        module: laws.Alt (Z.equals),
-        laws: {
-          associativity: [
-            jsc.dict (jsc.array (jsc.number)),
-            jsc.dict (jsc.array (jsc.number)),
-            jsc.dict (jsc.array (jsc.number)),
-          ],
-          distributivity: [
-            jsc.dict (jsc.array (jsc.number)),
-            jsc.dict (jsc.array (jsc.number)),
-            jsc.constant (sum),
-          ],
-        },
-      },
-      Plus: {
-        module: laws.Plus (Z.equals, Object),
-        laws: {
-          leftIdentity: [
-            jsc.dict (jsc.array (jsc.number)),
-          ],
-          rightIdentity: [
-            jsc.dict (jsc.array (jsc.number)),
-          ],
-          annihilation: [
-            jsc.constant (sum),
-          ],
-        },
-      },
-      Foldable: {
-        module: laws.Foldable (Z.equals),
-        laws: {
-          associativity: [
-            jsc.constant (Z.concat),
-            jsc.array (jsc.number),
-            jsc.dict (jsc.array (jsc.number)),
-          ],
-        },
-      },
-      Traversable: {
-        module: laws.Traversable (Z.equals),
-        laws: {
-          naturality: [
-            jsc.constant (List),
-            jsc.constant (Array),
-            jsc.constant (listToArray),
-            jsc.dict (ListArb (jsc.number)),
-          ],
-          identity: [
-            jsc.constant (Identity),
-            jsc.dict (jsc.array (jsc.number)),
-          ],
-          composition: [
-            jsc.constant (Maybe),
-            jsc.constant (List),
-            jsc.dict (MaybeArb (ListArb (jsc.number))),
-          ],
-        },
-      },
-    });
-  });
-
-  suite ('Function', () => {
-    const resultsEqual = x => (f, g) => Z.equals (f (x), g (x));
-    const arb = jsc.oneof (jsc.constant (abs), jsc.constant (square));
-    testLaws ({
-      Setoid: {
-        module: laws.Setoid,
-        laws: {
-          reflexivity: [
-            arb,
-          ],
-          symmetry: [
-            arb,
-            arb,
-          ],
-          transitivity: [
-            arb,
-            arb,
-            arb,
-          ],
-        },
-      },
-      Semigroupoid: {
-        module: laws.Semigroupoid (resultsEqual (['foo', 'bar', 'baz'])),
-        laws: {
-          associativity: [
-            jsc.constant (square),
-            jsc.constant (length),
-            jsc.constant (joinWith ('')),
-          ],
-        },
-      },
-      Category: {
-        module: laws.Category (resultsEqual (['foo', 'bar', 'baz'])),
-        laws: {
-          leftIdentity: [
-            jsc.constant (Function),
-            jsc.constant (joinWith ('')),
-          ],
-          rightIdentity: [
-            jsc.constant (Function),
-            jsc.constant (joinWith ('')),
-          ],
-        },
-      },
-      Functor: {
-        module: laws.Functor (resultsEqual (['foo', 'bar', 'baz'])),
-        laws: {
-          identity: [
-            jsc.constant (Z.reverse),
-          ],
-          composition: [
-            jsc.constant (Z.reverse),
-            jsc.constant (splitOn ('a')),
-            jsc.constant (joinWith ('-')),
-          ],
-        },
-      },
-      Profunctor: {
-        module: laws.Profunctor (resultsEqual (['foo', 'bar', 'baz'])),
-        laws: {
-          identity: [
-            jsc.constant (append ('3')),
-          ],
-          composition: [
-            jsc.constant (append ('3')),
-            jsc.constant (append ('2')),
-            jsc.constant (append ('1')),
-            jsc.constant (append ('5')),
-            jsc.constant (append ('4')),
-          ],
-        },
-      },
-      Apply: {
-        module: laws.Apply (resultsEqual (['foo', 'bar', 'baz'])),
-        laws: {
-          composition: [
-            jsc.constant (xs => x => [x].concat (xs)),
-            jsc.constant (xs => n => xs[n - 1]),
-            jsc.constant (length),
-          ],
-        },
-      },
-      Applicative: {
-        module: laws.Applicative (resultsEqual (['foo', 'bar', 'baz']), Function),
-        laws: {
-          identity: [
-            jsc.constant (length),
-          ],
-          homomorphism: [
-            jsc.constant (joinWith ('')),
-            jsc.array (jsc.string),
-          ],
-          interchange: [
-            jsc.constant (concat),
-            jsc.array (jsc.string),
-          ],
-        },
-      },
-      Chain: {
-        module: laws.Chain (resultsEqual (['foo', 'bar', 'baz'])),
-        laws: {
-          associativity: [
-            jsc.constant (length),
-            jsc.constant (n => xs => xs[n - 1]),
-            jsc.constant (x => xs => [x].concat (xs)),
-          ],
-        },
-      },
-      ChainRec: {
-        module: laws.ChainRec (resultsEqual ({step: 2, inc: 100}), Function),
-        laws: {
-          equivalence: [
-            jsc.constant (n => n === 3000),
-            jsc.constant (n => env => n + env.step),
-            jsc.constant (n => env => n + env.inc),
-            jsc.constant (0),
-          ],
-        },
-      },
-      Monad: {
-        module: laws.Monad (resultsEqual (['foo', 'bar', 'baz']), Function),
-        laws: {
-          leftIdentity: [
-            jsc.constant (compose (joinWith ('-'))),
-            jsc.constant (Z.reverse),
-          ],
-          rightIdentity: [
-            jsc.constant (Z.reverse),
-          ],
-        },
-      },
-      Extend: {
-        module: laws.Extend (resultsEqual (['foo', 'bar', 'baz'])),
-        laws: {
-          associativity: [
-            jsc.constant (Z.reverse),
-            jsc.constant (f => f (['(w b) -> c'])),
-            jsc.constant (f => f (['(w a) -> b'])),
-          ],
-        },
-      },
-      Contravariant: {
-        module: laws.Contravariant (resultsEqual (['foo', 'bar', 'baz'])),
-        laws: {
-          identity: [
-            jsc.constant (Z.reverse),
-          ],
-          composition: [
-            jsc.constant (Z.reverse),
-            jsc.constant (splitOn ('a')),
-            jsc.constant (joinWith ('-')),
-          ],
-        },
-      },
-    });
-  });
-
-});
+}
