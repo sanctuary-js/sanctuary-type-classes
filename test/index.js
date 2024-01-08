@@ -1,6 +1,6 @@
-import {deepStrictEqual as eq, throws} from 'assert';
-import module from 'module';
-import vm from 'vm';
+import {deepStrictEqual as eq, throws} from 'node:assert';
+import module from 'node:module';
+import vm from 'node:vm';
 
 import laws from 'fantasy-laws';
 import jsc from 'jsverify';
