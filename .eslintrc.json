@@ -3,19 +3,8 @@
   "extends": ["./node_modules/sanctuary-style/eslint.json"],
   "overrides": [
     {
-      "files": ["*.md"],
-      "rules": {
-        "array-element-newline": ["off"],
-        "eqeqeq": ["off"],
-        "no-undef": ["off"],
-        "no-unused-vars": ["error", {"varsIgnorePattern": "^Bar$"}]
-      }
-    },
-    {
       "files": ["index.js"],
-      "rules": {
-        "multiline-comment-style": ["off"]
-      }
+      "globals": {"__doctest": "readonly", "define": "readonly", "module": "readonly", "require": "readonly", "self": "readonly"}
     },
     {
       "files": ["bench/**/*.js"],
@@ -27,7 +16,10 @@
     },
     {
       "files": ["test/**/*.js"],
-      "parserOptions": {"ecmaVersion": 2020, "sourceType": "module"}
+      "parserOptions": {"ecmaVersion": 2020, "sourceType": "module"},
+      "rules": {
+        "max-len": ["off"]
+      }
     }
   ]
 }
