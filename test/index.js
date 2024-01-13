@@ -1482,7 +1482,7 @@ const testLaws = type => specs => {
     const spec = specs[typeClass];
     (Object.keys (spec.module)).forEach (name => {
       const prettyName = name.replace (/[A-Z]/g, c => ' ' + c.toLowerCase ());
-      test (`${type} \x1B[2m›\x1B[0m ${typeClass} laws \x1B[2m›\x1B[0m ${prettyName}`,
+      test (`${type} \x1B[2m›\x1B[22m ${typeClass} laws \x1B[2m›\x1B[22m ${prettyName}`,
             spec.module[name] (...spec.laws[name]));
     });
   });
