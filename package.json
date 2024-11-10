@@ -8,7 +8,6 @@
     "url": "git://github.com/sanctuary-js/sanctuary-type-classes.git"
   },
   "scripts": {
-    "bench": "sanctuary-benchmark",
     "doctest": "sanctuary-doctest",
     "lint": "sanctuary-lint",
     "release": "sanctuary-release",
@@ -21,8 +20,6 @@
     "fantasy-land": "5.0.0",
     "fantasy-laws": "2.0.x",
     "jsverify": "0.8.x",
-    "list": "2.0.11",
-    "sanctuary-benchmark": "1.0.x",
     "sanctuary-identity": "2.1.x",
     "sanctuary-maybe": "2.1.x",
     "sanctuary-pair": "2.1.x",
