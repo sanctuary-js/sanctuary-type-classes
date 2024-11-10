@@ -7,14 +7,6 @@
       "globals": {"__doctest": "readonly", "define": "readonly", "module": "readonly", "require": "readonly", "self": "readonly"}
     },
     {
-      "files": ["bench/**/*.js"],
-      "env": {"node": true},
-      "rules": {
-        "key-spacing": ["off"],
-        "max-len": ["off"]
-      }
-    },
-    {
       "files": ["test/**/*.js"],
       "parserOptions": {"ecmaVersion": 2020, "sourceType": "module"},
       "rules": {
